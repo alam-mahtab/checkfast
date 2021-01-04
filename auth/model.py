@@ -29,3 +29,6 @@ class Token(BaseModel):
     token_type : str
     expired_in : str
     user_info : UserList
+
+class TokenData(BaseModel):
+    username : str =None
