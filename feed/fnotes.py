@@ -4,6 +4,10 @@ from feed import crud
 from feed.models import FeedDB, FeedSchema
 from fastapi import APIRouter, HTTPException, Path
 from fastapi import FastAPI, File, Form, UploadFile
+# Pagination
+from fastapi_pagination import Page, PaginationParams
+from fastapi_pagination.ext.sqlalchemy import paginate
+
 
 router = APIRouter()
 
@@ -23,12 +27,12 @@ async def create_note(payload: FeedSchema):
 @router.get("/{id}/", response_model=FeedDB)
 async def read_note(id: int = Path(..., gt=0),):
     fnote = await crud.get(id)
-    if not note:
+    if not fnote:
         raise HTTPException(status_code=404, detail="Feed not found")
-    return note
+    return fnote
 
 
-@router.get("/", response_model=List[FeedDB])
+@router.get("/", response_model=Page[FeedDB])
 async def read_all_fnotes():
     return await crud.get_all()
 
@@ -57,5 +61,5 @@ async def delete_note(id: int = Path(..., gt=0)):
 
     await crud.delete(id)
 
-    return note
+    return fnote
 

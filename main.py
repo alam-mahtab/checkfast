@@ -2,16 +2,33 @@ from configs.appinfo import setting
 
 from configs.connection import database
 from fastapi import FastAPI, Request, Depends
-from functools import lru_cache
+
 from configs import appinfo
 import time
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI()
 
+origins = [
+    "http://checkfast.herokuapp.com/docs",
+    "https://checkfast.herokuapp.com/docs",
+    "http://checkfast.herokuapp.com",
+    "https://checkfast.herokuapp.com"
+    "http://localhost",
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
-@lru_cache()
+
 def app_setting():
     return appinfo.setting()
 
