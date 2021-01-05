@@ -3,7 +3,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from utils import constant
 import jwt
-from fastapi import HTTPException, Depends, status
+from fastapi import HTTPException, Depends, status,  File, Form, UploadFile
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from auth import model
 from jwt import PyJWTError
@@ -60,3 +60,11 @@ async def get_current_active_user(current_user: model.UserList = Depends(get_cur
     if current_user.status == "9":
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
+# New
+async def create_file(
+    file: bytes = File(...), fileb: UploadFile = File(...), token: str = Form(...)
+):
+    return {
+        "file_size": len(file),
+        "token": token,
+        "fileb_content_type": fileb.content_type,}

@@ -7,7 +7,7 @@ from configs import appinfo
 import time
 
 
-app = FastAPI()
+app = FastAPI(debug=True)
 
 
 
@@ -50,3 +50,9 @@ app.include_router(authController.router, tags =["Auth"])
 
 from users import controller as userController
 app.include_router(userController.router, tags =["Users"])
+
+#new code
+from api import notes, ping, imgnotes
+app.include_router(ping.router)
+app.include_router(notes.router, prefix="/notes", tags=["notes"])
+app.include_router(imgnotes.router, prefix="/imgnotes", tags=["imgnotes"])
