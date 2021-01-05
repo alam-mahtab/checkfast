@@ -11,7 +11,8 @@ async def read_user_me(currentuser: model.UserList = Depends(util.get_current_ac
 
 @router.get("/users")
 async def find_all_user(
-    currentuser : model.UserList = Depends(util.get_current_active_user)
+    currentuser : model.UserList = Depends(util.get_current_active_user),
+    skip: int = 0, limit: int = 10
 ):
     query = "select * from users"
-    return await database.fetch_all(query=query, values={}) 
+    return await database.fetch_all(query=query, values={} [skip : skip + limit]) 

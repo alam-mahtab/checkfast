@@ -7,7 +7,7 @@ from configs import appinfo
 import time
 
 
-app = FastAPI(debug=True)
+app = FastAPI()
 
 
 
