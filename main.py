@@ -13,10 +13,11 @@ app = FastAPI()
 origins = [
     "http://checkfast.herokuapp.com/docs",
     "https://checkfast.herokuapp.com/docs",
-    "http://checkfast.herokuapp.com",
-    "https://checkfast.herokuapp.com"
     "http://localhost",
     "http://localhost:8080",
+    "http://localhost:5000",
+    "http://127.0.0.1:5000",
+    "http://127.0.0.1:8000",
 ]
 
 app.add_middleware(
