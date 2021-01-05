@@ -13,8 +13,7 @@ class ImageSchema(BaseModel):
     name : str
     title : str
     description : str
-    url : bytes
-    
+    file: bytes
 
 class ImageDB(ImageSchema):
     id : int

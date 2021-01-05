@@ -8,7 +8,7 @@ router = APIRouter()
 
 @router.post("/",response_model=ImageDB, status_code=201)
 async def create_file(payload: ImageSchema,
-    file: bytes = File(...), token: str = Form(...)):
+    file = File(...), token: str = Form(...)):
     imgnote_id = await imagecrud.post(payload)
     response_object = {
         "id": imgnote_id,

@@ -56,3 +56,11 @@ from api import notes, ping, imgnotes
 app.include_router(ping.router)
 app.include_router(notes.router, prefix="/notes", tags=["notes"])
 app.include_router(imgnotes.router, prefix="/imgnotes", tags=["imgnotes"])
+
+# For Comments
+from comment import comnotes
+app.include_router(comnotes.router, prefix="/comnotes", tags=["Comment"])
+
+# For Feeds
+from feed import fnotes
+app.include_router(fnotes.router, prefix="/fnotes", tags=["Feed"])
