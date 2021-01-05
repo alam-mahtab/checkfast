@@ -3,11 +3,12 @@ import sqlalchemy
 from sqlalchemy import (Column, DateTime, Integer, MetaData, String, Table,create_engine)
 from sqlalchemy.sql import func
 
-from functools import lru_cache
+
 from configs import dbinfo
 from db.table import metadata
 import datetime
-@lru_cache
+
+
 def db_config():
     return dbinfo.setting()
 
