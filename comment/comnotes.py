@@ -2,8 +2,11 @@ from typing import List
 
 from comment import crud
 from comment.models import CommentDB, CommentSchema
-from fastapi import APIRouter, HTTPException, Path
+from fastapi import APIRouter, HTTPException, Path, Depends
 from fastapi import FastAPI, File, Form, UploadFile
+# pagination
+from fastapi_pagination import Page, pagination_params
+from fastapi_pagination.paginator import paginate
 
 router = APIRouter()
 
@@ -28,9 +31,10 @@ async def read_comment(id: int = Path(..., gt=0),):
     return comment
 
 
-@router.get("/", response_model=List[CommentDB])
+@router.get("/", response_model=Page[CommentDB], dependencies=[Depends(pagination_params)])
 async def read_all_comments():
-    return await crud.get_all()
+    comments_all= await crud.get_all()
+    return paginate(comments_all)
 
 
 @router.put("/{id}/", response_model=CommentDB)

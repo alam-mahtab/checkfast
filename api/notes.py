@@ -2,8 +2,11 @@ from typing import List
 
 from api import crud
 from api.models import NoteDB, NoteSchema
-from fastapi import APIRouter, HTTPException, Path
+from fastapi import APIRouter, HTTPException, Path, Depends
 from fastapi import FastAPI, File, Form, UploadFile
+# pagination
+from fastapi_pagination import Page, pagination_params
+from fastapi_pagination.paginator import paginate
 
 router = APIRouter()
 
@@ -28,12 +31,11 @@ async def read_note(id: int = Path(..., gt=0),):
     return note
 
 
-@router.get("/", response_model=List[NoteDB])
+@router.get("/", response_model=Page[NoteDB], dependencies=[Depends(pagination_params)])
 async def read_all_notes():
-    return await crud.get_all()
+    notes_all = await crud.get_all()
+    return paginate(notes_all)
 
-
-@router.put("/{id}/", response_model=NoteDB)
 @router.put("/{id}/", response_model=NoteDB)
 async def update_note(payload: NoteSchema, id: int = Path(..., gt=0),):
     note = await crud.get(id)

@@ -2,11 +2,11 @@ from typing import List
 
 from feed import crud
 from feed.models import FeedDB, FeedSchema
-from fastapi import APIRouter, HTTPException, Path
+from fastapi import APIRouter, HTTPException, Path, Depends
 from fastapi import FastAPI, File, Form, UploadFile
 # Pagination
-from fastapi_pagination import Page, PaginationParams
-from fastapi_pagination.ext.sqlalchemy import paginate
+from fastapi_pagination import Page, pagination_params
+from fastapi_pagination.paginator import paginate
 
 
 router = APIRouter()
@@ -32,9 +32,10 @@ async def read_note(id: int = Path(..., gt=0),):
     return fnote
 
 
-@router.get("/", response_model=Page[FeedDB])
+@router.get("/", response_model=Page[FeedDB], dependencies=[Depends(pagination_params)])
 async def read_all_fnotes():
-    return await crud.get_all()
+    feed_all = await crud.get_all()
+    return paginate(feed_all)
 
 
 @router.put("/{id}/", response_model=FeedDB)
