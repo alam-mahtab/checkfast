@@ -4,4 +4,4 @@ APP_FRAMEWORK = "FastAPI"
 APP_DATE = "2021-01-04"
 
 DB_CONNECTION = "sqlite"
-DB_DATABASE = "dbtest"
+DB_DATABASE = "dbtest.db"
