@@ -7,4 +7,4 @@ class setting(BaseSettings):
     app_date : str
 
     class Config:
-        env_file = ".env"
+        env_file = "env"
