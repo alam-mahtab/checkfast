@@ -17,14 +17,3 @@ users = sqlalchemy.Table(
     sqlalchemy.Column("created_at", sqlalchemy.String),
     sqlalchemy.Column("status", sqlalchemy.String)
 )
-posts = sqlalchemy.Table(
-    'posts',
-    metadata,
-    sqlalchemy.Column("id",sqlalchemy.String, Primary_key=True),
-    sqlalchemy.Column("url", sqlalchemy.String),
-    sqlalchemy.Column("title", sqlalchemy.String),
-    sqlalchemy.Column("name", sqlalchemy.String),
-    sqlalchemy.Column("desc", sqlalchemy.String),
-    sqlalchemy.Column("created_at", sqlalchemy.String),
-
-)
