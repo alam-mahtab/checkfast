@@ -13,6 +13,10 @@ app = FastAPI()
 origins = [
     "http://checkfast.herokuapp.com/docs",
     "https://checkfast.herokuapp.com/docs",
+    "uvicorn main:app --host=0.0.0.0 --port=${PORT:-5000}",
+    "uvicorn main:app --host=0.0.0.0 --port=${PORT:-5000}/docs",
+    "http://0.0.0.0:5000",
+    "http://0.0.0.0:5000/docs",
     "http://localhost",
     "http://localhost:8080",
     "http://localhost:8000",
