@@ -3,6 +3,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from utils import constant
 import jwt
+import bcrypt
 from fastapi import HTTPException, Depends, status,  File, Form, UploadFile
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from auth import model
@@ -19,11 +20,15 @@ def findExistedUser(username : str):
 
     return database.fetch_one(query, values={ "username" : username})
 
+def generate_salt() -> str:
+    return bcrypt.gensalt().decode()
+
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password):
     return pwd_context.hash(password)
+
 
 def create_access_token(*, data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()

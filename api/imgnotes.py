@@ -18,4 +18,4 @@ async def create_file(payload: ImageSchema,
 
     return response_object + {"file_size": len(file),
         "token": token,
-        "fileb_content_type": fileb.content_type,}
+        "fileb_content_type": file.content_type,}
