@@ -18,6 +18,7 @@ async def create_note(payload: FeedSchema):
 
     response_object = {
         "id": fnote_id,
+        "Name": payload.Name,
         "title": payload.title,
         "description": payload.description,
     }
@@ -48,6 +49,7 @@ async def update_note(payload: FeedSchema, id: int = Path(..., gt=0),):
 
     response_object = {
         "id": fnote_id,
+        "Name": payload.Name,
         "title": payload.title,
         "description": payload.description,
     }

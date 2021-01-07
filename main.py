@@ -78,9 +78,9 @@ from users import controller as userController
 app.include_router(userController.router, tags =["Users"])
 
 #new code
-from api import notes, ping, imgnotes
+from api import extensive_course, ping, imgnotes
 app.include_router(ping.router)
-app.include_router(notes.router, prefix="/notes", tags=["notes"])
+app.include_router(extensive_course.router, prefix="/extensive_course", tags=["Extensive_course"])
 app.include_router(imgnotes.router, prefix="/imgnotes", tags=["imgnotes"])
 
 # For Comments

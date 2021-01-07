@@ -17,6 +17,7 @@ async def create_comment(payload: CommentSchema):
 
     response_object = {
         "id": comment_id,
+        "Name": payload.Name,
         "title": payload.title,
         "description": payload.description,
     }
@@ -47,6 +48,7 @@ async def update_comment(payload: CommentSchema, id: int = Path(..., gt=0),):
 
     response_object = {
         "id": comment_id,
+        "Name": payload.Name,
         "title": payload.title,
         "description": payload.description,
     }

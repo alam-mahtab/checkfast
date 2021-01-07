@@ -4,11 +4,11 @@ from configs.connection import database, comnotes
 
 
 async def post(payload: CommentSchema):
-    query = comnotes.insert().values(title=payload.title, description=payload.description)
+    query = comnotes.insert().values(Name=payload.Name,title=payload.title, description=payload.description)
     return await database.execute(query=query)
 
 async def get(id: int):
-    query = comnotes.select().where(id == comments.c.id)
+    query = comnotes.select().where(id == comnotes.c.id)
     return await database.fetch_one(query=query)
 
 async def get_all():
@@ -17,16 +17,16 @@ async def get_all():
 
 async def put(id: int, payload: CommentSchema):
     query = (
-        comments
+        comnotes
         .update()
-        .where(id == comments.c.id)
-        .values(title=payload.title, description=payload.description)
-        .returning(comments.c.id)
+        .where(id == comnotes.c.id)
+        .values(Name=payload.Name,title=payload.title, description=payload.description)
+        .returning(comnotes.c.id)
     )
     return await database.execute(query=query)
 
 
 
 async def delete(id: int):
-    query = comments.delete().where(id == comments.c.id)
+    query = comnotes.delete().where(id == comnotes.c.id)
     return await database.execute(query=query)

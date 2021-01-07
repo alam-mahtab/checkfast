@@ -4,7 +4,7 @@ from configs.connection import database, fnotes
 
 
 async def post(payload: FeedSchema):
-    query = fnotes.insert().values(title=payload.title, description=payload.description)
+    query = fnotes.insert().values(Name=payload.Name, title=payload.title, description=payload.description)
     return await database.execute(query=query)
 
 async def get(id: int):
@@ -20,7 +20,7 @@ async def put(id: int, payload: FeedSchema):
         fnotes
         .update()
         .where(id == fnotes.c.id)
-        .values(title=payload.title, description=payload.description)
+        .values(Name=payload.Name, title=payload.title, description=payload.description)
         .returning(fnotes.c.id)
     )
     return await database.execute(query=query)

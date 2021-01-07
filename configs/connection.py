@@ -19,11 +19,12 @@ def DATABASE_URL(
 ):
 
     return str(connection+":///" +database)
-# Notes of Api
-notes = Table(
-    "notes",
+# extensive course
+extensive_course = Table(
+    "extensive_course",
     metadata,
     Column("id", Integer, primary_key=True),
+    Column("Name", String(50)),
     Column("title", String(50)),
     Column("description", String(50)),
     Column("created_date", DateTime, default=func.now(), nullable=False),
@@ -33,6 +34,7 @@ comnotes = Table(
     "comnotes",
     metadata,
     Column("id", Integer, primary_key=True),
+    Column("Name", String(50)),
     Column("title", String(50)),
     Column("description", String(50)),
     Column("created_date", DateTime, default=func.now(), nullable=False),
@@ -42,6 +44,7 @@ fnotes = Table(
     "fnotes",
     metadata,
     Column("id", Integer, primary_key=True),
+    Column("Name", String(50)),
     Column("title", String(50)),
     Column("description", String(50)),
     Column("created_date", DateTime, default=func.now(), nullable=False),
