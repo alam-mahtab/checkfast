@@ -1,20 +1,20 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
-from jose import JWTError, jwt
+
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Optional
 
-def create_post(title:str,name:str,body:str,url:str):
-    db_post = models.Post(title=title,body=body,name=name,url=url)
-    db.add(db_post)
+def create_tutor(db: Session,title:str,name:str,desc:str,url:str):
+    db_tutor = models.Tutor(title=title,desc=desc,name=name,url=url)
+    db.add(db_tutor)
     db.commit()
-    db.refresh(db_post)
-    return db_post
+    db.refresh(db_tutor)
+    return db_tutor
 
-def get_post(db, id: int):
-    return db.query(models.Post).filter(models.Post.id== id).first()
+def get_tutor(db, id: int):
+    return db.query(models.Tutor).filter(models.Tutor.id== id).first()
 
 def post_list(db):
-    return db.query(models.Post).all()
+    return db.query(models.Tutor).all()

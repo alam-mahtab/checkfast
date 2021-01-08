@@ -1,13 +1,10 @@
-
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String,DateTime
-
-from sqlalchemy_utils import EmailType,URLType
+from sqlalchemy import  Column, Integer, String,DateTime
+from sqlalchemy_utils import URLType
 import datetime
-
 from courses_live.database import Base
 
-class Post(Base):
-    __tablename__ = "posts"
+class Live(Base):
+    __tablename__ = "lives"
 
     id = Column(Integer, primary_key=True)
     created_date = Column(DateTime,default=datetime.datetime.utcnow)

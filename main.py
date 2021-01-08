@@ -93,3 +93,6 @@ app.include_router(fnotes.router, prefix="/fnotes", tags=["Feed"])
 #For live course in app
 from courses_live import live_course
 app.include_router(live_course.router, prefix="/live_course", tags=["Live Course"])
+# Course By tutor
+from coursebytutor import course_by_tutor
+app.include_router(course_by_tutor.router, prefix="/course_by_tutor", tags=["Course by tutor"])
