@@ -16,5 +16,5 @@ def create_tutor(db: Session,title:str,name:str,desc:str,url:str):
 def get_tutor(db, id: int):
     return db.query(models.Tutor).filter(models.Tutor.id== id).first()
 
-def post_list(db):
+def tutor_list(db):
     return db.query(models.Tutor).all()
