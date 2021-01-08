@@ -7,17 +7,17 @@ from fastapi import FastAPI, File, Form, UploadFile
 # Pagination
 from fastapi_pagination import Page, pagination_params
 from fastapi_pagination.paginator import paginate
-
+import shutil
 
 router = APIRouter()
 
 
 @router.post("/", response_model=FeedDB, status_code=201)
-async def create_note(payload: FeedSchema):
+async def create_note(payload: FeedSchema,file: UploadFile=File(...)):
     fnote_id = await crud.post(payload)
-
     response_object = {
         "id": fnote_id,
+        "url" : payload.url,
         "Name": payload.Name,
         "title": payload.title,
         "description": payload.description,

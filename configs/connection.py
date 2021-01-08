@@ -2,11 +2,11 @@ import databases
 import sqlalchemy
 from sqlalchemy import (Column, DateTime, Integer, MetaData, String, Table,create_engine)
 from sqlalchemy.sql import func
-
-
+from sqlalchemy_utils import URLType
+from sqlalchemy.ext.declarative import declarative_base
 from configs import dbinfo
 from db.table import metadata
-import datetime
+
 
 
 def db_config():
@@ -44,15 +44,30 @@ fnotes = Table(
     "fnotes",
     metadata,
     Column("id", Integer, primary_key=True),
+    Column("url", URLType ),
     Column("Name", String(50)),
     Column("title", String(50)),
     Column("description", String(50)),
     Column("created_date", DateTime, default=func.now(), nullable=False),
 )
+#liveapp
+
+posts = Table(
+    "posts",
+    metadata,
+    Column("id",Integer, primary_key=True),
+    Column("created_at",DateTime,default=func.now(),),
+    Column("url",URLType),
+    Column("name",String),
+    Column("title",String),
+    Column("desc",String),)
 
 database = databases.Database(DATABASE_URL())
 
 engine = sqlalchemy.create_engine(
     DATABASE_URL()
 )
+
+
+
 metadata.create_all(engine)
