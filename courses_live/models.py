@@ -4,7 +4,7 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String,DateTime
 from sqlalchemy_utils import EmailType,URLType
 import datetime
 
-from app1.database import Base
+from courses_live.database import Base
 
 class Post(Base):
     __tablename__ = "posts"

@@ -91,5 +91,5 @@ app.include_router(comnotes.router, prefix="/comnotes", tags=["Comment"])
 from feed import fnotes
 app.include_router(fnotes.router, prefix="/fnotes", tags=["Feed"])
 #For live course in app
-from app1 import live_course
+from courses_live import live_course
 app.include_router(live_course.router, prefix="/live_course", tags=["Live Course"])

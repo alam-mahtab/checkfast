@@ -2,11 +2,11 @@ from typing import List
 from fastapi import Depends, FastAPI, HTTPException, status,File, UploadFile, APIRouter
 from sqlalchemy.orm import Session
 
-from app1 import crud, models
-from app1.database import SessionLocal, engine
+from courses_live import crud, models
+from courses_live.database import SessionLocal, engine
 import shutil
-from app1.schemas import PostBase, PostList
-from app1.models import Post
+from courses_live.schemas import PostBase, PostList
+from courses_live.models import Post
 router = APIRouter()
 
 def get_db():
@@ -23,7 +23,7 @@ def create_post(
     title:str,desc:str,name:str,file: UploadFile = File(...), db: Session = Depends(get_db)
 ):
 
-    with open("media/"+file.filename, "wb") as image:
+    with open("media/live_course"+file.filename, "wb") as image:
         shutil.copyfileobj(file.file, image)
 
     url = str("media/"+file.filename)
