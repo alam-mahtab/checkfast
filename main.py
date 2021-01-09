@@ -1,7 +1,7 @@
 from configs.appinfo import setting
 
 from configs.connection import database
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, UploadFile, File
 
 from configs import appinfo
 import time
@@ -98,3 +98,36 @@ app.include_router(live_course.router, prefix="/live_course", tags=["Live Course
 # Course By tutor
 from coursebytutor import course_by_tutor
 app.include_router(course_by_tutor.router, prefix="/course_by_tutor", tags=["Course by tutor"])
+
+#image upload
+
+import uuid
+from pathlib import Path
+#from fastapi.staticfiles import StaticFiles
+#from fastapi.staticfiles import StaticFiles
+import os
+from os.path import dirname, abspath, join
+import shutil
+
+#app.mount("/static", StaticFiles(directory="static"), name="static")
+dirname = dirname(dirname(abspath(__file__)))
+images_path = join(dirname, 'testfast//media')
+ 
+@app.post("/cv2")
+async def get_image(request: Request, file: UploadFile = File(...)):
+ 
+    extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
+    if not extension:
+        return "Image must be jpg or png format!"
+    
+    # outputImage = Image.fromarray(sr_img)  
+    suffix = Path(file.filename).suffix
+    filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
+    
+    with open("media/"+filename, "wb") as image:
+        shutil.copyfileobj(file.file, image)
+
+    #url = str("media/"+file.filename)
+    file_path = os.path.join(images_path, filename)
+    
+    return {"url": file_path}

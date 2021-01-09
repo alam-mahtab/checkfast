@@ -20,7 +20,7 @@ async def put(id: int, payload: CommentSchema):
         comnotes
         .update()
         .where(id == comnotes.c.id)
-        .values(Name=payload.Name,title=payload.title, description=payload.description)
+        .values(Name=payload.Name,title=payload.title,description=payload.description)
         .returning(comnotes.c.id)
     )
     return await database.execute(query=query)
