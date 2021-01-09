@@ -104,14 +104,17 @@ app.include_router(course_by_tutor.router, prefix="/course_by_tutor", tags=["Cou
 import uuid
 from pathlib import Path
 #from fastapi.staticfiles import StaticFiles
+#import aiofiles
+#from aiofiles.os import stat as aio_stat
 #from fastapi.staticfiles import StaticFiles
+#import StaticFiles
 import os
 from os.path import dirname, abspath, join
 import shutil
 
 #app.mount("/static", StaticFiles(directory="static"), name="static")
 dirname = dirname(dirname(abspath(__file__)))
-images_path = join(dirname, 'testfast//media')
+images_path = join(dirname, 'testfast//static')
  
 @app.post("/cv2")
 async def get_image(request: Request, file: UploadFile = File(...)):
@@ -124,10 +127,10 @@ async def get_image(request: Request, file: UploadFile = File(...)):
     suffix = Path(file.filename).suffix
     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
     
-    with open("media/"+filename, "wb") as image:
+    with open("static/"+filename, "wb") as image:
         shutil.copyfileobj(file.file, image)
 
     #url = str("media/"+file.filename)
     file_path = os.path.join(images_path, filename)
-    
+    print(file_path)
     return {"url": file_path}
