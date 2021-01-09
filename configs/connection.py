@@ -3,7 +3,6 @@ import sqlalchemy
 from sqlalchemy import (Column, DateTime, Integer, MetaData, String, Table,create_engine)
 from sqlalchemy.sql import func
 from sqlalchemy_utils import URLType
-from sqlalchemy.ext.declarative import declarative_base
 from configs import dbinfo
 from db.table import metadata
 
