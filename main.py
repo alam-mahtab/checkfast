@@ -103,7 +103,8 @@ app.include_router(course_by_tutor.router, prefix="/course_by_tutor", tags=["Cou
 
 import uuid
 from pathlib import Path
-#from fastapi.staticfiles import StaticFiles
+#from starlette.staticfiles import StaticFiles
+#from fastapi.templating import Jinja2Templates
 #import aiofiles
 #from aiofiles.os import stat as aio_stat
 #from fastapi.staticfiles import StaticFiles
@@ -113,6 +114,8 @@ from os.path import dirname, abspath, join
 import shutil
 
 #app.mount("/static", StaticFiles(directory="static"), name="static")
+#templates = Jinja2Templates(directory="templates")
+
 dirname = dirname(dirname(abspath(__file__)))
 images_path = join(dirname, 'testfast//static')
  
@@ -133,4 +136,7 @@ async def get_image(request: Request, file: UploadFile = File(...)):
     #url = str("media/"+file.filename)
     file_path = os.path.join(images_path, filename)
     print(file_path)
-    return {"url": file_path}
+    client_host = request.client.host
+    return {"url": file_path,"client_host": client_host}
+
+    
