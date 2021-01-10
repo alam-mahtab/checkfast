@@ -6,7 +6,10 @@ from fastapi import FastAPI, Request, Depends, UploadFile, File
 from configs import appinfo
 import time
 from fastapi.middleware.cors import CORSMiddleware
-
+#import aiofiles
+#from aiofiles import stat as aio_stat
+import asyncio
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
@@ -112,12 +115,12 @@ from pathlib import Path
 import os
 from os.path import dirname, abspath, join
 import shutil
-
+import aiofiles
 #app.mount("/static", StaticFiles(directory="static"), name="static")
 #templates = Jinja2Templates(directory="templates")
-
+app.mount("/static", StaticFiles(directory="static"), name="static")
 dirname = dirname(dirname(abspath(__file__)))
-images_path = join(dirname, 'testfast//static')
+images_path = join(dirname, './testfast/static')
  
 @app.post("/cv2")
 async def get_image(request: Request, file: UploadFile = File(...)):
@@ -125,6 +128,9 @@ async def get_image(request: Request, file: UploadFile = File(...)):
     extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
     if not extension:
         return "Image must be jpg or png format!"
+    # async with aiofiles.open('filename', mode='r') as f:
+    #     contents = await f.read()
+
     
     # outputImage = Image.fromarray(sr_img)  
     suffix = Path(file.filename).suffix
