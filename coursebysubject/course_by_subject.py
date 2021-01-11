@@ -2,11 +2,11 @@
 from typing import List
 from fastapi import Depends,File, UploadFile, APIRouter
 from sqlalchemy.orm import Session
-from coursebytutor import crud, models
-from coursebytutor.database import SessionLocal, engine
+from coursebysubject import crud, models
+from coursebysubject.database import SessionLocal, engine
 import shutil
-from coursebytutor.schemas import TutorBase, TutorList
-from coursebytutor.models import Tutor
+from coursebysubject.schemas import SubjectBase, SubjectList
+from coursebysubject.models import Subject
 router = APIRouter()
 
 
@@ -32,8 +32,8 @@ router.mount("/static", StaticFiles(directory="static"), name="static")
 dirname = dirname(dirname(abspath(__file__)))
 images_path = join(dirname, '/static')
 
-@router.post("/tutor/")
-def create_tutor(
+@router.post("/subject/")
+def create_subject(
     title:str,desc:str,name:str,file: UploadFile= File(...), db: Session = Depends(get_db)
 ):
 
@@ -49,12 +49,12 @@ def create_tutor(
 
     #url = str("media/"+file.filename)
     url = os.path.join(images_path, filename)
-    return crud.create_tutor(db=db,name=name,title=title,desc=desc,url=url)
+    return crud.create_subject(db=db,name=name,title=title,desc=desc,url=url)
 
-@router.get("/tutors/")
-def tutor_list(db: Session = Depends(get_db)):
-    return crud.tutor_list(db=db)
+@router.get("/subjects/")
+def subject_list(db: Session = Depends(get_db)):
+    return crud.subject_list(db=db)
 
-@router.get("/tutors/{tutor_id}")
-def tutor_detail(tutor_id:int,db: Session = Depends(get_db)):
-    return crud.get_tutor(db=db, id=tutor_id)
+@router.get("/subjects/{subject_id}")
+def subject_detail(subject_id:int,db: Session = Depends(get_db)):
+    return crud.get_subject(db=db, id=subject_id)

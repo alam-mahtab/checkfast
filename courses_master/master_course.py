@@ -1,23 +1,11 @@
-
 from typing import List
 from fastapi import Depends,File, UploadFile, APIRouter
 from sqlalchemy.orm import Session
-from coursebytutor import crud, models
-from coursebytutor.database import SessionLocal, engine
-import shutil
-from coursebytutor.schemas import TutorBase, TutorList
-from coursebytutor.models import Tutor
+from courses_master import crud, models
+from courses_master.database import SessionLocal, engine
+from courses_master.schemas import MasterBase, MasterList
+from courses_master.models import Master
 router = APIRouter()
-
-
-import uuid
-from pathlib import Path
-import time
-#from fastapi.staticfiles import StaticFiles
-from starlette.staticfiles import StaticFiles
-import os
-from os.path import dirname, abspath, join
-
 
 def get_db():
     db = SessionLocal()
@@ -28,12 +16,21 @@ def get_db():
 
 models.Base.metadata.create_all(bind=engine)
 
+import uuid
+from pathlib import Path
+import time
+#from fastapi.staticfiles import StaticFiles
+from starlette.staticfiles import StaticFiles
+import os
+from os.path import dirname, abspath, join
+import shutil
+
 router.mount("/static", StaticFiles(directory="static"), name="static")
 dirname = dirname(dirname(abspath(__file__)))
 images_path = join(dirname, '/static')
 
-@router.post("/tutor/")
-def create_tutor(
+@router.post("/master/")
+def create_master(
     title:str,desc:str,name:str,file: UploadFile= File(...), db: Session = Depends(get_db)
 ):
 
@@ -49,12 +46,12 @@ def create_tutor(
 
     #url = str("media/"+file.filename)
     url = os.path.join(images_path, filename)
-    return crud.create_tutor(db=db,name=name,title=title,desc=desc,url=url)
+    return crud.create_master(db=db,name=name,title=title,desc=desc,url=url)
 
-@router.get("/tutors/")
-def tutor_list(db: Session = Depends(get_db)):
-    return crud.tutor_list(db=db)
+@router.get("/masters/")
+def master_list(db: Session = Depends(get_db)):
+    return crud.master_list(db=db)
 
-@router.get("/tutors/{tutor_id}")
-def tutor_detail(tutor_id:int,db: Session = Depends(get_db)):
-    return crud.get_tutor(db=db, id=tutor_id)
+@router.get("/masters/{master_id}")
+def master_detail(master_id:int,db: Session = Depends(get_db)):
+    return crud.get_master(db=db, id=master_id)

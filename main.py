@@ -84,10 +84,9 @@ from users import controller as userController
 app.include_router(userController.router, tags =["Users"])
 
 #new code
-from api import extensive_course, ping, imgnotes
+from api import ping
 app.include_router(ping.router)
-app.include_router(extensive_course.router, prefix="/extensive_course", tags=["Extensive_course"])
-app.include_router(imgnotes.router, prefix="/imgnotes", tags=["imgnotes"])
+
 
 # For Comments
 from comment import comnotes
@@ -96,29 +95,40 @@ app.include_router(comnotes.router, prefix="/comnotes", tags=["Comment"])
 # For Feeds
 from feed import fnotes
 app.include_router(fnotes.router, prefix="/fnotes", tags=["Feed"])
-#For live course in app
+
+#For live course
 from courses_live import live_course
 app.include_router(live_course.router, prefix="/live_course", tags=["Live Course"])
+
 # Course By tutor
-from coursebytutor import course_by_tutor
-app.include_router(course_by_tutor.router, prefix="/course_by_tutor", tags=["Course by tutor"])
+# from coursebytutor import course_by_tutor
+# app.include_router(course_by_tutor.router, prefix="/course_by_tutor", tags=["Course by Tutor"])
+
+# Course By subject
+# from coursebysubject import course_by_subject
+# app.include_router(course_by_subject.router, prefix="/course_by_subject", tags=["Course by Subject"])
+
+# # Extensive Course
+from courses_extensive import extensive_course
+app.include_router(extensive_course.router, prefix="/extensive_course", tags=["Extensive Course"])
+
+# # Micro Course
+# from courses_micro import micro_course
+# app.include_router(micro_course.router, prefix="/micro_course", tags=["Micro Course"])
+
+# # Master Course
+from courses_master import master_course
+app.include_router(master_course.router, prefix="/master_course", tags=["master Course"])
 
 #image upload
-
 import uuid
 from pathlib import Path
-#from starlette.staticfiles import StaticFiles
-#from fastapi.templating import Jinja2Templates
-#import aiofiles
-#from aiofiles.os import stat as aio_stat
-#from fastapi.staticfiles import StaticFiles
-#import StaticFiles
+
 import os
 from os.path import dirname, abspath, join
 import shutil
 import aiofiles
-#app.mount("/static", StaticFiles(directory="static"), name="static")
-#templates = Jinja2Templates(directory="templates")
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 dirname = dirname(dirname(abspath(__file__)))
 images_path = join(dirname, '/static')

@@ -1,23 +1,11 @@
-
 from typing import List
 from fastapi import Depends,File, UploadFile, APIRouter
 from sqlalchemy.orm import Session
-from coursebytutor import crud, models
-from coursebytutor.database import SessionLocal, engine
-import shutil
-from coursebytutor.schemas import TutorBase, TutorList
-from coursebytutor.models import Tutor
+from courses_micro import crud, models
+from courses_micro.database import SessionLocal, engine
+from courses_micro.schemas import MicroBase, MicroList
+from courses_micro.models import Micro
 router = APIRouter()
-
-
-import uuid
-from pathlib import Path
-import time
-#from fastapi.staticfiles import StaticFiles
-from starlette.staticfiles import StaticFiles
-import os
-from os.path import dirname, abspath, join
-
 
 def get_db():
     db = SessionLocal()
@@ -28,12 +16,21 @@ def get_db():
 
 models.Base.metadata.create_all(bind=engine)
 
+import uuid
+from pathlib import Path
+import time
+#from fastapi.staticfiles import StaticFiles
+from starlette.staticfiles import StaticFiles
+import os
+from os.path import dirname, abspath, join
+import shutil
+
 router.mount("/static", StaticFiles(directory="static"), name="static")
 dirname = dirname(dirname(abspath(__file__)))
 images_path = join(dirname, '/static')
 
-@router.post("/tutor/")
-def create_tutor(
+@router.post("/micro/")
+def create_micro(
     title:str,desc:str,name:str,file: UploadFile= File(...), db: Session = Depends(get_db)
 ):
 
@@ -49,12 +46,12 @@ def create_tutor(
 
     #url = str("media/"+file.filename)
     url = os.path.join(images_path, filename)
-    return crud.create_tutor(db=db,name=name,title=title,desc=desc,url=url)
+    return crud.create_micro(db=db,name=name,title=title,desc=desc,url=url)
 
-@router.get("/tutors/")
-def tutor_list(db: Session = Depends(get_db)):
-    return crud.tutor_list(db=db)
+@router.get("/micros/")
+def micro_list(db: Session = Depends(get_db)):
+    return crud.micro_list(db=db)
 
-@router.get("/tutors/{tutor_id}")
-def tutor_detail(tutor_id:int,db: Session = Depends(get_db)):
-    return crud.get_tutor(db=db, id=tutor_id)
+@router.get("/micros/{micro_id}")
+def master_detail(micro_id:int,db: Session = Depends(get_db)):
+    return crud.get_micro(db=db, id=micro_id)

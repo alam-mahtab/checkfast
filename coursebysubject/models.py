@@ -4,10 +4,10 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String,DateTime
 from sqlalchemy_utils import EmailType,URLType
 import datetime
 
-from coursebytutor.database import Base
+from coursebysubject.database import Base
 
-class Tutor(Base):
-    __tablename__ = "tutors"
+class Subject(Base):
+    __tablename__ = "subjects"
 
     id = Column(Integer, primary_key=True)
     created_date = Column(DateTime,default=datetime.datetime.utcnow)
