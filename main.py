@@ -9,7 +9,8 @@ from fastapi.middleware.cors import CORSMiddleware
 #import aiofiles
 #from aiofiles import stat as aio_stat
 import asyncio
-from fastapi.staticfiles import StaticFiles
+#from fastapi.staticfiles import StaticFiles
+from starlette.staticfiles import StaticFiles
 
 app = FastAPI()
 
@@ -120,7 +121,7 @@ import aiofiles
 #templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 dirname = dirname(dirname(abspath(__file__)))
-images_path = join(dirname, './testfast/static')
+images_path = join(dirname, '/static')
  
 @app.post("/cv2")
 async def get_image(request: Request, file: UploadFile = File(...)):
