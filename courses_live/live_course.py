@@ -20,12 +20,12 @@ import uuid
 from pathlib import Path
 import time
 #from fastapi.staticfiles import StaticFiles
-#from fastapi.staticfiles import StaticFiles
+from starlette.staticfiles import StaticFiles
 import os
 from os.path import dirname, abspath, join
 import shutil
 
-#router.mount("/static", StaticFiles(directory="static"), name="static")
+router.mount("/static", StaticFiles(directory="static"), name="static")
 dirname = dirname(dirname(abspath(__file__)))
 images_path = join(dirname, '/static')
 
