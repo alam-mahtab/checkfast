@@ -18,3 +18,6 @@ def get_micro(db, id: int):
 
 def micro_list(db):
     return db.query(models.Micro).all()
+
+# async def delete(db,id: int):
+#    return db.query(models.Micro).delete(models.Micro.id== id)

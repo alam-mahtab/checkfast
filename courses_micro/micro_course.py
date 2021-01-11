@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import Depends,File, UploadFile, APIRouter
+from fastapi import Depends,File, UploadFile, APIRouter, HTTPException
 from sqlalchemy.orm import Session
 from courses_micro import crud, models
 from courses_micro.database import SessionLocal, engine
@@ -53,5 +53,19 @@ def micro_list(db: Session = Depends(get_db)):
     return crud.micro_list(db=db)
 
 @router.get("/micros/{micro_id}")
-def master_detail(micro_id:int,db: Session = Depends(get_db)):
+def micro_detail(micro_id:int,db: Session = Depends(get_db)):
     return crud.get_micro(db=db, id=micro_id)
+
+# @router.delete("/micros/{micro_id}")
+# def delete(micro_id: int, db: Session = Depends(get_db)):
+#     return crud.delete(db=db, id=micro_id)
+
+# @router.delete("micros/{id}/", response_model=MicroList)
+# async def delete_note(id: int = Path(..., gt=0)):
+#     micro = await crud.get_micro(id)
+#     if not micro:
+#         raise HTTPException(status_code=404, detail="Note not found")
+
+#     await crud.delete(id)
+
+#     return micro
