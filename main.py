@@ -101,20 +101,20 @@ from courses_live import live_course
 app.include_router(live_course.router, prefix="/live_course", tags=["Live Course"])
 
 # Course By tutor
-# from coursebytutor import course_by_tutor
-# app.include_router(course_by_tutor.router, prefix="/course_by_tutor", tags=["Course by Tutor"])
+from coursebytutor import course_by_tutor
+app.include_router(course_by_tutor.router, prefix="/course_by_tutor", tags=["Course by Tutor"])
 
 # Course By subject
-# from coursebysubject import course_by_subject
-# app.include_router(course_by_subject.router, prefix="/course_by_subject", tags=["Course by Subject"])
+from coursebysubject import course_by_subject
+app.include_router(course_by_subject.router, prefix="/course_by_subject", tags=["Course by Subject"])
 
 # # Extensive Course
 from courses_extensive import extensive_course
 app.include_router(extensive_course.router, prefix="/extensive_course", tags=["Extensive Course"])
 
 # # Micro Course
-# from courses_micro import micro_course
-# app.include_router(micro_course.router, prefix="/micro_course", tags=["Micro Course"])
+from courses_micro import micro_course
+app.include_router(micro_course.router, prefix="/micro_course", tags=["Micro Course"])
 
 # # Master Course
 from courses_master import master_course

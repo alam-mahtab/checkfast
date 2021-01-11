@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 def create_extensive(db: Session,title:str,name:str,desc:str,url:str):
-    db_extensive = models.Live(title=title,desc=desc,name=name,url=url)
+    db_extensive = models.Extensive(title=title,desc=desc,name=name,url=url)
     db.add(db_extensive)
     db.commit()
     db.refresh(db_extensive)
