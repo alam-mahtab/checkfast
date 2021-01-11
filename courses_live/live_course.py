@@ -19,14 +19,15 @@ models.Base.metadata.create_all(bind=engine)
 import uuid
 from pathlib import Path
 import time
-#from fastapi.staticfiles import StaticFiles
+from fastapi.staticfiles import StaticFiles
 #from fastapi.staticfiles import StaticFiles
 import os
 from os.path import dirname, abspath, join
 import shutil
 
+router.mount("/static", StaticFiles(directory="static"), name="static")
 dirname = dirname(dirname(abspath(__file__)))
-images_path = join(dirname, 'media')
+images_path = join(dirname, '/static')
 
 @router.post("/live/")
 def create_live(
@@ -40,7 +41,7 @@ def create_live(
     # outputImage = Image.fromarray(sr_img)  
     suffix = Path(file.filename).suffix
     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-    with open("media/"+filename, "wb") as image:
+    with open("static/"+filename, "wb") as image:
         shutil.copyfileobj(file.file, image)
 
     #url = str("media/"+file.filename)
