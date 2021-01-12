@@ -18,3 +18,11 @@ def get_live(db, id: int):
 
 def live_list(db):
     return db.query(models.Live).all()
+
+async def delete(db: Session,id: int)-> bool:
+   sym1 =models.Live.__table__
+   sym = sym1.delete().where(models.Live.id== id)
+   print(sym)
+   result = db.execute(sym)
+   db.commit()
+   return True

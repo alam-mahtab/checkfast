@@ -18,3 +18,11 @@ def get_extensive(db, id: int):
 
 def extensive_list(db):
     return db.query(models.Extensive).all()
+
+async def delete(db: Session,id: int)-> bool:
+   sym1 =models.Extensive.__table__
+   sym = sym1.delete().where(models.Extensive.id== id)
+   print(sym)
+   result = db.execute(sym)
+   db.commit()
+   return True

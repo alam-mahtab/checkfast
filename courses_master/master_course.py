@@ -5,6 +5,10 @@ from courses_master import crud, models
 from courses_master.database import SessionLocal, engine
 from courses_master.schemas import MasterBase, MasterList
 from courses_master.models import Master
+
+# Pagination
+from fastapi_pagination import Page, pagination_params
+from fastapi_pagination.paginator import paginate
 router = APIRouter()
 
 def get_db():
@@ -48,10 +52,16 @@ def create_master(
     url = os.path.join(images_path, filename)
     return crud.create_master(db=db,name=name,title=title,desc=desc,url=url)
 
-@router.get("/masters/")
+@router.get("/masters/" ,dependencies=[Depends(pagination_params)])
 def master_list(db: Session = Depends(get_db)):
-    return crud.master_list(db=db)
+    master_all = crud.master_list(db=db) 
+    return paginate(master_all)
 
 @router.get("/masters/{master_id}")
 def master_detail(master_id:int,db: Session = Depends(get_db)):
     return crud.get_master(db=db, id=master_id)
+
+@router.delete("/masters/{master_id}")
+async def delete(master_id: int, db: Session = Depends(get_db)):
+    deleted = await crud.delete(db, master_id)
+    return {"deleted": deleted}

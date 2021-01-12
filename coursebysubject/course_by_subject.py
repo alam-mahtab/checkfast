@@ -7,6 +7,9 @@ from coursebysubject.database import SessionLocal, engine
 import shutil
 from coursebysubject.schemas import SubjectBase, SubjectList
 from coursebysubject.models import Subject
+# Pagination
+from fastapi_pagination import Page, pagination_params
+from fastapi_pagination.paginator import paginate
 router = APIRouter()
 
 
@@ -51,10 +54,16 @@ def create_subject(
     url = os.path.join(images_path, filename)
     return crud.create_subject(db=db,name=name,title=title,desc=desc,url=url)
 
-@router.get("/subjects/")
+@router.get("/subjects/"  ,dependencies=[Depends(pagination_params)])
 def subject_list(db: Session = Depends(get_db)):
-    return crud.subject_list(db=db)
+    subject_all = crud.subject_list(db=db)
+    return paginate(subject_all)
 
 @router.get("/subjects/{subject_id}")
 def subject_detail(subject_id:int,db: Session = Depends(get_db)):
     return crud.get_subject(db=db, id=subject_id)
+
+@router.delete("/subjects/{subject_id}")
+async def delete(subject_id: int, db: Session = Depends(get_db)):
+    deleted = await crud.delete(db, subject_id)
+    return {"deleted": deleted}

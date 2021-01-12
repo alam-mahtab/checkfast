@@ -1,12 +1,16 @@
 
 from typing import List
 from fastapi import Depends,File, UploadFile, APIRouter
+from fastapi_pagination.paginator import paginate
 from sqlalchemy.orm import Session
 from coursebytutor import crud, models
 from coursebytutor.database import SessionLocal, engine
 import shutil
 from coursebytutor.schemas import TutorBase, TutorList
 from coursebytutor.models import Tutor
+# Pagination
+from fastapi_pagination import Page, pagination_params
+from fastapi_pagination.paginator import paginate
 router = APIRouter()
 
 
@@ -51,10 +55,16 @@ def create_tutor(
     url = os.path.join(images_path, filename)
     return crud.create_tutor(db=db,name=name,title=title,desc=desc,url=url)
 
-@router.get("/tutors/")
+@router.get("/tutors/" ,dependencies=[Depends(pagination_params)])
 def tutor_list(db: Session = Depends(get_db)):
-    return crud.tutor_list(db=db)
+    tutor_all = crud.tutor_list(db=db)
+    return paginate(tutor_all)
 
 @router.get("/tutors/{tutor_id}")
 def tutor_detail(tutor_id:int,db: Session = Depends(get_db)):
     return crud.get_tutor(db=db, id=tutor_id)
+
+@router.delete("/tutors/{tutor_id}")
+async def delete(tutors_id: int, db: Session = Depends(get_db)):
+    deleted = await crud.delete(db, tutors_id)
+    return {"deleted": deleted}

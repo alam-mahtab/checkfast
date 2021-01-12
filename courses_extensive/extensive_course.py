@@ -5,6 +5,9 @@ from courses_extensive import crud, models
 from courses_extensive.database import SessionLocal, engine
 from courses_extensive.schemas import ExtensiveBase, ExtensiveList
 from courses_extensive.models import Extensive
+# Pagination
+from fastapi_pagination import Page, pagination_params
+from fastapi_pagination.paginator import paginate
 router = APIRouter()
 
 def get_db():
@@ -48,10 +51,16 @@ def create_extensive(
     url = os.path.join(images_path, filename)
     return crud.create_extensive(db=db,name=name,title=title,desc=desc,url=url)
 
-@router.get("/extensives/")
+@router.get("/extensives/" ,dependencies=[Depends(pagination_params)])
 def extensive_list(db: Session = Depends(get_db)):
-    return crud.extensive_list(db=db)
+    extensive_all =crud.extensive_list(db=db)
+    return paginate(extensive_all)
 
 @router.get("/extensives/{extensie_id}")
 def extensive_detail(extensive_id:int,db: Session = Depends(get_db)):
     return crud.get_extensive(db=db, id=extensive_id)
+
+@router.delete("/extensives/{extensie_id}")
+async def delete(extensie_id: int, db: Session = Depends(get_db)):
+    deleted = await crud.delete(db, extensie_id)
+    return {"deleted": deleted}

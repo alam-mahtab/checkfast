@@ -19,5 +19,11 @@ def get_micro(db, id: int):
 def micro_list(db):
     return db.query(models.Micro).all()
 
-# async def delete(db,id: int):
-#    return db.query(models.Micro).delete(models.Micro.id== id)
+    
+async def delete(db: Session,id: int)-> bool:
+   sym1 =models.Micro.__table__
+   sym = sym1.delete().where(models.Micro.id== id)
+   print(sym)
+   result = db.execute(sym)
+   db.commit()
+   return True

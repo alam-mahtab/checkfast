@@ -5,6 +5,10 @@ from courses_micro import crud, models
 from courses_micro.database import SessionLocal, engine
 from courses_micro.schemas import MicroBase, MicroList
 from courses_micro.models import Micro
+# Pagination
+from fastapi_pagination import Page, pagination_params
+from fastapi_pagination.paginator import paginate
+
 router = APIRouter()
 
 def get_db():
@@ -48,24 +52,17 @@ def create_micro(
     url = os.path.join(images_path, filename)
     return crud.create_micro(db=db,name=name,title=title,desc=desc,url=url)
 
-@router.get("/micros/")
+@router.get("/micros/" ,dependencies=[Depends(pagination_params)])
 def micro_list(db: Session = Depends(get_db)):
-    return crud.micro_list(db=db)
+    micro_all= crud.micro_list(db=db)
+    return paginate(micro_all)
 
 @router.get("/micros/{micro_id}")
 def micro_detail(micro_id:int,db: Session = Depends(get_db)):
     return crud.get_micro(db=db, id=micro_id)
 
-# @router.delete("/micros/{micro_id}")
-# def delete(micro_id: int, db: Session = Depends(get_db)):
-#     return crud.delete(db=db, id=micro_id)
-
-# @router.delete("micros/{id}/", response_model=MicroList)
-# async def delete_note(id: int = Path(..., gt=0)):
-#     micro = await crud.get_micro(id)
-#     if not micro:
-#         raise HTTPException(status_code=404, detail="Note not found")
-
-#     await crud.delete(id)
-
-#     return micro
+@router.delete("/micros/{micro_id}")
+async def delete(micro_id: int, db: Session = Depends(get_db)):
+    deleted = await crud.delete(db, micro_id)
+    return {"deleted": deleted}
+    

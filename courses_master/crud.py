@@ -18,3 +18,11 @@ def get_master(db, id: int):
 
 def master_list(db):
     return db.query(models.Master).all()
+
+async def delete(db: Session,id: int)-> bool:
+   sym1 =models.Master.__table__
+   sym = sym1.delete().where(models.Master.id== id)
+   print(sym)
+   result = db.execute(sym)
+   db.commit()
+   return True

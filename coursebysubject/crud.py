@@ -18,3 +18,11 @@ def get_subject(db, id: int):
 
 def subject_list(db):
     return db.query(models.Subject).all()
+    
+async def delete(db: Session,id: int)-> bool:
+   sym1 =models.Subject.__table__
+   sym = sym1.delete().where(models.Subject.id== id)
+   print(sym)
+   result = db.execute(sym)
+   db.commit()
+   return True
