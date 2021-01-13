@@ -2,7 +2,7 @@ from typing import List
 from fastapi import Depends,File, UploadFile, APIRouter
 from sqlalchemy.orm import Session
 from courses_extensive import crud, models
-from courses_extensive.database import SessionLocal, engine
+from courses_live.database import SessionLocal, engine
 from courses_extensive.schemas import ExtensiveBase, ExtensiveList
 from courses_extensive.models import Extensive
 # Pagination

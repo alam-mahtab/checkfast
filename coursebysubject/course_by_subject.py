@@ -1,9 +1,8 @@
-
 from typing import List
 from fastapi import Depends,File, UploadFile, APIRouter
 from sqlalchemy.orm import Session
 from coursebysubject import crud, models
-from coursebysubject.database import SessionLocal, engine
+from courses_live.database import SessionLocal, engine
 import shutil
 from coursebysubject.schemas import SubjectBase, SubjectList
 from coursebysubject.models import Subject

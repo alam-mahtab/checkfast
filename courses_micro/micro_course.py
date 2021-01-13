@@ -2,7 +2,7 @@ from typing import List
 from fastapi import Depends,File, UploadFile, APIRouter, HTTPException
 from sqlalchemy.orm import Session
 from courses_micro import crud, models
-from courses_micro.database import SessionLocal, engine
+from courses_live.database import SessionLocal, engine
 from courses_micro.schemas import MicroBase, MicroList
 from courses_micro.models import Micro
 # Pagination

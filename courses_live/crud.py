@@ -13,6 +13,12 @@ def create_live(db: Session,title:str,name:str,desc:str,url:str):
     db.refresh(db_live)
     return db_live
 
+# def update_live(db, id:int, title:str,name:str,desc:str,url:str):
+#     query = models.Live.__table__.update(models.live.title == title).where(models.Live.id== id)
+#     db.commit()
+    
+#     return True
+
 def get_live(db, id: int):
     return db.query(models.Live).filter(models.Live.id== id).first()
 

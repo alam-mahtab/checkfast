@@ -1,7 +1,7 @@
 from sqlalchemy import  Column, Integer, String,DateTime
 from sqlalchemy_utils import URLType
 import datetime
-from courses_master.database import Base
+from courses_live.database import Base
 
 class Master(Base):
     __tablename__ = "master"

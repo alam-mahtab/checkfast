@@ -4,7 +4,7 @@ from fastapi import Depends,File, UploadFile, APIRouter
 from fastapi_pagination.paginator import paginate
 from sqlalchemy.orm import Session
 from coursebytutor import crud, models
-from coursebytutor.database import SessionLocal, engine
+from courses_live.database import SessionLocal, engine
 import shutil
 from coursebytutor.schemas import TutorBase, TutorList
 from coursebytutor.models import Tutor

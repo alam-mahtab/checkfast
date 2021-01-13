@@ -52,6 +52,7 @@ def create_live(
     url = os.path.join(images_path, filename)
     return crud.create_live(db=db,name=name,title=title,desc=desc,url=url)
 
+
 @router.get("/lives/" ,dependencies=[Depends(pagination_params)])
 def live_list(db: Session = Depends(get_db)):
     live_all =crud.live_list(db=db)

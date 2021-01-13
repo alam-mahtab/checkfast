@@ -2,7 +2,7 @@ from typing import List
 from fastapi import Depends,File, UploadFile, APIRouter
 from sqlalchemy.orm import Session
 from courses_master import crud, models
-from courses_master.database import SessionLocal, engine
+from courses_live.database import SessionLocal, engine
 from courses_master.schemas import MasterBase, MasterList
 from courses_master.models import Master
 
