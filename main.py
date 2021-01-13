@@ -120,6 +120,42 @@ app.include_router(micro_course.router, prefix="/micro_course", tags=["Micro Cou
 from courses_master import master_course
 app.include_router(master_course.router, prefix="/master_course", tags=["master Course"])
 
+# # writer
+from writer import writer_skill
+app.include_router(writer_skill.router, prefix="/writer", tags=["Writer"])
+
+# # actor
+from actor import actor_skill
+app.include_router(actor_skill.router, prefix="/actor", tags=["Actor"])
+
+# # # cinematographer
+# from cinematographer import cinematographer_skill
+# app.include_router(cinematographer_skill.router, prefix="/cinematographer", tags=["Cinematographer"])
+
+# # # director
+# from director import director_skill
+# app.include_router(director_skill.router, prefix="/director", tags=["Director"])
+
+# # # editor
+# from editor import editor_skill
+# app.include_router(editor_skill.router, prefix="/editor", tags=["Editor"])
+
+# # # film_editing
+# from film_editing import film_edit_skill
+# app.include_router(film_edit_skill.router, prefix="/film_editing", tags=["Film Editor"])
+
+# # # film_maker
+# from filmmaker import film_maker_skill
+# app.include_router(film_maker_skill.router, prefix="/film_maker", tags=["Film Maker"])
+
+# # # sound_editor
+# from sound_editor import sound_editor_skill
+# app.include_router(sound_editor_skill.router, prefix="/sound_editor", tags=["Sound Editor"])
+
+# # # videographer
+# from vidographer import videographer_skill
+# app.include_router(videographer_skill.router, prefix="/videographer", tags=["Videographer"])
+
 #image upload
 import uuid
 from pathlib import Path
