@@ -4,9 +4,9 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String,DateTime
 from sqlalchemy_utils import EmailType,URLType
 import datetime
 
-from courses_live.database import Base
+from courses_live.database import Base1
 
-class Tutor(Base):
+class Tutor(Base1):
     __tablename__ = "tutors"
 
     id = Column(Integer, primary_key=True)

@@ -1,6 +1,7 @@
 import databases
 import sqlalchemy
-from sqlalchemy import (Column, DateTime, Integer, MetaData, String, Table,create_engine)
+from sqlalchemy import (Column, DateTime, Integer, MetaData, String, Table, create_engine)
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import func
 from sqlalchemy_utils import URLType
 from configs import dbinfo
@@ -63,10 +64,17 @@ posts = Table(
 
 database = databases.Database(DATABASE_URL())
 
-engine = sqlalchemy.create_engine(
+main_engine = sqlalchemy.create_engine(
     DATABASE_URL()
 )
+metadata.create_all(main_engine)
+session = sessionmaker()()
+#session.add_all(fnotes)
 
-
-
-metadata.create_all(engine)
+try:
+    session.commit()
+except:
+   session.rollback()
+   raise
+finally:
+   session.close()

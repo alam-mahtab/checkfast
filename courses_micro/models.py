@@ -1,9 +1,9 @@
 from sqlalchemy import  Column, Integer, String,DateTime
 from sqlalchemy_utils import URLType
 import datetime
-from courses_live.database import Base
+from courses_live.database import Base1
 
-class Micro(Base):
+class Micro(Base1):
     __tablename__ = "micro"
 
     id = Column(Integer, primary_key=True)

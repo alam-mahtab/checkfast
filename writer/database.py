@@ -9,7 +9,7 @@ SQLALCHEMY_DATABASE_URL = "sqlite:///./talent&course.db"
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
 )
-SessionLocal = sessionmaker(bind=engine)
+SessionLocal = sessionmaker(autocommit=False,autoflush=False,bind=engine)
 #SessionLocal.commit()
 # with SessionLocal.no_autoflush:
 #     SessionLocal.add(declarative_base)

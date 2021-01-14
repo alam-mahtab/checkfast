@@ -4,7 +4,7 @@ from fastapi import Depends,File, UploadFile, APIRouter
 from fastapi_pagination.paginator import paginate
 from sqlalchemy.orm import Session
 from coursebytutor import crud, models
-from courses_live.database import SessionLocal, engine
+from courses_live.database import SessionCourse, some_engine
 import shutil
 from coursebytutor.schemas import TutorBase, TutorList
 from coursebytutor.models import Tutor
@@ -24,13 +24,13 @@ from os.path import dirname, abspath, join
 
 
 def get_db():
-    db = SessionLocal()
+    db = SessionCourse()
     try:
         yield db
     finally:
         db.close()
 
-models.Base.metadata.create_all(bind=engine)
+models.Base1.metadata.create_all(bind=some_engine)
 
 router.mount("/static", StaticFiles(directory="static"), name="static")
 dirname = dirname(dirname(abspath(__file__)))
