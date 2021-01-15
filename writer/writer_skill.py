@@ -34,7 +34,7 @@ images_path = join(dirname, '/static')
 
 @router.post("/writer/")
 def create_writer(
-    title:str,desc:str,name:str,file_pro: UploadFile= File(...), file_cover: UploadFile= File(...), db: Session = Depends(get_db)
+    desc:str,name:str,file_pro: UploadFile= File(...), file_cover: UploadFile= File(...), db: Session = Depends(get_db)
 ):
 
     extension_pro = file_pro.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
