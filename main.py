@@ -128,33 +128,33 @@ app.include_router(writer_skill.router, prefix="/writer", tags=["Writer"])
 from actor import actor_skill
 app.include_router(actor_skill.router, prefix="/actor", tags=["Actor"])
 
-# # # cinematographer
-# from cinematographer import cinematographer_skill
-# app.include_router(cinematographer_skill.router, prefix="/cinematographer", tags=["Cinematographer"])
+# # cinematographer
+from cinematographer import cinematographer_skill
+app.include_router(cinematographer_skill.router, prefix="/cinematographer", tags=["Cinematographer"])
 
-# # # director
-# from director import director_skill
-# app.include_router(director_skill.router, prefix="/director", tags=["Director"])
+# # director
+from director import director_skill
+app.include_router(director_skill.router, prefix="/director", tags=["Director"])
 
-# # # editor
-# from editor import editor_skill
-# app.include_router(editor_skill.router, prefix="/editor", tags=["Editor"])
+# # editor
+from editor import editor_skill
+app.include_router(editor_skill.router, prefix="/editor", tags=["Editor"])
 
-# # # film_editing
-# from film_editing import film_edit_skill
-# app.include_router(film_edit_skill.router, prefix="/film_editing", tags=["Film Editor"])
+# # film_editing
+from film_editing import film_edit_skill
+app.include_router(film_edit_skill.router, prefix="/film_editing", tags=["Film Editor"])
 
-# # # film_maker
-# from filmmaker import film_maker_skill
-# app.include_router(film_maker_skill.router, prefix="/film_maker", tags=["Film Maker"])
+# # film_maker
+from filmmaker import film_maker_skill
+app.include_router(film_maker_skill.router, prefix="/film_maker", tags=["Film Maker"])
 
-# # # sound_editor
-# from sound_editor import sound_editor_skill
-# app.include_router(sound_editor_skill.router, prefix="/sound_editor", tags=["Sound Editor"])
+# # sound_editor
+from sound_editor import sound_editor_skill
+app.include_router(sound_editor_skill.router, prefix="/sound_editor", tags=["Sound Editor"])
 
-# # # videographer
-# from vidographer import videographer_skill
-# app.include_router(videographer_skill.router, prefix="/videographer", tags=["Videographer"])
+# # videographer
+from vidographer import videographer_skill
+app.include_router(videographer_skill.router, prefix="/videographer", tags=["Videographer"])
 
 #image upload
 import uuid
@@ -172,14 +172,9 @@ images_path = join(dirname, '/static')
 @app.post("/cv2")
 async def get_image(request: Request, file: UploadFile = File(...)):
  
-    extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
-    if not extension:
-        return "Image must be jpg or png format!"
-    # async with aiofiles.open('filename', mode='r') as f:
-    #     contents = await f.read()
-
-    
-    # outputImage = Image.fromarray(sr_img)  
+   # extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
+    #if not extension:
+     #   return "Image must be jpg or png format!"  
     suffix = Path(file.filename).suffix
     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
     
@@ -192,4 +187,22 @@ async def get_image(request: Request, file: UploadFile = File(...)):
     client_host = request.client.host
     return {"url": file_path,"client_host": client_host}
 
+from fastapi.responses import StreamingResponse
+
+some_file_path = "C:\\Users\\Ehtesham Hassan\\Desktop\\Testfast\\8.mp4" #os.path.join(UPLOAD_FOLDER, "1.mp4")
+
+@app.get("/video")
+def video():
+    file_like = open(some_file_path, mode="rb")
+    
+    return StreamingResponse(file_like, media_type="video/mp4")
+
+async def fake_video_streamer():
+    for i in range(10000):
+        yield b"some fake video bytes"
+
+
+@app.get("/stream")
+async def stream():
+    return StreamingResponse(fake_video_streamer())
     
