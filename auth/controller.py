@@ -4,7 +4,7 @@ from utils import util, constant
 import uuid, datetime
 from configs.connection import database
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-
+from users.controller import find_user_by_id
 from db.table import users
 router = APIRouter()
 
@@ -20,7 +20,7 @@ async def register(user : model.UserCreate):
         username = user.username,
         email = user.email,
         password = util.get_password_hash(user.password),
-        confirm_password = user.confirm_password,
+        confirm_password =  util.get_password_hash(user.confirm_password),
         first_name = user.first_name,
         last_name = user.last_name,
         dateofbirth = user.dateofbirth,
@@ -75,6 +75,41 @@ async def login(username: str = Form(...), password: str = Form(...)):
 
     return {"access_token": username, "token_type": "bearer"}
     
+@router.put("/auth/update",response_model=model.UserList)
+async def update_user(user : model.UserUpdate):
+    gdate = str(datetime.datetime.now())
+    query = users.update().\
+        where(users.c.id == user.id).\
+        values(
+        username = user.username,
+        email = user.email,
+        #password = util.get_password_hash(user.password),#
+        #confirm_password =  util.get_password_hash(user.confirm_password),#
+        first_name = user.first_name,
+        last_name = user.last_name,
+        dateofbirth = user.dateofbirth,
+        phone = user.phone,
+        created_at = gdate,
+        status = "1")
+    await database.execute(query)
+
+    #return {"status" : True}
+    return await find_user_by_id(user.id)
+
+@router.put("/auth/change_password",response_model=model.UserList)
+async def change_password(user : model.UserChange):
+    gdate = str(datetime.datetime.now())
+    query = users.update().\
+        where(users.c.id == user.id).\
+        values(
+        password = util.get_password_hash(user.password),
+        confirm_password =  util.get_password_hash(user.confirm_password),
+        created_at = gdate,
+        status = "1")
+    await database.execute(query)
+
+    #return {"status" : True}
+    return await find_user_by_id(user.id)
 
 # @router.post("/auth/changepassword", response_model = model.UserList)
 # def change_password(self, password: str):
