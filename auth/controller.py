@@ -37,43 +37,43 @@ async def register(user : model.UserCreate):
         "created_at" : gdate,
         "status" : "1"
     }
-# @router.post("/auth/login", response_model = model.Token)
-# async def login(form_data : OAuth2PasswordRequestForm = Depends()):
-#     userDB = await util.findExistedUser(form_data.username)
-#     if not userDB:
-#         raise HTTPException(status_code = 404, detail="User Not Found")
-
-#     user = model.UserPWD(**userDB)
-#     isValid = util.verify_password(form_data.password, user.password)
-#     if not isValid:
-#         raise HTTPException(status_code = 404, detail="Incorrect Username Or Password")
-
-#     access_token_expires = util.timedelta(minutes=constant.ACCESS_TOKEN_EXPIRE_MINUTES)
-#     access_token = util.create_access_token(
-#         data ={"sub": form_data.username},
-#         expires_delta= access_token_expires,
-#     )
-
-#     results = {
-#         "access_token": access_token,
-#         "token_type": "bearer",
-#         "expired_in" : constant.ACCESS_TOKEN_EXPIRE_MINUTES*60,
-#         "user_info" : user
-#     }
-#     return results
-
-
-@router.post("/auth/login/", response_model = model.Token)
-async def login(username: str = Form(...), password: str = Form(...)):
-    userDB = await util.findExistedUser(username)
+@router.post("/auth/login", response_model = model.Token)
+async def login(form_data : OAuth2PasswordRequestForm = Depends()):
+    userDB = await util.findExistedUser(form_data.username)
     if not userDB:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
-    user = model.UserPWD(**userDB)
-    isValid = util.verify_password(password, user.password)
-    if not isValid:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
+        raise HTTPException(status_code = 404, detail="User Not Found")
 
-    return {"access_token": username, "token_type": "bearer"}
+    user = model.UserPWD(**userDB)
+    isValid = util.verify_password(form_data.password, user.password)
+    if not isValid:
+        raise HTTPException(status_code = 404, detail="Incorrect Username Or Password")
+
+    access_token_expires = util.timedelta(minutes=constant.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = util.create_access_token(
+        data ={"sub": form_data.username},
+        expires_delta= access_token_expires,
+    )
+
+    results = {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "expired_in" : constant.ACCESS_TOKEN_EXPIRE_MINUTES*60,
+        "user_info" : user
+    }
+    return results
+
+
+# @router.post("/auth/login/", response_model = model.Token)
+# async def login(username: str = Form(...), password: str = Form(...)):
+#     userDB = await util.findExistedUser(username)
+#     if not userDB:
+#         raise HTTPException(status_code=400, detail="Incorrect username or password")
+#     user = model.UserPWD(**userDB)
+#     isValid = util.verify_password(password, user.password)
+#     if not isValid:
+#         raise HTTPException(status_code=400, detail="Incorrect username or password")
+
+#     return {"access_token": username, "token_type": "bearer"}
     
 @router.put("/auth/update",response_model=model.UserList)
 async def update_user(user : model.UserUpdate):

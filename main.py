@@ -205,4 +205,46 @@ async def fake_video_streamer():
 @app.get("/stream")
 async def stream():
     return StreamingResponse(fake_video_streamer())
+
+# Send mail
+from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
+from pydantic import EmailStr
+from pydantic import EmailStr, BaseModel
+from starlette.responses import JSONResponse
+from typing import List
+class EmailSchema(BaseModel):
+    email: List[EmailStr]
+
+
+conf = ConnectionConfig(
+    MAIL_USERNAME = "priyanka@mobirizer.com",
+    MAIL_PASSWORD = "123456789",
+    MAIL_FROM = "priyanka@mobirizer.com",
+    MAIL_PORT = 587,  
+    MAIL_SERVER = "smtpout.secureserver.net",
+    MAIL_TLS = True,
+    MAIL_SSL = False,
+    USE_CREDENTIALS = True
+)
+
+
+
+html = """
+<p>Hi this test mail using BackgroundTasks, thanks for using Fastapi-mail</p> 
+"""
+
+
+@app.post("/email")
+async def simple_send(email: EmailSchema) -> JSONResponse:
+
+    message = MessageSchema(
+        subject="Fastapi-Mail module",
+        recipients=email.dict().get("email"),  # List of recipients, as many as you can pass 
+        body=html,
+        subtype="html"
+        )
+
+    fm = FastMail(conf)
+    await fm.send_message(message)
+    return JSONResponse(status_code=200, content={"message": "email has been sent"})    
     

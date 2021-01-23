@@ -13,8 +13,8 @@ async def read_user_me(currentuser: model.UserList = Depends(util.get_current_ac
     return currentuser
 
 @router.get("/users/{userId}", response_model=model.UserList)
-async def find_user_by_id(userid : str):
-    query = users.select().where(users.c.id == userid)
+async def find_user_by_id(username : str):
+    query = users.select().where(users.username == username)
     return await database.fetch_one(query)
     
 @router.delete("/users/{userId}")
