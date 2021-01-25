@@ -10,6 +10,7 @@ asyncpg==0.21.0
 bcrypt==3.2.0
 beautifulsoup4==4.9.1
 blinker==1.4
+cachetools==4.2.1
 certifi==2020.6.20
 cffi==1.14.4
 chardet==3.0.4
@@ -17,6 +18,8 @@ click==7.1.2
 colorama==0.4.3
 comtypes==1.1.7
 cryptography==3.2.1
+cssselect==1.1.0
+cssutils==1.0.2
 databases==0.4.1
 DateTime==4.3
 distlib==0.3.1
@@ -25,6 +28,7 @@ djangorestframework==3.12.1
 djangorestframework-simplejwt==4.4.0
 dnspython==2.1.0
 email-validator==1.1.2
+emails==0.6
 fakeredis==1.4.5
 fastapi==0.63.0
 fastapi-mail==0.3.3.1
@@ -45,6 +49,7 @@ itsdangerous==1.1.0
 Jinja2==2.11.2
 jose==1.0.0
 lazy-object-proxy==1.4.3
+lxml==4.6.2
 MarkupSafe==1.1.1
 mccabe==0.6.1
 mypy==0.790
@@ -55,6 +60,7 @@ opencv-python==4.4.0.46
 orm==0.1.5
 pandas==1.1.4
 passlib==1.7.4
+premailer==3.7.0
 protobuf==3.14.0
 psycopg2==2.8.6
 pycparser==2.20
@@ -63,13 +69,13 @@ PyJWT==2.0.0
 pylint==2.4.4
 PyMySQL==0.9.3
 PyPika==0.44.1
-#pypiwin32==223
+pypiwin32==223
 python-dateutil==2.8.1
 python-dotenv==0.15.0
 python-multipart==0.0.5
 pyttsx3==2.90
 pytz==2020.5
-#pywin32==300
+pywin32==300
 redis==3.5.3
 requests==2.24.0
 rfc3986==1.4.0

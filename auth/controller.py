@@ -8,48 +8,6 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from db.table import users
 #from .service import verify_registration_user
 router = APIRouter()
-# Send mail
-from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
-from pydantic import EmailStr
-from pydantic import EmailStr, BaseModel
-from starlette.responses import JSONResponse
-from typing import List
-class EmailSchema(BaseModel):
-    email: List[EmailStr]
-
-
-conf = ConnectionConfig(
-    MAIL_USERNAME = "priyanka@mobirizer.com",
-    MAIL_PASSWORD = "123456789",
-    MAIL_FROM = "priyanka@mobirizer.com",
-    MAIL_PORT = 587,  
-    MAIL_SERVER = "smtpout.secureserver.net",
-    MAIL_TLS = True,
-    MAIL_SSL = False,
-    USE_CREDENTIALS = True
-)
-
-
-
-html = """
-<p>Hi this test mail using BackgroundTasks, thanks for using Fastapi-mail</p> 
-"""
-
-
-@router.post("/email")
-async def simple_send(email: EmailSchema) -> JSONResponse:
-
-    message = MessageSchema(
-        subject="Fastapi-Mail module",
-        recipients=email.dict().get("email"),  # List of recipients, as many as you can pass 
-        body=html,
-        subtype="html"
-        )
-
-    fm = FastMail(conf)
-    await fm.send_message(message)
-    return JSONResponse(status_code=200, content={"message": "email has been sent"})    
-    
 
 @router.post("/auth/register", response_model = model.UserList)
 async def register(user : model.UserCreate):
@@ -89,7 +47,7 @@ async def register(user : model.UserCreate):
 #     else:
 #         raise HTTPException(status_code=404, detail="Not found")
 
-# @auth_router.post("/password-recovery/{email}", response_model=Msg)
+# @router.post("/password-recovery/{email}", response_model=model.Msg)
 # async def recover_password(email: str, task: BackgroundTasks):
 #     """ Password Recovery
 #     """
@@ -106,7 +64,7 @@ async def register(user : model.UserCreate):
 #     return {"msg": "Password recovery email sent"}
 
 
-# @auth_router.post("/reset-password/", response_model=Msg)
+# @router.post("/reset-password/", response_model=Msg)
 # async def reset_password(token: str = Body(...), new_password: str = Body(...)):
 #     """ Reset password
 #     """
@@ -151,7 +109,13 @@ async def login(form_data : OAuth2PasswordRequestForm = Depends()):
         "user_info" : user
     }
     return results
-
+from utils.util import get_current_user
+@router.post("/login/test-token", response_model=model.UserList)
+def test_token(current_user: model.UserInDB = Depends(get_current_user)):
+    """
+    Test access token.
+    """
+    return current_user
 # from . import py_functions
 # @router.post("/auth/login", response_model = model.Token)
 # def login(email: str,password:str):
@@ -230,19 +194,19 @@ async def change_password(user : model.UserChange , form_data : OAuth2PasswordRe
 
     #return {"status" : True}
    # return await find_user_by_id(user.id)
-@router.put("/auth/forgetPassword",response_model=model.UserList)
-async def forget_password(user : model.UserReset):
-    gdate = str(datetime.datetime.now())
-    query = users.update().\
-        where(users.c.id == user.id).\
-        values(
-        password = util.get_password_hash(user.password),
-        confirm_password =  util.get_password_hash(user.confirm_password),
-        created_at = gdate,
-        status = "1")
-    await database.execute(query)
+# @router.post("/auth/forgetPassword",response_model=model.UserList)
+# async def forget_password(user : model.UserReset):
+#     gdate = str(datetime.datetime.now())
+#     query = users.update().\
+#         where(users.c.id == user.id).\
+#         values(
+#         password = util.get_password_hash(user.password),
+#         confirm_password =  util.get_password_hash(user.confirm_password),
+#         created_at = gdate,
+#         status = "1")
+#     await database.execute(query)
 
-    return {"status" : True}
+#     return {"status" : True}
     #return await find_user_by_id(user.id)
 # from pathlib import Path
 # @router.post("/auth/changepassword", response_model = model.Token)
