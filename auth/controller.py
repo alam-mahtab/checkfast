@@ -4,9 +4,52 @@ from utils import util, constant
 import uuid, datetime
 from configs.connection import database
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from users.controller import find_user_by_id
+#from users.controller import find_user_by_id
 from db.table import users
+#from .service import verify_registration_user
 router = APIRouter()
+# Send mail
+from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
+from pydantic import EmailStr
+from pydantic import EmailStr, BaseModel
+from starlette.responses import JSONResponse
+from typing import List
+class EmailSchema(BaseModel):
+    email: List[EmailStr]
+
+
+conf = ConnectionConfig(
+    MAIL_USERNAME = "priyanka@mobirizer.com",
+    MAIL_PASSWORD = "123456789",
+    MAIL_FROM = "priyanka@mobirizer.com",
+    MAIL_PORT = 587,  
+    MAIL_SERVER = "smtpout.secureserver.net",
+    MAIL_TLS = True,
+    MAIL_SSL = False,
+    USE_CREDENTIALS = True
+)
+
+
+
+html = """
+<p>Hi this test mail using BackgroundTasks, thanks for using Fastapi-mail</p> 
+"""
+
+
+@router.post("/email")
+async def simple_send(email: EmailSchema) -> JSONResponse:
+
+    message = MessageSchema(
+        subject="Fastapi-Mail module",
+        recipients=email.dict().get("email"),  # List of recipients, as many as you can pass 
+        body=html,
+        subtype="html"
+        )
+
+    fm = FastMail(conf)
+    await fm.send_message(message)
+    return JSONResponse(status_code=200, content={"message": "email has been sent"})    
+    
 
 @router.post("/auth/register", response_model = model.UserList)
 async def register(user : model.UserCreate):
@@ -37,20 +80,65 @@ async def register(user : model.UserCreate):
         "created_at" : gdate,
         "status" : "1"
     }
+# new routers
+
+# @router.post("/confirm-email", response_model=model.Msg)
+# async def confirm_email(uuid: model.VerificationOut):
+#     if await verify_registration_user(uuid):
+#         return {"msg": "Success verify email"}
+#     else:
+#         raise HTTPException(status_code=404, detail="Not found")
+
+# @auth_router.post("/password-recovery/{email}", response_model=Msg)
+# async def recover_password(email: str, task: BackgroundTasks):
+#     """ Password Recovery
+#     """
+#     user = await service.user_s.get_obj(email=email)
+#     if not user:
+#         raise HTTPException(
+#             status_code=404,
+#             detail="The user with this username does not exist in the system.",
+#         )
+#     password_reset_token = generate_password_reset_token(email)
+#     task.add_task(
+#         send_reset_password_email, email_to=user.email, email=email, token=password_reset_token
+#     )
+#     return {"msg": "Password recovery email sent"}
+
+
+# @auth_router.post("/reset-password/", response_model=Msg)
+# async def reset_password(token: str = Body(...), new_password: str = Body(...)):
+#     """ Reset password
+#     """
+#     email = verify_password_reset_token(token)
+#     if not email:
+#         raise HTTPException(status_code=400, detail="Invalid token")
+#     user = await service.user_s.get_obj(email=email)
+#     if not user:
+#         raise HTTPException(
+#             status_code=404,
+#             detail="The user with this username does not exist in the system.",
+#         )
+#     elif not user.is_active:
+#         raise HTTPException(status_code=400, detail="Inactive user")
+#     await service.user_s.change_password(user, new_password)
+#     return {"msg": "Password updated successfully"}
+
+
 @router.post("/auth/login", response_model = model.Token)
-async def login(form_data : OAuth2PasswordRequestForm = Depends()):
-    userDB = await util.findExistedUser(form_data.username)
+async def login(username: str,password:str):
+    userDB = await util.findExistedUser(username)
     if not userDB:
         raise HTTPException(status_code = 404, detail="User Not Found")
 
     user = model.UserPWD(**userDB)
-    isValid = util.verify_password(form_data.password, user.password)
+    isValid = util.verify_password(password, user.password)
     if not isValid:
         raise HTTPException(status_code = 404, detail="Incorrect Username Or Password")
 
     access_token_expires = util.timedelta(minutes=constant.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = util.create_access_token(
-        data ={"sub": form_data.username},
+        data ={"sub": username},
         expires_delta= access_token_expires,
     )
 
@@ -62,9 +150,17 @@ async def login(form_data : OAuth2PasswordRequestForm = Depends()):
     }
     return results
 
+# from . import py_functions
+# @router.post("/auth/login", response_model = model.Token)
+# def login(email: str,password:str):
+#     user_exist = py_functions.check_user_details(email,password,cnxn)
+#     if user_exist>0:
+#         return {"Status":"Login Successful Access Granted"}
+#     else:
+#         return {"Status":"Login error Access not Granted"}
 
 # @router.post("/auth/login/", response_model = model.Token)
-# async def login(username: str = Form(...), password: str = Form(...)):
+# async def login(username: str,password:str):
 #     userDB = await util.findExistedUser(username)
 #     if not userDB:
 #         raise HTTPException(status_code=400, detail="Incorrect username or password")
@@ -97,7 +193,43 @@ async def update_user(user : model.UserUpdate):
     return await find_user_by_id(user.id)
 
 @router.put("/auth/change_password",response_model=model.UserList)
-async def change_password(user : model.UserChange):
+async def change_password(user : model.UserChange , form_data : OAuth2PasswordRequestForm = Depends()):
+    userDB = await util.findExistedUser(form_data.username)
+    if not userDB:
+        raise HTTPException(status_code = 404, detail="User Not Found")
+    user = model.UserPWD(**userDB)
+    isValid = util.verify_password(form_data.password, user.password)
+    if not isValid:
+        raise HTTPException(status_code = 404, detail="Incorrect Username Or Password")
+    gdate = str(datetime.datetime.now())
+    query = users.update().values(password = util.get_password_hash(user.password),
+        confirm_password =  util.get_password_hash(user.confirm_password),
+        created_at = gdate,
+        status = "1")
+    await database.execute(query) 
+    results = {
+       # "access_token": access_token,
+       # "token_type": "bearer",
+       # "expired_in" : constant.ACCESS_TOKEN_EXPIRE_MINUTES*60,
+        "user_info" : user
+    }
+    return results
+# @router.put("/auth/change_password",response_model=model.UserList)
+# async def change_password(user : model.UserChange):
+#     gdate = str(datetime.datetime.now())
+#     query = users.update().\
+#         where(users.c.id == user.id).\
+#         values(
+#         password = util.get_password_hash(user.password),
+#         confirm_password =  util.get_password_hash(user.confirm_password),
+#         created_at = gdate,
+#         status = "1")
+#     await database.execute(query)
+
+    #return {"status" : True}
+   # return await find_user_by_id(user.id)
+@router.put("/auth/forgetPassword",response_model=model.UserList)
+async def forget_password(user : model.UserReset):
     gdate = str(datetime.datetime.now())
     query = users.update().\
         where(users.c.id == user.id).\
@@ -108,8 +240,8 @@ async def change_password(user : model.UserChange):
         status = "1")
     await database.execute(query)
 
-    #return {"status" : True}
-    return await find_user_by_id(user.id)
+    return {"status" : True}
+    #return await find_user_by_id(user.id)
 
 # @router.post("/auth/changepassword", response_model = model.UserList)
 # def change_password(self, password: str):

@@ -69,33 +69,35 @@ async def delete(subject_id: int, db: Session = Depends(get_db)):
     deleted = await crud.delete(db, subject_id)
     return {"deleted": deleted}
 
-@router.put("/subjects/{subject_id}", response_model=schemas.SubjectBase, status_code=200)
-async def put_note(subject_id: int, subject: schemas.SubjectUpdate,file: UploadFile= File(...), db: Session = Depends(get_db)):
-    extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
-    if not extension:
-        return "Image must be jpg or png format!"
+@router.put("/subjects/{subject_id}", response_model=schemas.SubjectUpdate, status_code=200)
+async def put_subject(subject_id: int, subject: schemas.SubjectList,
+    # #file: UploadFile= File(...),
+    db: Session = Depends(get_db)):
+    # extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
+    # if not extension:
+    #     return "Image must be jpg or png format!"
     
-    # outputImage = Image.fromarray(sr_img)  
-    suffix = Path(file.filename).suffix
-    filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-    with open("static/"+filename, "wb") as image:
-        shutil.copyfileobj(file.file, image)
+    # # outputImage = Image.fromarray(sr_img)  
+    # suffix = Path(file.filename).suffix
+    # filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
+    # with open("static/"+filename, "wb") as image:
+    #     shutil.copyfileobj(file.file, image)
 
-    #url = str("media/"+file.filename)
-    url = os.path.join(images_path, filename)
-    db_subject = schemas.SubjectUpdate(db=db,id =id, title=subject.title, desc=subject.desc,name=subject.name, url=url)
+    # #url = str("media/"+file.filename)
+    # url = os.path.join(images_path, filename)
+    db_subject = schemas.SubjectUpdate(db=db, id =subject_id, title=subject.title, desc=subject.desc,name=subject.name)
 
-    return crud.update_subject(db=db, note=db_subject) # Added return
+    return await crud.update_subject(db=db, subject=db_subject) # Added return
 
 @router.patch("/subjects/{subject_id}", response_model=schemas.SubjectUpdate, status_code=200)
-async def patch_note(subject_id: int, subject: schemas.SubjectBase, db: Session = Depends(get_db)):
+async def patch_note(subject_id: int, subject: schemas.SubjectUpdate, db: Session = Depends(get_db)):
 
     print(subject_id)
     print(subject.title)
-    print(subject.description)
-    db_subject = schemas.SubjectUpdate(id =subject_id, title= subject.title, desc=subject.desc, name= subject.name, url=subject.url)
+    print(subject.desc)
+    db_subject = schemas.SubjectUpdate(id =subject_id, title= subject.title, desc=subject.desc, name= subject.name)
 
-    return crud.update_subject(db=db, note=db_subject) # Added return
+    return crud.update_subject(db=db, subject=db_subject) # Added return
     
 # @router.put("/subjects/{subject_id}")
 # async def update_subject(
@@ -115,11 +117,11 @@ async def patch_note(subject_id: int, subject: schemas.SubjectBase, db: Session 
 
 #     #url = str("media/"+file.filename)
 #     url = os.path.join(images_path, filename)
-#     subject =  crud.get_subject(db,id)
+#     subject =  crud.get_subject(db,subject_id)
 #     if not subject:
 #         raise HTTPException(status_code=404, detail="comment not found")
 
-#     return await crud.update_subject(db=db,name=name,title=title,desc=desc,url=url)
+#     return await crud.update_subject(db=db,subject_id=subject_id,name=name,title=title,desc=desc,url=url)
 #     #return {"updated" : updated}
 
 

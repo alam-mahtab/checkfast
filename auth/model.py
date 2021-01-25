@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
-
+#from sqlalchemy.orm import models, fields
+from uuid import UUID
 class UserCreate(BaseModel):
     username : str 
     email : str
@@ -39,7 +40,12 @@ class UserInDB(UserList):
 class UserDelete(BaseModel):
     id : str = Field(..., example="Enter Your Id")
 class UserChange(BaseModel):
+   # id : str = Field(..., example="Enter Your Id")
+    password : str
+    confirm_password: str
+class UserReset(BaseModel):
     id : str = Field(..., example="Enter Your Id")
+   # username : str
     password : str
     confirm_password: str
 class Token(BaseModel):
@@ -51,3 +57,13 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username : str =None
 
+class Msg(BaseModel):
+    msg: str
+class VerificationOut(BaseModel):
+    link: UUID
+
+# class Verification(models.Model):
+#     """ Модель для подтверждения регистрации пользователя
+#     """
+#     link = fields.UUIDField(pk=True)
+#     user = fields.ForeignKeyField('models.User', related_name='verification')
