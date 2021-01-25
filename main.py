@@ -31,11 +31,11 @@ app = FastAPI()
 #     "http://127.0.0.1:8080",
 #     "http://127.0.0.1:8000",
 # ]
-origins = ["*"]
+#origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     #["DELETE", "GET", "POST", "PUT"],

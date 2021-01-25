@@ -124,10 +124,10 @@ async def register(user : model.UserCreate):
 #     await service.user_s.change_password(user, new_password)
 #     return {"msg": "Password updated successfully"}
 
-form_data : OAuth2PasswordBearer = Depends()
+#form_data : OAuth2PasswordBearer = Depends()
 @router.post("/auth/login", response_model = model.Token)
 #async def login(username: str,password:str):
-async def login(form_data : OAuth2PasswordBearer = Depends()):
+async def login(form_data : OAuth2PasswordRequestForm = Depends()):
 
     userDB = await util.findExistedUser(form_data.username) #(username)
     if not userDB:
