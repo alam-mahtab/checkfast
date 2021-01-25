@@ -124,21 +124,23 @@ async def register(user : model.UserCreate):
 #     await service.user_s.change_password(user, new_password)
 #     return {"msg": "Password updated successfully"}
 
-
+form_data : OAuth2PasswordBearer = Depends()
 @router.post("/auth/login", response_model = model.Token)
-async def login(username: str,password:str):
-    userDB = await util.findExistedUser(username)
+#async def login(username: str,password:str):
+async def login(form_data : OAuth2PasswordBearer = Depends()):
+
+    userDB = await util.findExistedUser(form_data.username) #(username)
     if not userDB:
         raise HTTPException(status_code = 404, detail="User Not Found")
 
     user = model.UserPWD(**userDB)
-    isValid = util.verify_password(password, user.password)
+    isValid = util.verify_password(form_data.password, user.password) #(password)
     if not isValid:
         raise HTTPException(status_code = 404, detail="Incorrect Username Or Password")
 
     access_token_expires = util.timedelta(minutes=constant.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = util.create_access_token(
-        data ={"sub": username},
+        data ={"sub": form_data.username},
         expires_delta= access_token_expires,
     )
 
@@ -242,8 +244,31 @@ async def forget_password(user : model.UserReset):
 
     return {"status" : True}
     #return await find_user_by_id(user.id)
+# from pathlib import Path
+# @router.post("/auth/changepassword", response_model = model.Token)
+# def send_reset_password_email(email_to: str, username: str):
+#     subject = "{} - Password recovery for user {username}"
+#     access_token_expires = util.timedelta(minutes=constant.ACCESS_TOKEN_EXPIRE_MINUTES)
+#     access_token = util.create_access_token(
+#         data ={"sub": form_data.username},
+#         expires_delta= access_token_expires,
 
-# @router.post("/auth/changepassword", response_model = model.UserList)
-# def change_password(self, password: str):
-#     self.salt = util.generate_salt()
-#     self.hashed_password = util.get_password_hash(self.salt + password)
+#     with open(Path(EMAIL_TEMPLATES_DIR) / "reset_password.html") as f:
+#         template_str = f.read()
+#     if hasattr(token, "decode"):
+#         use_token = token.decode()
+#     else:
+#         use_token = token
+#     link = f"{SERVER_HOST}/reset-password?token={use_token}"
+#     send_email(
+#         email_to=email_to,
+#         subject_template=subject,
+#         html_template=template_str,
+#         environment={
+#             #"project_name": PROJECT_NAME,
+#             "username": username,
+#             "email": email_to,
+#             "valid_hours": EMAIL_RESET_TOKEN_EXPIRE_HOURS,
+#             "link": link,
+#         },
+#     ) 

@@ -51,8 +51,8 @@ class UserReset(BaseModel):
 class Token(BaseModel):
     access_token : str
     token_type : str
-    #expired_in : str
-    #user_info : UserList
+    expired_in : str
+    user_info : UserList
 
 class TokenData(BaseModel):
     username : str =None
