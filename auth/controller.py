@@ -1,4 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, Form
+from fastapi.openapi.models import OAuth2
+from fastapi.security.oauth2 import OAuth2AuthorizationCodeBearer, OAuth2PasswordRequestFormStrict
 from auth import model
 from utils import util, constant
 import uuid, datetime
@@ -88,11 +90,13 @@ async def register(user : model.UserCreate):
 async def login(form_data : OAuth2PasswordRequestForm = Depends()):
 
     userDB = await util.findExistedUser(form_data.username) #(username)
+    print("this is username" ,form_data.username)
     if not userDB:
         raise HTTPException(status_code = 404, detail="User Not Found")
 
     user = model.UserPWD(**userDB)
     isValid = util.verify_password(form_data.password, user.password) #(password)
+    print("This is password", form_data.password)
     if not isValid:
         raise HTTPException(status_code = 404, detail="Incorrect Username Or Password")
 
@@ -137,26 +141,26 @@ def test_token(current_user: model.UserInDB = Depends(get_current_user)):
 
 #     return {"access_token": username, "token_type": "bearer"}
     
-@router.put("/auth/update",response_model=model.UserList)
-async def update_user(user : model.UserUpdate):
-    gdate = str(datetime.datetime.now())
-    query = users.update().\
-        where(users.c.id == user.id).\
-        values(
-        username = user.username,
-        email = user.email,
-        #password = util.get_password_hash(user.password),#
-        #confirm_password =  util.get_password_hash(user.confirm_password),#
-        first_name = user.first_name,
-        last_name = user.last_name,
-        dateofbirth = user.dateofbirth,
-        phone = user.phone,
-        created_at = gdate,
-        status = "1")
-    await database.execute(query)
+# # @router.put("/auth/update",response_model=model.UserList)
+# # async def update_user(user : model.UserUpdate):
+# #     gdate = str(datetime.datetime.now())
+# #     query = users.update().\
+# #         where(users.c.id == user.id).\
+# #         values(
+# #         username = user.username,
+# #         email = user.email,
+# #         #password = util.get_password_hash(user.password),#
+# #         #confirm_password =  util.get_password_hash(user.confirm_password),#
+# #         first_name = user.first_name,
+# #         last_name = user.last_name,
+# #         dateofbirth = user.dateofbirth,
+# #         phone = user.phone,
+# #         created_at = gdate,
+# #         status = "1")
+# #     await database.execute(query)
 
-    #return {"status" : True}
-    return await find_user_by_id(user.id)
+# #     #return {"status" : True}
+# #     return await find_user_by_id(user.id)
 
 @router.put("/auth/change_password",response_model=model.UserList)
 async def change_password(user : model.UserChange , form_data : OAuth2PasswordRequestForm = Depends()):
