@@ -7,8 +7,8 @@ import datetime
 #from courses_live.database import Base1
 from writer.database import Base
 
-class Subject(Base):
-    __tablename__ = "subjects"
+class Free(Base):
+    __tablename__ = "frees"
 
     id = Column(Integer, primary_key=True)
     created_date = Column(DateTime,default=datetime.datetime.utcnow)

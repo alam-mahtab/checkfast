@@ -5,8 +5,8 @@ from . import crud, models, schemas
 #from courses_live.database import SessionCourse, some_engine
 from writer.database import SessionLocal, engine
 import shutil
-from coursebysubject.schemas import SubjectBase, SubjectUpdate
-from coursebysubject.models import Subject
+from freecourse.schemas import FreeBase, FreeUpdate
+from freecourse.models import Free
 import datetime
 #from coursebysubject.models import subjects
 # Pagination
@@ -37,8 +37,8 @@ router.mount("/static", StaticFiles(directory="static"), name="static")
 dirname = dirname(dirname(abspath(__file__)))
 images_path = join(dirname, '/static')
 
-@router.post("/subject/")
-def create_subject(
+@router.post("/free/")
+def create_free(
     title:str,desc:str,name:str,file: UploadFile= File(...), db: Session = Depends(get_db)
 ):
 
@@ -54,24 +54,24 @@ def create_subject(
 
     #url = str("media/"+file.filename)
     url = os.path.join(images_path, filename)
-    return crud.create_subject(db=db,name=name,title=title,desc=desc,url=url)
+    return crud.create_free(db=db,name=name,title=title,desc=desc,url=url)
 
-@router.get("/subjects/"  ,dependencies=[Depends(pagination_params)])
-def subject_list(db: Session = Depends(get_db)):
-    subject_all = crud.subject_list(db=db)
-    return paginate(subject_all)
+@router.get("/frees/"  ,dependencies=[Depends(pagination_params)])
+def free_list(db: Session = Depends(get_db)):
+    free_all = crud.free_list(db=db)
+    return paginate(free_all)
 
-@router.get("/subjects/{subject_id}")
-def subject_detail(subject_id:int,db: Session = Depends(get_db)):
-    return crud.get_subject(db=db, id=subject_id)
+@router.get("/frees/{free_id}")
+def free_detail(free_id:int,db: Session = Depends(get_db)):
+    return crud.get_free(db=db, id=free_id)
 
-@router.delete("/subjects/{subject_id}")
-async def delete(subject_id: int, db: Session = Depends(get_db)):
-    deleted = await crud.delete(db, subject_id)
+@router.delete("/frees/{free_id}")
+async def delete(free_id: int, db: Session = Depends(get_db)):
+    deleted = await crud.delete(db, free_id)
     return {"deleted": deleted}
 
-# @router.put("/subjects/{subject_id}", response_model=schemas.SubjectUpdate, status_code=200)
-# async def put_subject(subject_id: int, subject: schemas.SubjectList,
+# @router.put("/frees/{free_id}", response_model=schemas.FreeUpdate, status_code=200)
+# async def put_free(free_id: int, free: schemas.FreeList,
 #     # #file: UploadFile= File(...),
 #     db: Session = Depends(get_db)):
 #     # extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
@@ -86,19 +86,19 @@ async def delete(subject_id: int, db: Session = Depends(get_db)):
 
 #     # #url = str("media/"+file.filename)
 #     # url = os.path.join(images_path, filename)
-#     db_subject = schemas.SubjectUpdate(db=db, id =subject_id, title=subject.title, desc=subject.desc,name=subject.name)
+#     db_free = schemas.FreeUpdate(db=db, id =free_id, title=free.title, desc=free.desc,name=free.name)
 
-#     return await crud.update_subject(db=db, subject=db_subject) # Added return
+#     return await crud.update_free(db=db, free=db_free) # Added return
 
-# @router.patch("/subjects/{subject_id}", response_model=schemas.SubjectUpdate, status_code=200)
-# async def patch_note(subject_id: int, subject: schemas.SubjectUpdate, db: Session = Depends(get_db)):
+# @router.patch("/frees/{free_id}", response_model=schemas.FreeUpdate, status_code=200)
+# async def patch_note(free: schemas.FreeUpdate, db: Session = Depends(get_db)):
 
-#     print(subject_id)
-#     print(subject.title)
-#     print(subject.desc)
-#     db_subject = schemas.SubjectUpdate(id =subject_id, title= subject.title, desc=subject.desc, name= subject.name)
+#     print(free.id)
+#     print(free.title)
+#     print(free.desc)
+#     db_free = schemas.FreeUpdate(id =free.id, title= free.title, desc=free.desc, name= free.name)
 
-#     return crud.update_subject(db=db, subject=db_subject) # Added return
+#     return crud.update_free(db=db, free=db_free) # Added return
     
 # @router.put("/subjects/{subject_id}")
 # async def update_subject(

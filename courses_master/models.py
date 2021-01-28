@@ -1,9 +1,10 @@
 from sqlalchemy import  Column, Integer, String,DateTime
 from sqlalchemy_utils import URLType
 import datetime
-from courses_live.database import Base1
+#from courses_live.database import Base1
+from writer.database import Base
 
-class Master(Base1):
+class Master(Base):
     __tablename__ = "master"
 
     id = Column(Integer, primary_key=True)

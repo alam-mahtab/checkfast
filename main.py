@@ -12,7 +12,27 @@ import asyncio
 #from fastapi.staticfiles import StaticFiles
 from starlette.staticfiles import StaticFiles
 
-app = FastAPI()
+tags_metadata = [
+    {
+        "name": "Auth",
+        "description": "Operations with authentication. The **login** logic is also here.",
+    },
+    {
+        "name": "Users",
+        "description": "Manage users. So _fancy_ they have their own docs.",
+        # "externalDocs": {
+        #     "description": "Items external docs",
+        #     "url": "https://fastapi.tiangolo.com/",
+        # },
+    },
+]
+
+app = FastAPI(
+    openapi_tags=tags_metadata,
+    title="CineDarbaar Project",
+    description="This is the Backend Of the Educational Website deals with Film industry",
+    version="0.0.0",
+)
 
 # origins = [
 #     "http://checkfast.herokuapp.com/docs",
@@ -118,7 +138,11 @@ app.include_router(micro_course.router, prefix="/micro_course", tags=["Micro Cou
 
 # # Master Course
 from courses_master import master_course
-app.include_router(master_course.router, prefix="/master_course", tags=["master Course"])
+app.include_router(master_course.router, prefix="/master_course", tags=["Master Course"])
+
+# # Free Course
+from freecourse import course_free
+app.include_router(course_free.router, prefix="/course_free", tags=["Free Course"])
 
 # # writer
 from writer import writer_skill

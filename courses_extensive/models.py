@@ -1,9 +1,10 @@
 from sqlalchemy import  Column, Integer, String,DateTime
 from sqlalchemy_utils import URLType
 import datetime
-from courses_live.database import Base1
+#from courses_live.database import Base1
+from writer.database import Base
 
-class Extensive(Base1):
+class Extensive(Base):
     __tablename__ = "extensives"
 
     id = Column(Integer, primary_key=True)

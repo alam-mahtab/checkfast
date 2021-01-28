@@ -1,28 +1,28 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
-from .schemas import SubjectBase,SubjectUpdate
+from .schemas import FreeBase,FreeUpdate
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Optional
 import datetime
 
-def create_subject(db: Session,title:str,name:str,desc:str,url:str):
-    db_subject = models.Subject(title=title,desc=desc,name=name,url=url)
-    db.add(db_subject)
+def create_free(db: Session,title:str,name:str,desc:str,url:str):
+    db_free = models.Free(title=title,desc=desc,name=name,url=url)
+    db.add(db_free)
     db.commit()
-    db.refresh(db_subject)
-    return db_subject
+    db.refresh(db_free)
+    return db_free
 
-def get_subject(db, id: int):
-    return db.query(models.Subject).filter(models.Subject.id== id).first()
+def get_free(db, id: int):
+    return db.query(models.Free).filter(models.Free.id== id).first()
 
-def subject_list(db):
-    return db.query(models.Subject).all()
+def free_list(db):
+    return db.query(models.Free).all()
     
 async def delete(db: Session,id: int)-> bool:
-   sym1 =models.Subject.__table__
-   sym = sym1.delete().where(models.Subject.id== id)
+   sym1 =models.Free.__table__
+   sym = sym1.delete().where(models.Free.id== id)
    print(sym)
    result = db.execute(sym)
    db.commit()
@@ -40,17 +40,17 @@ async def delete(db: Session,id: int)-> bool:
 #     #return db.execute(query)
 #     return True
 
-async def update_subject(db: Session,
+async def update_free(db: Session,
 #title:str,name:str,desc:str,url:str,id=int,
- subject = schemas.SubjectBase):
-    db_subject = db.query(models.Subject).filter(models.Subject.id == id).first()
-    db_subject.title = subject.title
-    db_subject.name = subject.name
+ free = schemas.FreeBase):
+    db_free = db.query(models.Free).filter(models.Free.id == id).first()
+    db_free.title = free.title
+    db_free.name = free.name
     #db_subject.url = models.Subject.__table__.url
-    db_subject.desc = subject.desc
+    db_free.desc = free.desc
     db.commit()
-    db.refresh(db_subject)
-    return await db_subject
+    db.refresh(db_free)
+    return await db_free
 # async def update_subject(db: Session,id: int, payload: SubjectUpdate):
 #     query = (
 #         models.Subject.__table__

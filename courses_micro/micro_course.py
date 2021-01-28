@@ -2,7 +2,8 @@ from typing import List
 from fastapi import Depends,File, UploadFile, APIRouter, HTTPException
 from sqlalchemy.orm import Session
 from courses_micro import crud, models
-from courses_live.database import SessionCourse , some_engine
+#from courses_live.database import SessionCourse , some_engine
+from writer.database import SessionLocal, engine
 from courses_micro.schemas import MicroBase, MicroList
 from courses_micro.models import Micro
 # Pagination
@@ -12,13 +13,13 @@ from fastapi_pagination.paginator import paginate
 router = APIRouter()
 
 def get_db():
-    db = SessionCourse()
+    db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
 
-models.Base1.metadata.create_all(bind=some_engine)
+models.Base.metadata.create_all(bind=engine)
 
 import uuid
 from pathlib import Path
