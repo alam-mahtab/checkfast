@@ -116,6 +116,14 @@ app.include_router(comnotes.router, prefix="/comnotes", tags=["Comment"])
 from feed import fnotes
 app.include_router(fnotes.router, prefix="/fnotes", tags=["Feed"])
 
+# For Inquiry
+from inquiry_form import inquiry
+app.include_router(inquiry.router, prefix="/inquiry", tags=["Inquiry"])
+
+# For FAQS
+from Faqs import question
+app.include_router(question.router, prefix="/faq", tags=["FAQS"])
+
 #For live course
 from courses_live import live_course
 app.include_router(live_course.router, prefix="/live_course", tags=["Live Course"])
