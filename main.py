@@ -13,12 +13,15 @@ import asyncio
 from starlette.staticfiles import StaticFiles
 
 tags_metadata = [
-    {
-        "name": "Auth",
-        "description": "Operations with authentication. The **login** logic is also here.",
-    },
-    {
-        "name": "Users",
+    {   "name": "Auth",
+        "description": "Operations with authentication. The **login** logic is also here.", },
+    {   "name": "Awards",
+        "description": "Operations with awards section in talent & courses. sorting done by status",},
+    {   "name": "Filmography",
+        "description": "Operations with filmography section in talent & courses. sorting done by status",    },
+    {   "name": "Portfolio",
+        "description": "Operations with portfolio section in talent & courses. sorting done by status",    },
+    {   "name": "Users",
         "description": "Manage users. So _fancy_ they have their own docs.",
         # "externalDocs": {
         #     "description": "Items external docs",
@@ -123,6 +126,18 @@ app.include_router(inquiry.router, prefix="/inquiry", tags=["Inquiry"])
 # For FAQS
 from Faqs import question
 app.include_router(question.router, prefix="/faq", tags=["FAQS"])
+
+# For Awards
+from awards import award
+app.include_router(award.router, prefix="/award", tags=["Awards"])
+
+# For Filmography
+from filmography import filmo
+app.include_router(filmo.router, prefix="/filmo", tags=["Filmography"])
+
+# For Portfolio
+from portfolio import port
+app.include_router(port.router, prefix="/port", tags=["Portfolio"])
 
 #For live course
 from courses_live import live_course
