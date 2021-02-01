@@ -7,7 +7,7 @@ import uuid, datetime
 from configs.connection import database
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 #from users.controller import find_user_by_id
-from db.table import users
+from db.table import Users
 #from .service import verify_registration_user
 router = APIRouter()
 from . import py_functions
@@ -19,7 +19,7 @@ async def register(user : model.UserCreate):
         raise HTTPException(status_code =400, detail="Username already existed")
     gid = str(uuid.uuid1())
     gdate = str(datetime.datetime.now())
-    query = users.insert().values(
+    query = Users.insert().values(
         id = gid,
         username = user.username,
         email = user.email,
@@ -173,7 +173,7 @@ async def change_password(user : model.UserChange , form_data : OAuth2PasswordRe
     if not isValid:
         raise HTTPException(status_code = 404, detail="Incorrect Username Or Password")
     gdate = str(datetime.datetime.now())
-    query = users.update().values(password = util.get_password_hash(user.password),
+    query = Users.update().values(password = util.get_password_hash(user.password),
         confirm_password =  util.get_password_hash(user.confirm_password),
         created_at = gdate,
         status = "1")
