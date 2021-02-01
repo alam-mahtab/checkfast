@@ -15,10 +15,12 @@ def db_config():
 def DATABASE_URL(
     connection : str = db_config().db_connection,
     database : str = db_config().db_database,
+    #database : str = db_config.db_string
     
 ):
 
     return str(connection+":///" +database)
+    #return str(database)
 # extensive course
 # extensive_course = Table(
 #     "extensive_course",

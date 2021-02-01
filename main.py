@@ -21,6 +21,8 @@ tags_metadata = [
         "description": "Operations with filmography section in talent & courses. sorting done by status",    },
     {   "name": "Portfolio",
         "description": "Operations with portfolio section in talent & courses. sorting done by status",    },
+    {   "name": "Work",
+        "description": "Operations with 1.work with us, 2.affiliate, 3.partnership. status = 1 means (work with us) and so on",    },
     {   "name": "Users",
         "description": "Manage users. So _fancy_ they have their own docs.",
         # "externalDocs": {
@@ -138,6 +140,14 @@ app.include_router(filmo.router, prefix="/filmo", tags=["Filmography"])
 # For Portfolio
 from portfolio import port
 app.include_router(port.router, prefix="/port", tags=["Portfolio"])
+
+# For work_with_us
+from work_with_us import work
+app.include_router(work.router, prefix="/work", tags=["Work"])
+
+# For User Story
+from user_stories import story
+app.include_router(story.router, prefix="/story", tags=["Story"])
 
 #For live course
 from courses_live import live_course
