@@ -10,6 +10,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from db.table import users
 #from .service import verify_registration_user
 router = APIRouter()
+from . import py_functions
 
 @router.post("/auth/register", response_model = model.UserList)
 async def register(user : model.UserCreate):
@@ -241,3 +242,8 @@ async def change_password(user : model.UserChange , form_data : OAuth2PasswordRe
 #             "link": link,
 #         },
 #     ) 
+
+@router.get("/search")
+def get_data(search : str = ""):
+    df = py_functions.fetch_data(search,engine)
+    return df.to_dict('r')

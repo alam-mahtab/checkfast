@@ -1,6 +1,14 @@
-import pandas as pd
+import pandas.io.sql as psql
 
-def check_user_details(username,password,cnxn):
-    query = 'select * from USER_CREDS where email='+"'"+str(username)+"'"+' and PASSWORD='+"'"+str(password)+"'"
-    df= pd.read_sql(query,cnxn)
-    return df.shape[0]
+def fetch_data(search,engine):
+    query_cols = 'select top 1+ from DATABASE-1'
+    df=psql.read_sql(query_cols,engine)
+    col_list=(','.join(df.columns))
+    print(col_list)
+
+    query = 'SELECT TOP 10* FROM DATABASE-1'\
+         "where lower(concat("+col_list+") like '%"+search+"%'"
+
+    print(query)
+    df = psql.read_sql(query,engine)
+    return df
