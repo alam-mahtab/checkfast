@@ -12,10 +12,10 @@ import os
 #SQLALCHEMY_DATABASE_URL = "postgresql://postgres:Mobirizer12345@cd.csorhad7ihl5.ap-south-1.rds.amazonaws.com:5432/cd" 
 #SQLALCHEMY_DATABASE_URL = "postgresql://postgres:Mobirizer12345@172.31.15.218:5432/cd" 
 
-SQLALCHEMY_DATABASE_URL = "postgres://postgres:Mobirizer2021@database-1.csorhad7ihl5.ap-south-1.rds.amazonaws.com" 
+#SQLALCHEMY_DATABASE_URL = "postgres://postgres:Mobirizer2021@database-1.csorhad7ihl5.ap-south-1.rds.amazonaws.com" 
 #db_string = "postgres://admin:donotusethispassword@aws-us-east-1-portal.19.dblayer.com:15813/compose"
 # For Heroku connection
-#SQLALCHEMY_DATABASE_URL = "postgres://pabzjsrsctrfvp:4ffd0617efde5cdae2d60b2b24b9f378ae832a2bb56c2eca8b83f10697c022f7@ec2-107-23-191-123.compute-1.amazonaws.com:5432/dcunjfn20d8pi0"
+SQLALCHEMY_DATABASE_URL = "postgres://qfawfnaslzovwe:03ef650b17a8e85da0081d5522e11f0a85d667369feb88da97c1b3e968482f81@ec2-54-86-189-179.compute-1.amazonaws.com:5432/d5cu3ni8p963j9"
  
 
 
