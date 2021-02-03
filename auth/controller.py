@@ -19,7 +19,7 @@ async def register(user : model.UserCreate):
         raise HTTPException(status_code =400, detail="Username already existed")
     gid = str(uuid.uuid1())
     gdate = str(datetime.datetime.now())
-    query = Users.insert().values(
+    query = Users(
         id = gid,
         username = user.username,
         email = user.email,
@@ -30,11 +30,9 @@ async def register(user : model.UserCreate):
         dateofbirth = user.dateofbirth,
         phone = user.phone,
         created_at = gdate,
-        status = "1"
+        status = "1")
 
-    )
-
-    await database.execute(query)
+    #await database.execute(query)
     return {
         **user.dict(),
         "id" :gid,

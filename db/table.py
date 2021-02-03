@@ -13,11 +13,13 @@ class Users(Base):
     email = Column(String)
     password = Column(String)
     confirm_password = Column(String)
-    date_of_birth = Column(String)
+    dateofbirth = Column(String)
     phone = Column(String)
     first_name = Column(String)
     last_name = Column(String)
     status = Column(String)
+
+    
 # users = sqlalchemy.Table(
 #     "users",
 #     metadata,
