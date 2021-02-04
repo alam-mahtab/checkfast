@@ -1,9 +1,9 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7
+FROM python3.7
 
 RUN pip install -r requirements.txt
 
-EXPOSE 80
+EXPOSE 15400
 
-COPY ./testfast /main
+COPY ./app /app
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "15400"]

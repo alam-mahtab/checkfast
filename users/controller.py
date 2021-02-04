@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from auth import model
 from utils import util
-from configs.connection import database
+from writer.database import database
 # Pagination
 from fastapi_pagination import Page, pagination_params
 from fastapi_pagination.paginator import paginate

@@ -5,4 +5,4 @@ APP_DATE = "2021-01-04"
 
 DB_CONNECTION = "sqlite"
 DB_DATABASE = "dbtest.db"
-DB_STRING = "postgres://postgres:Mobirizer2021@database-1.csorhad7ihl5.ap-south-1.rds.amazonaws.com"
+DB_STRING = "sqlite:///./talent&course.db"

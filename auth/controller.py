@@ -4,7 +4,7 @@ from fastapi.security.oauth2 import OAuth2AuthorizationCodeBearer, OAuth2Passwor
 from auth import model
 from utils import util, constant
 import uuid, datetime
-from configs.connection import database
+from writer.database import database
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 #from users.controller import find_user_by_id
 from db.table import Users
@@ -32,7 +32,7 @@ async def register(user : model.UserCreate):
         created_at = gdate,
         status = "1")
 
-    #await database.execute(query)
+    await database.execute(query)
     return {
         **user.dict(),
         "id" :gid,
