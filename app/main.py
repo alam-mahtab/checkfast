@@ -102,11 +102,11 @@ async def startup():
 async def shutdown():
     await database.disconnect()
 
-from auth import controller as authController
-app.include_router(authController.router, tags =["Auth"])
+# from auth import controller as authController
+# app.include_router(authController.router, tags =["Auth"])
 
-from users import controller as userController
-app.include_router(userController.router, tags =["Users"])
+# from users import controller as userController
+# app.include_router(userController.router, tags =["Users"])
 
 #new code
 from api import ping

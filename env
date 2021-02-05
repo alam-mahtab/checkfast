@@ -5,4 +5,3 @@ APP_DATE = "2021-01-04"
 
 DB_CONNECTION = "sqlite"
 DB_DATABASE = "dbtest.db"
-DB_STRING = "sqlite:///./talent&course.db"
