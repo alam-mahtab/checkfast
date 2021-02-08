@@ -3,7 +3,7 @@ from fastapi import Depends,File, UploadFile, APIRouter, HTTPException
 from sqlalchemy.orm import Session
 from . import crud, models, schemas
 #from courses_live.database import SessionCourse, some_engine
-from writer.database import SessionLocal, engine
+from talent.database import SessionLocal, engine
 #from coursebysubject.models import subjects
 # Pagination
 from fastapi_pagination import Page, pagination_params

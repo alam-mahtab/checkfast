@@ -1,6 +1,7 @@
 from configs.appinfo import setting
 
-from configs.connection import database
+#from configs.connection import database
+from talent.database import database
 from fastapi import FastAPI, Request, Depends, UploadFile, File
 
 from configs import appinfo
@@ -102,24 +103,18 @@ async def startup():
 async def shutdown():
     await database.disconnect()
 
-# from auth import controller as authController
-# app.include_router(authController.router, tags =["Auth"])
+from authentication import controller as authController
+app.include_router(authController.router, tags =["Auth"])
 
-# from users import controller as userController
-# app.include_router(userController.router, tags =["Users"])
+from users import controller as userController
+app.include_router(userController.router, tags =["Users"])
 
+# from auth import pyauth
+# app.include_router(pyauth.router,tags=["Users"])
 #new code
 from api import ping
 app.include_router(ping.router)
 
-
-# For Comments
-from comment import comnotes
-app.include_router(comnotes.router, prefix="/comnotes", tags=["Comment"])
-
-# For Feeds
-from feed import fnotes
-app.include_router(fnotes.router, prefix="/fnotes", tags=["Feed"])
 
 # For Inquiry
 from inquiry_form import inquiry
@@ -149,69 +144,13 @@ app.include_router(work.router, prefix="/work", tags=["Work"])
 from user_stories import story
 app.include_router(story.router, prefix="/story", tags=["Story"])
 
-#For live course
-from courses_live import live_course
-app.include_router(live_course.router, prefix="/live_course", tags=["Live Course"])
+# For Course 
+from All_Course import courses
+app.include_router(courses.router, prefix="/course", tags=["Courses"])
 
-# Course By tutor
-from coursebytutor import course_by_tutor
-app.include_router(course_by_tutor.router, prefix="/course_by_tutor", tags=["Course by Tutor"])
-
-# Course By subject
-from coursebysubject import course_by_subject
-app.include_router(course_by_subject.router, prefix="/course_by_subject", tags=["Course by Subject"])
-
-# # Extensive Course
-from courses_extensive import extensive_course
-app.include_router(extensive_course.router, prefix="/extensive_course", tags=["Extensive Course"])
-
-# # Micro Course
-from courses_micro import micro_course
-app.include_router(micro_course.router, prefix="/micro_course", tags=["Micro Course"])
-
-# # Master Course
-from courses_master import master_course
-app.include_router(master_course.router, prefix="/master_course", tags=["Master Course"])
-
-# # Free Course
-from freecourse import course_free
-app.include_router(course_free.router, prefix="/course_free", tags=["Free Course"])
-
-# # writer
-from writer import writer_skill
-app.include_router(writer_skill.router, prefix="/writer", tags=["Writer"])
-
-# # actor
-from actor import actor_skill
-app.include_router(actor_skill.router, prefix="/actor", tags=["Actor"])
-
-# # cinematographer
-from cinematographer import cinematographer_skill
-app.include_router(cinematographer_skill.router, prefix="/cinematographer", tags=["Cinematographer"])
-
-# # director
-from director import director_skill
-app.include_router(director_skill.router, prefix="/director", tags=["Director"])
-
-# # editor
-from editor import editor_skill
-app.include_router(editor_skill.router, prefix="/editor", tags=["Editor"])
-
-# # film_editing
-from film_editing import film_edit_skill
-app.include_router(film_edit_skill.router, prefix="/film_editing", tags=["Film Editor"])
-
-# # film_maker
-from filmmaker import film_maker_skill
-app.include_router(film_maker_skill.router, prefix="/film_maker", tags=["Film Maker"])
-
-# # sound_editor
-from sound_editor import sound_editor_skill
-app.include_router(sound_editor_skill.router, prefix="/sound_editor", tags=["Sound Editor"])
-
-# # videographer
-from vidographer import videographer_skill
-app.include_router(videographer_skill.router, prefix="/videographer", tags=["Videographer"])
+# Talent And Courses
+from talent import talents
+app.include_router(talents.router, prefix="/talents", tags=["Talents"])
 
 #image upload
 import uuid

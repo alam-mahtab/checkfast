@@ -5,7 +5,7 @@ from fastapi_pagination.paginator import paginate
 from sqlalchemy.orm import Session
 from . import crud, models
 #from courses_live.database import SessionCourse, some_engine
-from writer.database import SessionLocal, engine
+from talent.database import SessionLocal, engine
 import shutil
 # Pagination
 from fastapi_pagination import Page, pagination_params

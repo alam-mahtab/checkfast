@@ -4,7 +4,7 @@ from sqlalchemy_utils import EmailType,URLType
 import datetime
 
 #from courses_live.database import Base1
-from writer.database import Base
+from talent.database import Base
 
 class Inquiry(Base):
     __tablename__ = "inquiries"

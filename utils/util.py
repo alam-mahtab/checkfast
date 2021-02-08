@@ -1,4 +1,6 @@
-from configs.connection import database
+from sqlalchemy import schema
+#from configs.connection import database
+from talent.database import database
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from utils import constant
@@ -6,7 +8,7 @@ import jwt
 import bcrypt
 from fastapi import HTTPException, Depends, status,  File, Form
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from auth import model
+from authentication import schemas
 from jwt import PyJWTError
 from pydantic import ValidationError
 
@@ -46,7 +48,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
-        token_data = model.TokenData(username=username)
+        token_data = schemas.TokenData(username=username)
     except (PyJWTError, ValidationError):
         raise credentials_exception
     user = await findExistedUser(token_data.username)
@@ -54,9 +56,9 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     if user is None:
         raise credentials_exception
     #return user
-    return model.UserList(**user)
+    return schemas.UserList(**user)
 
-async def get_current_active_user(current_user: model.UserList = Depends(get_current_user)):
+async def get_current_active_user(current_user: schemas.UserList = Depends(get_current_user)):
     if current_user.status == "9":
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
