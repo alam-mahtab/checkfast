@@ -71,44 +71,44 @@ async def delete(subject_id: int, db: Session = Depends(get_db)):
 # 1.Master Course
 @router.get("/Master/"  ,dependencies=[Depends(pagination_params)])
 def master_list(db: Session = Depends(get_db)):
-    course_all = crud.master_list(db=db)
-    return paginate(course_all)
+    master_all = crud.master_list(db=db)
+    return paginate(master_all)
 
 # 2.Extensive Course
 @router.get("/Extensive/"  ,dependencies=[Depends(pagination_params)])
-def master_list(db: Session = Depends(get_db)):
-    course_all = crud.extensive_list(db=db)
-    return paginate(course_all)
+def extensive_list(db: Session = Depends(get_db)):
+    extensive_all = crud.extensive_list(db=db)
+    return paginate(extensive_all)
 
 # 3.Micro Course
 @router.get("/Micro/"  ,dependencies=[Depends(pagination_params)])
-def master_list(db: Session = Depends(get_db)):
-    course_all = crud.micro_list(db=db)
-    return paginate(course_all)
+def micro_list(db: Session = Depends(get_db)):
+    micro_all = crud.micro_list(db=db)
+    return paginate(micro_all)
 
 # 4.Live Course
 @router.get("/Live/"  ,dependencies=[Depends(pagination_params)])
-def master_list(db: Session = Depends(get_db)):
-    course_all = crud.live_list(db=db)
-    return paginate(course_all)
+def live_list(db: Session = Depends(get_db)):
+    live_all = crud.live_list(db=db)
+    return paginate(live_all)
 
 # 5.Profession Course
 @router.get("/Profession/"  ,dependencies=[Depends(pagination_params)])
-def master_list(db: Session = Depends(get_db)):
-    course_all = crud.profession_list(db=db)
-    return paginate(course_all)
+def profession_list(db: Session = Depends(get_db)):
+    profession_all = crud.profession_list(db=db)
+    return paginate(profession_all)
 
 # 6.Subject Course
 @router.get("/Subject/"  ,dependencies=[Depends(pagination_params)])
-def master_list(db: Session = Depends(get_db)):
-    course_all = crud.subject_list(db=db)
-    return paginate(course_all)
+def subject_list(db: Session = Depends(get_db)):
+    subject_all = crud.subject_list(db=db)
+    return paginate(subject_all)
 
 # 7.Free Course
 @router.get("/Free/"  ,dependencies=[Depends(pagination_params)])
-def master_list(db: Session = Depends(get_db)):
-    course_all = crud.master_list(db=db)
-    return paginate(course_all)
+def free_list(db: Session = Depends(get_db)):
+    free_all = crud.master_list(db=db)
+    return paginate(free_all)
 # @router.put("/subjects/{subject_id}", response_model=schemas.SubjectUpdate, status_code=200)
 # async def put_subject(subject_id: int, subject: schemas.SubjectList,
 #     # #file: UploadFile= File(...),
