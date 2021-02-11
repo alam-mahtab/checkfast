@@ -1,2 +1,2 @@
-EMAIL_ID ="alammahtab869@gmail.com"
-EMAIL_PWD="Mahtab1234"
+EMAIL_ID ="mahtab.alam@mobirizer.com"
+EMAIL_PWD="mobirizer123"
