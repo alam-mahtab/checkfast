@@ -9,7 +9,7 @@ class Users(Base):
     id = Column(String, primary_key=True,unique=True)
     created_at = Column(DateTime,default=datetime.datetime.utcnow)
     username = Column(String,unique=True)
-    email = Column(String)
+    email = Column(String,unique=True)
     password = Column(String)
     confirm_password = Column(String)
     dateofbirth = Column(String)

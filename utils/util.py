@@ -20,6 +20,10 @@ def findExistedUser(username : str):
     query = " select * from users where status='1' and username=:username "
     return database.fetch_one(query, values={ "username" : username})
 
+def findExistedEmailUser(email : str):
+    query = " select * from users where status='1' and email=:email "
+    return database.fetch_one(query, values={ "email" : email})
+
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 

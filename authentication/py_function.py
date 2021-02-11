@@ -8,20 +8,20 @@ def fetch_data(search,engine,search_type):
 
 #     query = 'SELECT TOP 10 FROM Users'\
 #                   "where lower(concat("+col_list+") like '%"+search+"%'"
-    query =" SELECT * FROM "+search_type+" where  like '%"+search+"%'"
+    query =" SELECT * FROM "+search_type+" where type like '%"+search+"%'"
 
     print(query)
     df = pd.read_sql(query,engine)
     return df
 import pandas as pd
 from random import randint
-from . import conf
+from . import conf, models
 import email, smtplib, ssl
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
+from talent.database import database
 # def fetch_data(search,cnxn):
 #     query_cols='select top 1* from SALES_DATA'
 #     df=pd.read_sql(query_cols,cnxn)
@@ -33,7 +33,7 @@ from email.mime.text import MIMEText
 #     print(query)
 #     df = pd.read_sql(query,cnxn)
 #     return df
-
+from. models import Users
 
 def check_user_details(username,password,engine):
     query = 'select * from USERS where email='+"'"+str(username)+"'"+' and PASSWORD='+"'"+str(password)+"'"
@@ -57,10 +57,19 @@ def signup_data(firstname,lastname,city,email,password):
 def generate_code():
     return randint(100000,1000000)
 
-def send_auth_code(email,database):
+async def send_auth_code(email,database):
     code = generate_code()
-    query="UPDATE USERS SET PASSCODE ="+str(code)+"where EMAIL='"+str(email)+"'"
-    database.execute(query)
+    print (code)
+    query = "Update users set passcode='" + str(code) + "'where email="+ str(email)+""
+    #query = "UPDATE USERS SET PASSCODE ='" + str(code) + "' where EMAIL='" + str(email) + "'"
+    #query="select * from USERS where EMAIL='"+str(email)+"' AND UPDATE USERS WITH PASSCODE ="+str(code)+"where EMAIL='"+str(email)+"'"
+    # query = Users.__table__.update().\
+    #     where(Users.email == email).\
+    #         values(
+    #            passcode =code,
+    #            status = "2"
+    #         )
+    await database.execute(query)
     return code
 
 
@@ -112,5 +121,5 @@ def validate_passcode(email,passcode,engine):
         return False
 
 def update_password(email,password,database):
-    query = "UPDATE USER_CRED SET PASSWORD ='" + str(password) + "' where EMAIL='" + str(email) + "'"
+    query = "UPDATE USERS SET PASSWORD ='" + str(password) + "' where EMAIL='" + str(email) + "'"
     database.execute(query)

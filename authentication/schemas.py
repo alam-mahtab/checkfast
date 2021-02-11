@@ -1,3 +1,4 @@
+import email
 from pydantic import BaseModel, Field
 from typing import Optional
 import datetime
@@ -25,8 +26,8 @@ class UserList(BaseModel):
     status: str
     passcode:Optional[int] =None
 class UserUpdate(BaseModel):
-    id : str = Field(..., example="Enter Your Id")
-    username : str 
+    #id : str = Field(..., example="Enter Your Id")
+    username : str = Field(..., example="Enter Your Username")
     email : str
     #password : str
     #confirm_password: str
@@ -35,7 +36,7 @@ class UserUpdate(BaseModel):
     dateofbirth : str
     phone : str
     status : str
-    passcode:Optional[int] =None
+    #passcode:Optional[int] =None
 class UserPWD(UserList):
     password : str
 class UserInDB(UserList):
@@ -44,8 +45,8 @@ class UserInDB(UserList):
 class UserDelete(BaseModel):
     id : str = Field(..., example="Enter Your Id")
 class UserChange(BaseModel):
-   # id : str = Field(..., example="Enter Your Id")
-    password : str
+    id : str = Field(..., example="Enter Your Id")
+    new_password : str
     confirm_password: str
 class UserReset(BaseModel):
     id : str = Field(..., example="Enter Your Id")
@@ -65,7 +66,9 @@ class Msg(BaseModel):
     msg: str
 class VerificationOut(BaseModel):
     link: UUID
-
+class PasscodeUpdate(BaseModel):
+    email: str
+    passcode:str
 # class Verification(models.Model):
 #     """ Модель для подтверждения регистрации пользователя
 #     """

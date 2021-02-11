@@ -19,7 +19,27 @@ def get_course(db, id: int):
 
 def course_list(db):
     return db.query(models.Course).all()
-    
+
+def master_list(db):
+    return db.query(models.Course).filter(models.Course.status== 1 and models.Course.type == "Master").all()
+
+def extensive_list(db):
+    return db.query(models.Course).filter(models.Course.status== 2 and models.Course.type == "Extensive").all()
+
+def micro_list(db):
+    return db.query(models.Course).filter(models.Course.status== 3 and models.Course.type == "Micro").all()
+
+def live_list(db):
+    return db.query(models.Course).filter(models.Course.status== 4 and models.Course.type == "Live").all()
+
+def profession_list(db):
+    return db.query(models.Course).filter(models.Course.status== 5 and models.Course.type == "Profession").all()
+
+def subject_list(db):
+    return db.query(models.Course).filter(models.Course.status== 6 and models.Course.type == "Subject").all()
+
+def free_list(db):
+    return db.query(models.Course).filter(models.Course.status== 7 and models.Course.type == "Free").all()   
 async def delete(db: Session,id: int)-> bool:
    sym1 =models.Course.__table__
    sym = sym1.delete().where(models.Course.id== id)

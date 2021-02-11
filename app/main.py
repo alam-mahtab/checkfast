@@ -16,6 +16,8 @@ from starlette.staticfiles import StaticFiles
 tags_metadata = [
     {   "name": "Auth",
         "description": "Operations with authentication. The **login** logic is also here.", },
+    {   "name": "Users",
+        "description": "Manage users. So _fancy_ they have their own docs.", },
     {   "name": "Awards",
         "description": "Operations with awards section in talent & courses. sorting done by status",},
     {   "name": "Filmography",
@@ -24,13 +26,7 @@ tags_metadata = [
         "description": "Operations with portfolio section in talent & courses. sorting done by status",    },
     {   "name": "Work",
         "description": "Operations with 1.work with us, 2.affiliate, 3.partnership. status = 1 means (work with us) and so on",    },
-    {   "name": "Users",
-        "description": "Manage users. So _fancy_ they have their own docs.",
-        # "externalDocs": {
-        #     "description": "Items external docs",
-        #     "url": "https://fastapi.tiangolo.com/",
-        # },
-    },
+    
 ]
 
 app = FastAPI(

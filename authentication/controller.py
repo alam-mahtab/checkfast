@@ -9,6 +9,7 @@ from talent.database import database
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 #from users.controller import find_user_by_id
 from .models import Users
+from users.controller import find_user_by_username
 #from .service import verify_registration_user
 router = APIRouter()
 from . import py_function
@@ -70,6 +71,36 @@ async def login(form_data : OAuth2PasswordRequestForm = Depends()):
         "user_info" : user
     }
     return results
+
+@router.put("/auth/update",response_model=schemas.UserList)
+async def update_user(user : schemas.UserUpdate):
+    gDate = datetime.datetime.now()
+    query = Users.__table__.update().\
+        where(Users.username == user.username).\
+            values(
+                first_name = user.first_name,
+                last_name = user.last_name,
+                email = user.email,
+                phone = user.phone,
+                dateofbirth = user.dateofbirth,
+                created_at = gDate
+            )
+    await database.execute(query)
+    #return {"status" : True}
+    return await find_user_by_username(user.username)
+
+@router.put("/auth/change_password", response_model=schemas.UserList)
+async def change_password(user : schemas.UserChange):
+    query = Users.__table__.update().\
+        where(Users.username == user.username).\
+            values(
+                password =util.get_password_hash(user.new_password),
+                confirm_password = util.get_password_hash(user.confirm_password)
+            )
+    await database.execute(query)
+    #return {"message" : "Password Change Succesfully"}
+    return await find_user_by_username(user.username)
+
 from utils.util import get_current_user
 @router.post("/login/test-token", response_model=schemas.UserList)
 def test_token(current_user: schemas.UserInDB = Depends(get_current_user)):
@@ -86,10 +117,20 @@ def get_data(search : str = "",search_type: str =" "):
 
 @router.post('/auth/')
 def get_user_auth(email: str):
-    passcode = py_function.send_auth_code(email,database)
-    py_function.generate_auth_email(passcode,[email])
-    return {"status":'Sent Passcode'}
+    #check = util.findExistedEmailUser(database=database,email=email)
+    check = py_function.check_user_exist(email,engine)
+    if check:
+        passcode = py_function.send_auth_code(email,database)
+        py_function.generate_auth_email(passcode,[email])
+        return {"status":'Sent Passcode'}
+    else:
+        return {"message":"Check your email-id"}
 
+# @router.put('/auth/')
+# def get_user_auth(email: str):
+#     passcode = py_function.send_auth_code(email,database)
+#     py_function.generate_auth_email(passcode,[email])
+#     return {"status":'Sent Passcode'}
 
 @router.post('/forget/')
 def forget(email: str,passcode:int,new_pass:str):

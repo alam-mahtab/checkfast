@@ -68,6 +68,47 @@ async def delete(subject_id: int, db: Session = Depends(get_db)):
     deleted = await crud.delete(db, subject_id)
     return {"deleted": deleted}
 
+# 1.Master Course
+@router.get("/Master/"  ,dependencies=[Depends(pagination_params)])
+def master_list(db: Session = Depends(get_db)):
+    course_all = crud.master_list(db=db)
+    return paginate(course_all)
+
+# 2.Extensive Course
+@router.get("/Extensive/"  ,dependencies=[Depends(pagination_params)])
+def master_list(db: Session = Depends(get_db)):
+    course_all = crud.extensive_list(db=db)
+    return paginate(course_all)
+
+# 3.Micro Course
+@router.get("/Micro/"  ,dependencies=[Depends(pagination_params)])
+def master_list(db: Session = Depends(get_db)):
+    course_all = crud.micro_list(db=db)
+    return paginate(course_all)
+
+# 4.Live Course
+@router.get("/Live/"  ,dependencies=[Depends(pagination_params)])
+def master_list(db: Session = Depends(get_db)):
+    course_all = crud.live_list(db=db)
+    return paginate(course_all)
+
+# 5.Profession Course
+@router.get("/Profession/"  ,dependencies=[Depends(pagination_params)])
+def master_list(db: Session = Depends(get_db)):
+    course_all = crud.profession_list(db=db)
+    return paginate(course_all)
+
+# 6.Subject Course
+@router.get("/Subject/"  ,dependencies=[Depends(pagination_params)])
+def master_list(db: Session = Depends(get_db)):
+    course_all = crud.subject_list(db=db)
+    return paginate(course_all)
+
+# 7.Free Course
+@router.get("/Free/"  ,dependencies=[Depends(pagination_params)])
+def master_list(db: Session = Depends(get_db)):
+    course_all = crud.master_list(db=db)
+    return paginate(course_all)
 # @router.put("/subjects/{subject_id}", response_model=schemas.SubjectUpdate, status_code=200)
 # async def put_subject(subject_id: int, subject: schemas.SubjectList,
 #     # #file: UploadFile= File(...),
