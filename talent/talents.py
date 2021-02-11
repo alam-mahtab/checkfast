@@ -55,19 +55,65 @@ def create_talent(
         shutil.copyfileobj(file_cover.file, image)
     url_cover = os.path.join(images_path, filename_cover)
 
-    return crud.create_talent(db=db,name=name,desc=desc,url_profile=url_profile,url_cover=url_cover)
+    return crud.create_talent(db=db,name=name,desc=desc,url_profile=url_profile,url_cover=url_cover,type=type,status=status)
 
 
-@router.get("/writers/" ,dependencies=[Depends(pagination_params)])
+@router.get("/talents/" ,dependencies=[Depends(pagination_params)])
+def talent_list(db: Session = Depends(get_db)):
+    talent_all =crud.talent_list(db=db)
+    return paginate(talent_all)
+
+@router.get("/talents/{talent_id}")
+def talent_detail(talent_id:int,db: Session = Depends(get_db)):
+    return crud.get_talent(db=db, id=talent_id)
+
+@router.delete("/talents/{talent_id}")
+async def delete(talent_id: int, db: Session = Depends(get_db)):
+    deleted = await crud.delete(db, talent_id)
+    return {"deleted": deleted}
+
+# 1.Writer
+@router.get("/Witer/" ,dependencies=[Depends(pagination_params)])
 def writer_list(db: Session = Depends(get_db)):
     writer_all =crud.writer_list(db=db)
     return paginate(writer_all)
-
-@router.get("/writers/{writer_id}")
-def writer_detail(writer_id:int,db: Session = Depends(get_db)):
-    return crud.get_writer(db=db, id=writer_id)
-
-@router.delete("/writers/{writer_id}")
-async def delete(writer_id: int, db: Session = Depends(get_db)):
-    deleted = await crud.delete(db, writer_id)
-    return {"deleted": deleted}
+# 2.Director
+@router.get("/Director/" ,dependencies=[Depends(pagination_params)])
+def director_list(db: Session = Depends(get_db)):
+    director_all =crud.director_list(db=db)
+    return paginate(director_all)
+# 3.Actor
+@router.get("/Actor/" ,dependencies=[Depends(pagination_params)])
+def actor_list(db: Session = Depends(get_db)):
+    actor_all =crud.actor_list(db=db)
+    return paginate(actor_all)
+# 4.Cinematographer
+@router.get("/Cinematographer/" ,dependencies=[Depends(pagination_params)])
+def cinematographer_list(db: Session = Depends(get_db)):
+    cinematographer_all =crud.cinematographer_list(db=db)
+    return paginate(cinematographer_all)
+# 5.Editor
+@router.get("/Editor/" ,dependencies=[Depends(pagination_params)])
+def editor_list(db: Session = Depends(get_db)):
+    editor_all =crud.editor_list(db=db)
+    return paginate(editor_all)
+# 6.SoundEditor
+@router.get("/Soundeditor/" ,dependencies=[Depends(pagination_params)])
+def sound_editor_list(db: Session = Depends(get_db)):
+    sound_all =crud.soundeditor_list(db=db)
+    return paginate(sound_all)
+# 7.Filmmaker
+@router.get("/Filmmaker/" ,dependencies=[Depends(pagination_params)])
+def filmmaker_list(db: Session = Depends(get_db)):
+    filmmaker_all =crud.filmmaker_list(db=db)
+    return paginate(filmmaker_all)
+# 8.Videographer
+@router.get("/Videographer/" ,dependencies=[Depends(pagination_params)])
+def videographer_list(db: Session = Depends(get_db)):
+    videographer_all =crud.videographer_list(db=db)
+    return paginate(videographer_all)
+# 9.FilmEditor
+@router.get("/Filmediting/" ,dependencies=[Depends(pagination_params)])
+def filmediting_list(db: Session = Depends(get_db)):
+    filmediting_all =crud.filmediting_list(db=db)
+    return paginate(filmediting_all)

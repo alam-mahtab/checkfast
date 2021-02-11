@@ -13,7 +13,7 @@ class Talent(Base):
     name = Column(String)
     desc = Column(String)
     type = Column(String)
-    stats = Column(Integer)
+    status = Column(Integer)
     
 
 

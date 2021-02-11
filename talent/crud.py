@@ -28,3 +28,31 @@ async def delete(db: Session,id: int)-> bool:
    db.commit()
    return True
 
+# 1.Writer
+def writer_list(db):
+    return db.query(models.Talent).filter(models.Talent.status== 1 and models.Talent.type == "Writer").all()
+# 2.Director
+def director_list(db):
+    return db.query(models.Talent).filter(models.Talent.status== 2 and models.Talent.type == "Director").all()
+# 3.Actor
+def actor_list(db, id: int):
+    return db.query(models.Talent).filter(models.Talent.status== 3 and models.Talent.type == "Actor").all()
+# 4.Cinematographer
+def cinematographer_list(db, id: int):
+    return db.query(models.Talent).filter(models.Talent.status== 4 and models.Talent.type == "Cinematographer").all()
+# 5.Editor
+def editor_list(db, id: int):
+    return db.query(models.Talent).filter(models.Talent.status== 5 and models.Talent.type == "Editor").all()
+# 6.SoundEditor
+def soundeditor_list(db, id: int):
+    return db.query(models.Talent).filter(models.Talent.status== 6 and models.Talent.type == "SoundEditor").all()
+# 7.Filmmaker
+def filmmaker_list(db, id: int):
+    return db.query(models.Talent).filter(models.Talent.status== 7 and models.Talent.type == "Filmmaker").all()
+# 8.Videographer
+def videographer_list(db, id: int):
+    return db.query(models.Talent).filter(models.Talent.status== 8 and models.Talent.type == "Videographer").all()
+# 9.FilmEditing
+def filmediting_list(db, id: int):
+    return db.query(models.Talent).filter(models.Talent.status== 9 and models.Talent.type == "FilmEditing").all()
+
