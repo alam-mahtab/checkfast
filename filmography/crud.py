@@ -26,3 +26,31 @@ async def delete(db: Session,id: int)-> bool:
    result = db.execute(sym)
    db.commit()
    return True
+
+# Writer
+def writer_list(db):
+    return db.query(models.Filmo).filter(models.Filmo.status == 1).all()
+# Director
+def director_list(db):
+    return db.query(models.Filmo).filter(models.Filmo.status == 2).all()
+# Actor
+def actor_list(db):
+    return db.query(models.Filmo).filter(models.Filmo.status == 3).all()
+# Cinematographer
+def cinematographer_list(db):
+    return db.query(models.Filmo).filter(models.Filmo.status == 4).all()
+# Editor
+def editor_list(db):
+    return db.query(models.Filmo).filter(models.Filmo.status == 5).all()
+# SoundEditor
+def sound_editor_list(db):
+    return db.query(models.Filmo).filter(models.Filmo.status == 6).all()
+# FilmMaker
+def filmmaker_list(db):
+    return db.query(models.Filmo).filter(models.Filmo.status == 7).all()
+# Videographer
+def videographer_list(db):
+    return db.query(models.Filmo).filter(models.Filmo.status == 8).all()
+# filmEditing
+def filmediting_list(db):
+    return db.query(models.Filmo).filter(models.Filmo.status == 9).all()

@@ -26,3 +26,32 @@ async def delete(db: Session,id: int)-> bool:
    result = db.execute(sym)
    db.commit()
    return True
+
+
+# Writer
+def portfolio_writer_list(db):
+    return db.query(models.Port).filter(models.Port.status == 1).all()
+# Director
+def portfolio_director_list(db):
+    return db.query(models.Port).filter(models.Port.status == 2).all()
+# Actor
+def portfolio_actor_list(db):
+    return db.query(models.Port).filter(models.Port.status == 3).all()
+# Cinematographer
+def portfolio_cinematographer_list(db):
+    return db.query(models.Port).filter(models.Port.status == 4).all()
+# Editor
+def portfolio_editor_list(db):
+    return db.query(models.Port).filter(models.Port.status == 5).all()
+# SoundEditor
+def portfolio_sound_editor_list(db):
+    return db.query(models.Port).filter(models.Port.status == 6).all()
+# FilmMaker
+def portfolio_filmmaker_list(db):
+    return db.query(models.Port).filter(models.Port.status == 7).all()
+# Videographer
+def portfolio_videographer_list(db):
+    return db.query(models.Port).filter(models.Port.status == 8).all()
+# filmEditing
+def portfolio_filmediting_list(db):
+    return db.query(models.Port).filter(models.Port.status == 9).all()

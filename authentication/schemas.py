@@ -45,7 +45,7 @@ class UserInDB(UserList):
 class UserDelete(BaseModel):
     id : str = Field(..., example="Enter Your Id")
 class UserChange(BaseModel):
-    id : str = Field(..., example="Enter Your Id")
+    username : str = Field(..., example="Enter Your username")
     new_password : str
     confirm_password: str
 class UserReset(BaseModel):

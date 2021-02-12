@@ -1,5 +1,6 @@
 import pandas.io.sql as psql
 import pandas as pd
+from sqlalchemy.orm.session import Session
 def fetch_data(search,engine,search_type):
 #     query_cols = "SELECT * FROM database-1"
 #     df=pd.read_sql(query_cols,engine)
@@ -57,25 +58,25 @@ def signup_data(firstname,lastname,city,email,password):
 def generate_code():
     return randint(100000,1000000)
 
-async def send_auth_code(email,database):
+def send_auth_code(email):
     code = generate_code()
     print (code)
-    query = "Update users set passcode='" + str(code) + "'where email="+ str(email)+""
+    #query = "Update users set passcode='" + str(code) + "'where email="+ str(email)+""
     #query = "UPDATE USERS SET PASSCODE ='" + str(code) + "' where EMAIL='" + str(email) + "'"
-    #query="select * from USERS where EMAIL='"+str(email)+"' AND UPDATE USERS WITH PASSCODE ="+str(code)+"where EMAIL='"+str(email)+"'"
-    # query = Users.__table__.update().\
-    #     where(Users.email == email).\
-    #         values(
-    #            passcode =code,
-    #            status = "2"
-    #         )
-    await database.execute(query)
+    #query='select * from USERS where email='+"'"+str(email)+"'"' AND
+    #query=' UPDATE USERS SET PASSCODE ='+"'"+str(code)+"'"'where EMAIL'+"'"+str(email)+"'"
+    query = Users.__table__.update().where(Users.email == email).values(
+               passcode =code,
+               status = "2"
+            )
+    database.execute(query)
+        #' UPDATE USERS SET PASSCODE ='+"'"+str(code)+"'"'where EMAIL'+"'"+str(email)+"'")
     return code
 
 
-def generate_auth_email(passcode,RECEIVER_EMAIL):
+def generate_auth_email(passcode1,RECEIVER_EMAIL):
     subject = "Verification Code"
-    body ="\nHi Everyone,\n\n Your verification code is "+str(passcode)
+    body ="\nHi Everyone,\n\n Your verification code is "+str(passcode1)
     sender_email = conf.EMAIL_ID
     receiver_email = RECEIVER_EMAIL
     password = conf.EMAIL_PWD
@@ -88,7 +89,10 @@ def generate_auth_email(passcode,RECEIVER_EMAIL):
     text = message.as_string()
 
     context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+    
+    with smtplib.SMTP_SSL("smtpout.secureserver.net", 465, context=context) as server:
+
+    #with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, text)
 

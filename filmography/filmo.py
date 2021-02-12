@@ -67,3 +67,49 @@ def filmo_detail(filmo_id:int,db: Session = Depends(get_db)):
 async def delete(filmos_id: int, db: Session = Depends(get_db)):
     deleted = await crud.delete(db, filmos_id)
     return {"deleted": deleted}
+
+# Writer
+@router.get("/writer/" ,dependencies=[Depends(pagination_params)])
+def filmography_writer_list(db: Session = Depends(get_db)):
+    writer_all = crud.writer_list(db=db)
+    return paginate(writer_all)
+# Director
+@router.get("/director/" ,dependencies=[Depends(pagination_params)])
+def filmography_director_list(db: Session = Depends(get_db)):
+    director_all = crud.director_list(db=db)
+    return paginate(director_all)
+# Actor
+@router.get("/actor/" ,dependencies=[Depends(pagination_params)])
+def filmography_actor_list(db: Session = Depends(get_db)):
+    actor_all = crud.actor_list(db=db)
+    return paginate(actor_all)
+# Cinematographer
+@router.get("/cinematographer/" ,dependencies=[Depends(pagination_params)])
+def filmography_cinematographer_list(db: Session = Depends(get_db)):
+    cinematographer_all = crud.cinematographer_list(db=db)
+    return paginate(cinematographer_all)
+# Editor
+@router.get("/editor/" ,dependencies=[Depends(pagination_params)])
+def filmography_editor_list(db: Session = Depends(get_db)):
+    editor_all = crud.editor_list(db=db)
+    return paginate(editor_all)
+# SoundEditor
+@router.get("/sound_editor/" ,dependencies=[Depends(pagination_params)])
+def filmography_sound_editor_list(db: Session = Depends(get_db)):
+    sound_all = crud.sound_editor_list(db=db)
+    return paginate(sound_all)
+# Film_maker
+@router.get("/film_maker/" ,dependencies=[Depends(pagination_params)])
+def filmography_film_maker_list(db: Session = Depends(get_db)):
+    film_maker_all = crud.filmmaker_list(db=db)
+    return paginate(film_maker_all)
+# Videographer
+@router.get("/video_grapher/" ,dependencies=[Depends(pagination_params)])
+def filmography_video_grapher_list(db: Session = Depends(get_db)):
+    video_grapher_all = crud.videographer_list(db=db)
+    return paginate(video_grapher_all)
+# FilmEditing
+@router.get("/film_editing/" ,dependencies=[Depends(pagination_params)])
+def filmography_film_editing_list(db: Session = Depends(get_db)):
+    film_editing_all = crud.filmediting_list(db=db)
+    return paginate(film_editing_all)

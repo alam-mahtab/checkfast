@@ -8,7 +8,7 @@ import datetime
 from talent.database import Base
 
 class Award(Base):
-    __tablename__ = "awards"
+    __tablename__ = "Award"
 
     id = Column(Integer, primary_key=True)
     created_date = Column(DateTime,default=datetime.datetime.utcnow)

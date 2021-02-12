@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Form
 from fastapi.openapi.models import OAuth2
 from fastapi.security.oauth2 import OAuth2AuthorizationCodeBearer, OAuth2PasswordRequestFormStrict
+from sqlalchemy.orm.session import Session
 from . import schemas, models
 from utils import util, constant
 import uuid, datetime
@@ -19,7 +20,7 @@ async def register(user : schemas.UserCreate):
     userDB = await util.findExistedUser(user.username)
     if userDB:
         raise HTTPException(status_code =400, detail="Username already existed")
-    code = randint(100000,1000000)
+    #code = randint(100000,1000000)
     gid = str(uuid.uuid1())
     gdate = datetime.datetime.now()
     query = Users.__table__.insert().values(
@@ -33,7 +34,7 @@ async def register(user : schemas.UserCreate):
         dateofbirth = user.dateofbirth,
         phone = user.phone,
         created_at = gdate,
-        passcode = code,
+        passcode = 0,
         status = "1")
 
     await database.execute(query)
@@ -120,8 +121,8 @@ def get_user_auth(email: str):
     #check = util.findExistedEmailUser(database=database,email=email)
     check = py_function.check_user_exist(email,engine)
     if check:
-        passcode = py_function.send_auth_code(email,database)
-        py_function.generate_auth_email(passcode,[email])
+        passcode1 = py_function.send_auth_code(email)
+        py_function.generate_auth_email(passcode1,[email])
         return {"status":'Sent Passcode'}
     else:
         return {"message":"Check your email-id"}
