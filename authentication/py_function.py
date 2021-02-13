@@ -1,3 +1,4 @@
+from authentication.schemas import PasscodeUpdate
 import pandas.io.sql as psql
 import pandas as pd
 from sqlalchemy.orm.session import Session
@@ -58,20 +59,23 @@ def signup_data(firstname,lastname,city,email,password):
 def generate_code():
     return randint(100000,1000000)
 
-def send_auth_code(email):
-    code = generate_code()
-    print (code)
-    #query = "Update users set passcode='" + str(code) + "'where email="+ str(email)+""
+async def send_auth_code(email,username):
+    passcode = generate_code()
+    print (passcode)
+    query = "Update users set passcode='" + str(passcode) + "'where username='"+ str(username)+"'"
     #query = "UPDATE USERS SET PASSCODE ='" + str(code) + "' where EMAIL='" + str(email) + "'"
     #query='select * from USERS where email='+"'"+str(email)+"'"' AND
     #query=' UPDATE USERS SET PASSCODE ='+"'"+str(code)+"'"'where EMAIL'+"'"+str(email)+"'"
-    query = Users.__table__.update().where(Users.email == email).values(
-               passcode =code,
-               status = "2"
-            )
-    database.execute(query)
+    print(username)
+    #query = Users.__table__.update().where(Users.username == username ).values(
+            #    passcode = passcode,
+            #    status = "2"
+            # )
+    print(query)
+    await database.execute(query)
+    #database.add(query)
         #' UPDATE USERS SET PASSCODE ='+"'"+str(code)+"'"'where EMAIL'+"'"+str(email)+"'")
-    return code
+    return passcode
 
 
 def generate_auth_email(passcode1,RECEIVER_EMAIL):
@@ -111,7 +115,8 @@ def generate_password_change_email(RECEIVER_EMAIL):
     text = message.as_string()
 
     context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+    with smtplib.SMTP_SSL("smtpout.secureserver.net", 465, context=context) as server:
+    #with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, text)
 
@@ -123,7 +128,14 @@ def validate_passcode(email,passcode,engine):
         return True
     else:
         return False
-
-def update_password(email,password,database):
-    query = "UPDATE USERS SET PASSWORD ='" + str(password) + "' where EMAIL='" + str(email) + "'"
-    database.execute(query)
+from utils import util
+async def update_password(email,username,password,confirm_password):
+    #query = "UPDATE USERS SET PASSWORD ='" + str(password) + "' where EMAIL='" + str(email) + "'"
+    print(username)
+    query = Users.__table__.update().where(Users.username == username).values(
+            password = util.get_password_hash(password),
+            confirm_password = util.get_password_hash(confirm_password),
+            passcode = 000000
+    )
+    print(query)
+    await database.execute(query)

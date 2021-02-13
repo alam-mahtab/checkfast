@@ -116,16 +116,16 @@ def get_data(search : str = "",search_type: str =" "):
     df = py_function.fetch_data(search,engine,search_type)
     return df.to_dict('r')
 
-@router.post('/auth/')
-def get_user_auth(email: str):
+@router.post('/auth')
+async def get_user_auth(email: str, username: str):
     #check = util.findExistedEmailUser(database=database,email=email)
     check = py_function.check_user_exist(email,engine)
     if check:
-        passcode1 = py_function.send_auth_code(email)
+        passcode1 = await py_function.send_auth_code(email,username)
         py_function.generate_auth_email(passcode1,[email])
         return {"status":'Sent Passcode'}
     else:
-        return {"message":"Check your email-id"}
+        return  {"message":"Check your email-id"}
 
 # @router.put('/auth/')
 # def get_user_auth(email: str):
@@ -133,11 +133,11 @@ def get_user_auth(email: str):
 #     py_function.generate_auth_email(passcode,[email])
 #     return {"status":'Sent Passcode'}
 
-@router.post('/forget/')
-def forget(email: str,passcode:int,new_pass:str):
+@router.post('/forget')
+async def forget(email: str,username:str,passcode:int,new_pass:str,confirm_password:str):
     validate=py_function.validate_passcode(email,passcode,engine)
     if validate:
-        passcode = py_function.update_password(email,new_pass,database)
+        passcode = await py_function.update_password(email,username,new_pass,confirm_password)
         py_function.generate_password_change_email([email])
         return {"status":'Success'}
     else:

@@ -20,7 +20,7 @@ import os
 #     #return str(connection+":///" +database)
 #     return str(database)
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test8.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test9.db"
 # For local connection
 #SQLALCHEMY_DATABASE_URL = "postgresql://postgres:1234@127.0.0.1/talent&course" 
 
