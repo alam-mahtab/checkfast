@@ -80,36 +80,36 @@ def portfolio_director_list(db: Session = Depends(get_db)):
     return paginate(portfolio_director_all)
 # Actor
 @router.get("/actor/" ,dependencies=[Depends(pagination_params)])
-def portfolio_filmography_actor_list(db: Session = Depends(get_db)):
+def portfolio_actor_list(db: Session = Depends(get_db)):
     portfolio_actor_all = crud.portfolio_actor_list(db=db)
     return paginate(portfolio_actor_all)
 # Cinematographer
 @router.get("/cinematographer/" ,dependencies=[Depends(pagination_params)])
-def portfolio_filmography_cinematographer_list(db: Session = Depends(get_db)):
+def portfolio_cinematographer_list(db: Session = Depends(get_db)):
     portfolio_cinematographer_all = crud.portfolio_cinematographer_list(db=db)
     return paginate(portfolio_cinematographer_all)
 # Editor
 @router.get("/editor/" ,dependencies=[Depends(pagination_params)])
-def portfolio_filmography_editor_list(db: Session = Depends(get_db)):
+def portfolio_editor_list(db: Session = Depends(get_db)):
     portfolio_editor_all = crud.portfolio_editor_list(db=db)
     return paginate(portfolio_editor_all)
 # SoundEditor
 @router.get("/sound_editor/" ,dependencies=[Depends(pagination_params)])
-def portfolio_filmography_sound_editor_list(db: Session = Depends(get_db)):
+def portfolio_sound_editor_list(db: Session = Depends(get_db)):
     portfolio_sound_all = crud.portfolio_sound_editor_list(db=db)
     return paginate(portfolio_sound_all)
 # Film_maker
 @router.get("/film_maker/" ,dependencies=[Depends(pagination_params)])
-def portfolio_filmography_film_maker_list(db: Session = Depends(get_db)):
+def portfolio_film_maker_list(db: Session = Depends(get_db)):
     portfolio_film_maker_all = crud.portfolio_filmediting_list(db=db)
     return paginate(portfolio_film_maker_all)
 # Videographer
 @router.get("/video_grapher/" ,dependencies=[Depends(pagination_params)])
-def portfolio_filmography_video_grapher_list(db: Session = Depends(get_db)):
+def portfolio_video_grapher_list(db: Session = Depends(get_db)):
     portfolio_video_grapher_all = crud.portfolio_videographer_list(db=db)
     return paginate(portfolio_video_grapher_all)
 # FilmEditing
 @router.get("/film_editing/" ,dependencies=[Depends(pagination_params)])
-def portfolio_filmography_film_editing_list(db: Session = Depends(get_db)):
+def portfolio_film_editing_list(db: Session = Depends(get_db)):
     portfolio_film_editing_all = crud.portfolio_filmediting_list(db=db)
     return paginate(portfolio_film_editing_all)
