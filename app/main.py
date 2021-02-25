@@ -1,10 +1,10 @@
-from configs.appinfo import setting
+from app.configs.appinfo import setting
 
 #from configs.connection import database
-from talent.database import database
+from app.talent.database import database
 from fastapi import FastAPI, Request, Depends, UploadFile, File
 
-from configs import appinfo
+from app.configs import appinfo
 import time
 from fastapi.middleware.cors import CORSMiddleware
 #import aiofiles
@@ -99,53 +99,55 @@ async def startup():
 async def shutdown():
     await database.disconnect()
 
-from authentication import controller as authController
+from app.authentication import controller as authController
 app.include_router(authController.router, tags =["Auth"])
 
-from users import controller as userController
+from app.users import controller as userController
 app.include_router(userController.router, tags =["Users"])
 
 # from auth import pyauth
 # app.include_router(pyauth.router,tags=["Users"])
 #new code
-from api import ping
+from app.api import ping
 app.include_router(ping.router)
 
-
+# payment
+from app.Payment import donate
+app.include_router(donate.router, tags=["Payments"])
 # For Inquiry
-from inquiry_form import inquiry
+from app.inquiry_form import inquiry
 app.include_router(inquiry.router, prefix="/inquiry", tags=["Inquiry"])
 
 # For FAQS
-from Faqs import question
+from app.Faqs import question
 app.include_router(question.router, prefix="/faq", tags=["FAQS"])
 
 # For Awards
-from awards import award
+from app.awards import award
 app.include_router(award.router, prefix="/award", tags=["Awards"])
 
 # For Filmography
-from filmography import filmo
+from app.filmography import filmo
 app.include_router(filmo.router, prefix="/filmo", tags=["Filmography"])
 
 # For Portfolio
-from portfolio import port
+from app.portfolio import port
 app.include_router(port.router, prefix="/port", tags=["Portfolio"])
 
 # For work_with_us
-from work_with_us import work
+from app.work_with_us import work
 app.include_router(work.router, prefix="/work", tags=["Work"])
 
 # For User Story
-from user_stories import story
+from app.user_stories import story
 app.include_router(story.router, prefix="/story", tags=["Story"])
 
 # For Course 
-from All_Course import courses
+from app.All_Course import courses
 app.include_router(courses.router, prefix="/course", tags=["Courses"])
 
 # Talent And Courses
-from talent import talents
+from app.talent import talents
 app.include_router(talents.router, prefix="/talents", tags=["Talents"])
 
 #image upload
@@ -157,86 +159,91 @@ from os.path import dirname, abspath, join
 import shutil
 import aiofiles
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-dirname = dirname(dirname(abspath(__file__)))
-images_path = join(dirname, '/static')
+# app.mount("/static", StaticFiles(directory="static"), name="static")
+# dirname = dirname(dirname(abspath(__file__)))
+# images_path = join(dirname, '/static')
+current_file = Path(__file__)
+current_file_dir = current_file.parent
+project_root = current_file_dir.parent
+project_root_absolute = project_root.resolve()
+static_root_absolute = project_root_absolute / "static" 
  
-@app.post("/cv2")
-async def get_image(request: Request, file: UploadFile = File(...)):
+# @app.post("/cv2")
+# async def get_image(request: Request, file: UploadFile = File(...)):
  
-   # extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
-    #if not extension:
-     #   return "Image must be jpg or png format!"  
-    suffix = Path(file.filename).suffix
-    filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
+#    # extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
+#     #if not extension:
+#      #   return "Image must be jpg or png format!"  
+#     suffix = Path(file.filename).suffix
+#     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
     
-    with open("static/"+filename, "wb") as image:
-        shutil.copyfileobj(file.file, image)
+#     with open("static/"+filename, "wb") as image:
+#         shutil.copyfileobj(file.file, image)
 
-    #url = str("media/"+file.filename)
-    file_path = os.path.join(images_path, filename)
-    print(file_path)
-    client_host = request.client.host
-    return {"url": file_path,"client_host": client_host}
+#     #url = str("media/"+file.filename)
+#     file_path = os.path.join(images_path, filename)
+#     print(file_path)
+#     client_host = request.client.host
+#     return {"url": file_path,"client_host": client_host}
 
-from fastapi.responses import StreamingResponse
+# from fastapi.responses import StreamingResponse
 
-some_file_path = "C:\\Users\\Ehtesham Hassan\\Desktop\\Testfast\\8.mp4" #os.path.join(UPLOAD_FOLDER, "1.mp4")
+# some_file_path = "C:\\Users\\Ehtesham Hassan\\Desktop\\Testfast\\8.mp4" #os.path.join(UPLOAD_FOLDER, "1.mp4")
 
-@app.get("/video")
-def video():
-    file_like = open(some_file_path, mode="rb")
+# @app.get("/video")
+# def video():
+#     file_like = open(some_file_path, mode="rb")
     
-    return StreamingResponse(file_like, media_type="video/mp4")
+#     return StreamingResponse(file_like, media_type="video/mp4")
 
-async def fake_video_streamer():
-    for i in range(10000):
-        yield b"some fake video bytes"
-
-
-@app.get("/stream")
-async def stream():
-    return StreamingResponse(fake_video_streamer())
-
-# Send mail
-from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
-from pydantic import EmailStr
-from pydantic import EmailStr, BaseModel
-from starlette.responses import JSONResponse
-from typing import List
-class EmailSchema(BaseModel):
-    email: List[EmailStr]
+# async def fake_video_streamer():
+#     for i in range(10000):
+#         yield b"some fake video bytes"
 
 
-conf = ConnectionConfig(
-    MAIL_USERNAME = "priyanka@mobirizer.com",
-    MAIL_PASSWORD = "123456789",
-    MAIL_FROM = "priyanka@mobirizer.com",
-    MAIL_PORT = 587,  
-    MAIL_SERVER = "smtpout.secureserver.net",
-    MAIL_TLS = True,
-    MAIL_SSL = False,
-    USE_CREDENTIALS = True
-)
+# @app.get("/stream")
+# async def stream():
+#     return StreamingResponse(fake_video_streamer())
+
+# # Send mail
+# from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
+# from pydantic import EmailStr
+# from pydantic import EmailStr, BaseModel
+# from starlette.responses import JSONResponse
+# from typing import List
+# class EmailSchema(BaseModel):
+#     email: List[EmailStr]
+
+
+# conf = ConnectionConfig(
+#     MAIL_USERNAME = "priyanka@mobirizer.com",
+#     MAIL_PASSWORD = "123456789",
+#     MAIL_FROM = "priyanka@mobirizer.com",
+#     MAIL_PORT = 587,  
+#     MAIL_SERVER = "smtpout.secureserver.net",
+#     MAIL_TLS = True,
+#     MAIL_SSL = False,
+#     USE_CREDENTIALS = True
+# )
 
 
 
-html = """
-<p>Hi this test mail using BackgroundTasks, thanks for using Fastapi-mail</p> 
-"""
+# html = """
+# <p>Hi this test mail using BackgroundTasks, thanks for using Fastapi-mail</p> 
+# """
 
 
-@app.post("/email")
-async def simple_send(email: EmailSchema) -> JSONResponse:
+# @app.post("/email")
+# async def simple_send(email: EmailSchema) -> JSONResponse:
 
-    message = MessageSchema(
-        subject="Fastapi-Mail module",
-        recipients=email.dict().get("email"),  # List of recipients, as many as you can pass 
-        body=html,
-        subtype="html"
-        )
+#     message = MessageSchema(
+#         subject="Fastapi-Mail module",
+#         recipients=email.dict().get("email"),  # List of recipients, as many as you can pass 
+#         body=html,
+#         subtype="html"
+#         )
 
-    fm = FastMail(conf)
-    await fm.send_message(message)
-    return JSONResponse(status_code=200, content={"message": "email has been sent"})    
+#     fm = FastMail(conf)
+#     await fm.send_message(message)
+#     return JSONResponse(status_code=200, content={"message": "email has been sent"})    
     

@@ -1,9 +1,9 @@
-version: '3'
+version: '3.7'
 services: 
   core_api:
-    build: .
-    container_name: core-api-container
-    ports: 
+      build: .
+      container_name: "core-api-container"
+      restart: "always"
+      ports: 
       - "8000:15400"
-    volumes: 
-      - ./app/:/app
+      
