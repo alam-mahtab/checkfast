@@ -30,16 +30,19 @@ def get_db():
         db.close()
 
 models.Base.metadata.create_all(bind=engine)
+router.mount("/static", StaticFiles(directory="static"), name="static")
+dirname = dirname(dirname(abspath(__file__)))
+images_path = join(dirname, '/static')
 
 # router.mount("/static", StaticFiles(directory="static"), name="static")
 # dirname = dirname(dirname(abspath(__file__)))
 # images_path = join(dirname, 'static')
 
-current_file = Path(__file__)
-current_file_dir = current_file.parent
-project_root = current_file_dir.parent
-project_root_absolute = project_root.resolve()
-static_root_absolute = project_root_absolute / "static" 
+# current_file = Path(__file__)
+# current_file_dir = current_file.parent
+# project_root = current_file_dir.parent
+# project_root_absolute = project_root.resolve()
+# static_root_absolute = project_root_absolute / "static" 
 
 @router.post("/award/")
 def create_award(
@@ -49,18 +52,23 @@ def create_award(
     extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
     if not extension:
         return "Image must be jpg or png format!"
-    print(project_root)
-    print(project_root_absolute)
+    # print(current_file)
+    # print(project_root)
+    # print(current_file_dir)
+    # print(project_root_absolute)
+    # print("hello")
+    # print(dirname)
+    # print(images_path)
     # outputImage = Image.fromarray(sr_img)  
     suffix = Path(file.filename).suffix
     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-    print(filename)
+    #print(filename)
     with open("static/"+filename, "wb") as image:
         shutil.copyfileobj(file.file, image)
 
     #url = str("media/"+file.filename)
-    print(static_root_absolute)
-    url = os.path.join(static_root_absolute, filename)
+    #print(static_root_absolute)
+    url = os.path.join(images_path, filename)
     return crud.create_award(db=db,status=status,title=title,desc=desc,url=url)
 
 @router.get("/Award/" ,dependencies=[Depends(pagination_params)])

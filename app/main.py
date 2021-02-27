@@ -159,9 +159,45 @@ from os.path import dirname, abspath, join
 import shutil
 import aiofiles
 
-# app.mount("/static", StaticFiles(directory="static"), name="static")
-# dirname = dirname(dirname(abspath(__file__)))
-# images_path = join(dirname, '/static')
+# # S3
+# import boto3
+# from botocore.exceptions import NoCredentialsError
+
+# ACCESS_KEY = 'AKIAIEMFR3CSUUCRABFQ'
+# SECRET_KEY = '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'
+
+# @app.post('upload')
+# def upload():
+#     s3 = boto3.client('s3')
+#     with open("FILE_NAME", "rb") as f:
+#     s3.upload_fileobj(f, "BUCKET_NAME", "OBJECT_NAME")
+#     s3.upload_file(
+#     'FILE_NAME', 'BUCKET_NAME', 'OBJECT_NAME',
+#     ExtraArgs={'Metadata': {'mykey': 'myvalue'}}
+
+# @app.post('upload')
+# def upload_to_aws(file: UploadFile = local_file, bucket, s3_file):
+#     s3 = boto3.client('s3', aws_access_key_id=ACCESS_KEY,
+#                       aws_secret_access_key=SECRET_KEY)
+
+#     try:
+#         s3.upload_file(local_file, bucket, s3_file)
+#         print("Upload Successful")
+#         return True
+#     except FileNotFoundError:
+#         print("The file was not found")
+#         return False
+#     except NoCredentialsError:
+#         print("Credentials not available")
+#         return False
+
+
+# uploaded = upload_to_aws('local_file', 'bucket_name', 's3_file_name')
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+dirname = dirname(dirname(abspath(__file__)))
+images_path = join(dirname, '/static')
+
 current_file = Path(__file__)
 current_file_dir = current_file.parent
 project_root = current_file_dir.parent

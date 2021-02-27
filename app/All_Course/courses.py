@@ -31,15 +31,15 @@ def get_db():
 
 models.Base.metadata.create_all(bind=engine)
 
-# router.mount("/app/static", StaticFiles(directory="app/static"), name="static")
-# dirname = dirname(dirname(abspath(__file__)))
-# images_path = join(dirname, 'app/static')
+router.mount("/static", StaticFiles(directory="static"), name="static")
+dirname = dirname(dirname(abspath(__file__)))
+images_path = join(dirname, '/static')
 
-current_file = Path(__file__)
-current_file_dir = current_file.parent
-project_root = current_file_dir.parent
-project_root_absolute = project_root.resolve()
-static_root_absolute = project_root_absolute / "static" 
+# current_file = Path(__file__)
+# current_file_dir = current_file.parent
+# project_root = current_file_dir.parent
+# project_root_absolute = project_root.resolve()
+# static_root_absolute = project_root_absolute / "static" 
 
 @router.post("/course/")
 def create_course(
@@ -53,11 +53,11 @@ def create_course(
     # outputImage = Image.fromarray(sr_img)  
     suffix = Path(file.filename).suffix
     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-    with open("app/static/"+filename, "wb") as image:
+    with open("static/"+filename, "wb") as image:
         shutil.copyfileobj(file.file, image)
-
+    print(images_path)
     #url = str("media/"+file.filename)
-    url = os.path.join(static_root_absolute, filename)
+    url = os.path.join(images_path, filename)
     return crud.create_course(db=db,name=name,title=title,desc=desc,url=url,type=type,status=status)
 
 @router.get("/courses/"  ,dependencies=[Depends(pagination_params)])

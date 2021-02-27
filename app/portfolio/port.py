@@ -30,16 +30,19 @@ def get_db():
         db.close()
 
 models.Base.metadata.create_all(bind=engine)
+router.mount("/static", StaticFiles(directory="static"), name="static")
+dirname = dirname(dirname(abspath(__file__)))
+images_path = join(dirname, '/static')
 
-# router.mount("/static", StaticFiles(directory="static"), name="static")
-# dirname = dirname(dirname(abspath(__file__)))
-# images_path = join(dirname, '/static')
+# # router.mount("/static", StaticFiles(directory="static"), name="static")
+# # dirname = dirname(dirname(abspath(__file__)))
+# # images_path = join(dirname, '/static')
 
-current_file = Path(__file__)
-current_file_dir = current_file.parent
-project_root = current_file_dir.parent
-project_root_absolute = project_root.resolve()
-static_root_absolute = project_root_absolute / "static" 
+# current_file = Path(__file__)
+# current_file_dir = current_file.parent
+# project_root = current_file_dir.parent
+# project_root_absolute = project_root.resolve()
+# static_root_absolute = project_root_absolute / "static" 
 
 @router.post("/port/")
 def create_port(status:int,file: UploadFile= File(...), db: Session = Depends(get_db)):
@@ -55,7 +58,7 @@ def create_port(status:int,file: UploadFile= File(...), db: Session = Depends(ge
         shutil.copyfileobj(file.file, video)
 
     #url = str("media/"+file.filename)
-    url = os.path.join(static_root_absolute, filename)
+    url = os.path.join(images_path, filename)
     crud.create_port(db=db,status=status,url=url)
     return {"url": url,"status":status}
 

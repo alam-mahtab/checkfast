@@ -28,15 +28,19 @@ import os
 from os.path import dirname, abspath, join
 import shutil
 
-# router.mount("/static", StaticFiles(directory="static"), name="static")
-# dirname = dirname(dirname(abspath(__file__)))
-# images_path = join(dirname, '/static')
+router.mount("/static", StaticFiles(directory="static"), name="static")
+dirname = dirname(dirname(abspath(__file__)))
+images_path = join(dirname, '/static')
 
-current_file = Path(__file__)
-current_file_dir = current_file.parent
-project_root = current_file_dir.parent
-project_root_absolute = project_root.resolve()
-static_root_absolute = project_root_absolute / "static" 
+# router.mount("/app", StaticFiles(directory="app"), name="app")
+# # dirname = dirname(dirname(abspath(__file__)))
+# # images_path = join(dirname, '/static')
+
+# current_file = Path(__file__)
+# current_file_dir = current_file.parent
+# project_root = current_file_dir.parent
+# project_root_absolute = project_root.resolve()
+# static_root_absolute = project_root_absolute / "static" 
 
 @router.post("/talent/")
 def create_talent(
@@ -50,7 +54,7 @@ def create_talent(
     filename_pro = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
     with open("static/"+filename_pro, "wb") as image:
         shutil.copyfileobj(file_pro.file, image)
-    url_profile = os.path.join(static_root_absolute, filename_pro)
+    url_profile = os.path.join(images_path, filename_pro)
 
     extension_cover = file_cover.filename.split(".")[-1] in ("jpg", "jpeg", "png")
     if not extension_cover:
@@ -59,7 +63,7 @@ def create_talent(
     filename_cover = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_cover )
     with open("static/"+filename_cover, "wb") as image:
         shutil.copyfileobj(file_cover.file, image)
-    url_cover = os.path.join(static_root_absolute, filename_cover)
+    url_cover = os.path.join(images_path, filename_cover)
 
     return crud.create_talent(db=db,name=name,desc=desc,url_profile=url_profile,url_cover=url_cover,type=type,status=status)
 

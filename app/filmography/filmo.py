@@ -31,15 +31,15 @@ def get_db():
 
 models.Base.metadata.create_all(bind=engine)
 
-# router.mount("/app/static", StaticFiles(directory="app/static"), name="static")
-# dirname = dirname(dirname(abspath(__file__)))
-# images_path = join(dirname, 'app/static')
+router.mount("/static", StaticFiles(directory="static"), name="static")
+dirname = dirname(dirname(abspath(__file__)))
+images_path = join(dirname, '/static')
 
-current_file = Path(__file__)
-current_file_dir = current_file.parent
-project_root = current_file_dir.parent
-project_root_absolute = project_root.resolve()
-static_root_absolute = project_root_absolute / "static" 
+# current_file = Path(__file__)
+# current_file_dir = current_file.parent
+# project_root = current_file_dir.parent
+# project_root_absolute = project_root.resolve()
+# static_root_absolute = project_root_absolute / "static" 
 
 @router.post("/filmo/")
 def create_filmo(
@@ -57,7 +57,7 @@ def create_filmo(
         shutil.copyfileobj(file.file, image)
 
     #url = str("media/"+file.filename)
-    url = os.path.join(static_root_absolute, filename)
+    url = os.path.join(images_path, filename)
     return crud.create_filmo(db=db,status=status,title=title,desc=desc,url=url)
 
 @router.get("/filmos/" ,dependencies=[Depends(pagination_params)])
