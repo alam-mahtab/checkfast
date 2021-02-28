@@ -163,8 +163,8 @@ import aiofiles
 # import boto3
 # from botocore.exceptions import NoCredentialsError
 
-# ACCESS_KEY = 'AKIAIEMFR3CSUUCRABFQ'
-# SECRET_KEY = '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'
+# ACCESS_KEY = ''
+# SECRET_KEY = ''
 
 # @app.post('upload')
 # def upload():
