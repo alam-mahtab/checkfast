@@ -6,6 +6,7 @@ class CourseBase(BaseModel):
     title:str
     name :str
     desc:str
+    price:int
     type:str
     status:int
     

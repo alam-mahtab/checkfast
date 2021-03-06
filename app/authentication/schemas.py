@@ -62,6 +62,17 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username : str =None
 
+class PaidBase(BaseModel):
+    name:str
+    amount:str
+class PaidList(PaidBase):
+    created_date: Optional[datetime.datetime]
+    client_id:str
+    client : UserList
+
+    class config:
+        orm_mode = True
+
 class Msg(BaseModel):
     msg: str
 class VerificationOut(BaseModel):

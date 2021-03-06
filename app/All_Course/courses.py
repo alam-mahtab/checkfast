@@ -1,7 +1,8 @@
 from typing import Dict, List
 from fastapi import Depends,File, UploadFile, APIRouter, HTTPException
 from sqlalchemy.orm import Session
-from . import crud, models
+from . import crud
+from app.authentication import models
 #from courses_live.database import SessionCourse, some_engine
 from app.talent.database import SessionLocal, engine
 import shutil
@@ -35,15 +36,15 @@ router.mount("/static", StaticFiles(directory="static"), name="static")
 dirname = dirname(dirname(abspath(__file__)))
 images_path = join(dirname, '/static')
 
-# current_file = Path(__file__)
-# current_file_dir = current_file.parent
-# project_root = current_file_dir.parent
-# project_root_absolute = project_root.resolve()
-# static_root_absolute = project_root_absolute / "static" 
+current_file = Path(__file__)
+current_file_dir = current_file.parent
+project_root = current_file_dir.parent
+project_root_absolute = project_root.resolve()
+static_root_absolute = project_root_absolute / "static" 
 
 @router.post("/course/")
 def create_course(
-    title:str,desc:str,name:str,type:str,status:int,file: UploadFile= File(...), db: Session = Depends(get_db)
+    title:str,desc:str,name:str,price:int,type:str,status:int,file: UploadFile= File(...), db: Session = Depends(get_db)
 ):
 
     extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
@@ -57,8 +58,9 @@ def create_course(
         shutil.copyfileobj(file.file, image)
     print(images_path)
     #url = str("media/"+file.filename)
-    url = os.path.join(images_path, filename)
-    return crud.create_course(db=db,name=name,title=title,desc=desc,url=url,type=type,status=status)
+    #url = os.path.join(images_path, filename)
+    url = os.path.join(static_root_absolute,filename)
+    return crud.create_course(db=db,name=name,title=title,desc=desc,price=price,url=url,type=type,status=status)
 
 @router.get("/courses/"  ,dependencies=[Depends(pagination_params)])
 def course_list(db: Session = Depends(get_db)):

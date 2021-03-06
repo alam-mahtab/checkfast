@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-from . import models, schemas
+from . import schemas
+from app.authentication import models
 from .schemas import CourseBase,CourseList
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
@@ -7,8 +8,8 @@ from datetime import datetime, timedelta
 from typing import Optional
 import datetime
 
-def create_course(db: Session,title:str,name:str,desc:str,url:str,type:str,status:int):
-    db_course = models.Course(title=title,desc=desc,name=name,url=url,type=type,status=status)
+def create_course(db: Session,title:str,name:str,desc:str,price:int,url:str,type:str,status:int):
+    db_course = models.Course(title=title,desc=desc,name=name,price=price,url=url,type=type,status=status)
     db.add(db_course)
     db.commit()
     db.refresh(db_course)
