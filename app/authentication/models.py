@@ -43,5 +43,5 @@ class Paid(Base):
     amount = Column(Integer)
     client_id = Column(String, ForeignKey('users.id'))
     client = relationship('Users', back_populates='paid')
-    course_id = Column(String, ForeignKey('courses.id'))
+    course_id = Column(Integer, ForeignKey('courses.id'))
     course = relationship('Course', back_populates='paid1')
