@@ -59,7 +59,8 @@ async def pay_me(request: Request, id:str):
     print(pay)
     gid = randint(100000,1000000)
     gdate = datetime.datetime.now()
-    
+    #print(pay.amount)
+    df= pd.read_sql(pay,engine)
     # any = models.Payment.amount
     #print(result)
     print(pay1)
