@@ -59,32 +59,13 @@ async def pay_me(request: Request, id:str):
     print(pay)
     gid = randint(100000,1000000)
     gdate = datetime.datetime.now()
-    #print(pay.amount)
-    df= pd.read_sql(pay,engine)
-    df1 = pd.read_sql(pay1,engine)
-    print(df.price.values)
-    print(str(df1.name.values))
-    print(df.shape[0])
+    
     # any = models.Payment.amount
     #print(result)
     print(pay1)
     client = razorpay.Client(auth=("rzp_test_cfbr43uRZAs35w","dcPlBgM8Fv7H2J1cYISFKC81"))
     payment = client.order.create({'amount' : int(df.price.values)*100, 'currency':'INR', 'receipt': 'TEST','payment_capture':'1'})
-    #query = "INSERT INTO Paid VALUE Where name ="+str(df1.name.values)
-    # query = models.Paid.__table__.insert().values(
-    #     id = gid,
-    #     name = df1.name.values,
-    #     #email = pay.email,
-    #     amount= {{payment['order_id']}},
-    #     created_date = gdate)
-    # await database.execute(query)
-#    puts payment
-# {
-#   :razorpay_order_id   => "test_order_id",
-#   :razorpay_payment_id => "test_payment_id",
-#   :razorpay_signature  => "signature"
-# }
-    #Razorpay::Utility.verify_payment_signature(payment)
+    
     return templates.TemplateResponse("pay.html", {"request": request, "payment":payment})
 
 @router.get("/success/")
