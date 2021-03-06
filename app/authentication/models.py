@@ -22,6 +22,7 @@ class Users(Base):
     passcode = Column(Integer)
     is_admin = Column(String)
     paid = relationship('Paid',back_populates='client')
+    
 class Course(Base):
     __tablename__ = "courses"
 
@@ -40,7 +41,7 @@ class Paid(Base):
     id = Column(String, primary_key=True,unique=True)
     created_date = Column(DateTime,default=datetime.datetime.utcnow)
     name = Column(String)
-    amount = Column(Integer)
+    #amount = Column(Integer)
     client_id = Column(String, ForeignKey('users.id'))
     client = relationship('Users', back_populates='paid')
     course_id = Column(Integer, ForeignKey('courses.id'))

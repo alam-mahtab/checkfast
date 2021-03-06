@@ -20,9 +20,9 @@ import os
 #     #return str(connection+":///" +database)
 #     return str(database)
 
-#SQLALCHEMY_DATABASE_URL = "sqlite:///./test10.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test10.db"
 # For local connection
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:Pass2020!@13.127.254.56:5432" 
+#SQLALCHEMY_DATABASE_URL = "postgresql://postgres:Pass2020!@13.127.254.56:5432" 
 
 #SQLALCHEMY_DATABASE_URL ="psql --host=cd.csorhad7ihl5.ap-south-1.rds.amazonaws.com --port=5432 --username=postgres --password=Mobirizer12345 --dbname=cd"
 # For aws connection
