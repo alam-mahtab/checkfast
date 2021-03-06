@@ -58,8 +58,8 @@ def create_course(
         shutil.copyfileobj(file.file, image)
     print(images_path)
     #url = str("media/"+file.filename)
-    #url = os.path.join(images_path, filename)
-    url = os.path.join(static_root_absolute,filename)
+    url = os.path.join(images_path, filename)
+    #url = os.path.join(static_root_absolute,filename)
     return crud.create_course(db=db,name=name,title=title,desc=desc,price=price,url=url,type=type,status=status)
 
 @router.get("/courses/"  ,dependencies=[Depends(pagination_params)])
