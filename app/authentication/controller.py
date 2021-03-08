@@ -15,6 +15,7 @@ from app.users.controller import find_user_by_username
 router = APIRouter()
 from . import py_function
 from random import randint
+
 @router.post("/auth/register", response_model = schemas.UserList)
 async def register(user : schemas.UserCreate):
     userDB = await util.findExistedUser(user.username)

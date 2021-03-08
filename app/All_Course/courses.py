@@ -1,10 +1,10 @@
 from typing import Dict, List
 from fastapi import Depends,File, UploadFile, APIRouter, HTTPException
 from sqlalchemy.orm import Session
-from . import crud
+from . import crud, schemas
 from app.authentication import models
 #from courses_live.database import SessionCourse, some_engine
-from app.talent.database import SessionLocal, engine
+from app.talent.database import SessionLocal, engine,database
 import shutil
 import datetime
 #from coursebysubject.models import subjects
@@ -42,6 +42,46 @@ project_root = current_file_dir.parent
 project_root_absolute = project_root.resolve()
 static_root_absolute = project_root_absolute / "static" 
 
+# @router.post("/course", response_model=schemas.CourseList)
+# async def create_course(title:str,desc:str,name:str,price:int,types:str,status:int, file: UploadFile= File(...)):
+#     extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
+#     if not extension:
+#         return "Image must be jpg or png format!"
+    
+#     # outputImage = Image.fromarray(sr_img)  
+#     suffix = Path(file.filename).suffix
+#     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
+#     with open("static/"+filename, "wb") as image:
+#         shutil.copyfileobj(file.file, image)
+#     print(images_path)
+#     #url = str("media/"+file.filename)
+#     #url = os.path.join(images_path, filename)
+#     url = os.path.join(static_root_absolute,filename)
+#     gdate = datetime.datetime.now()
+#     query = models.Course.__table__.insert().values(
+#         title = title,
+#         name = name,
+#         desc = desc,
+#         price = price,
+#         type = types,
+#         status = status,
+#         url = url,
+#         created_date = gdate
+#     )
+#     print("hello")
+#     await database.execute(query)
+#     print("executed")
+#     return {
+#         "title" : title,
+#         "name" : name,
+#         "desc" : desc,
+#         "price" : price,
+#         "type" : types,
+#         "status" : status,
+#         "url" : url,
+#         "created_at" : gdate,
+#     }
+    #return True
 @router.post("/course/")
 def create_course(
     title:str,desc:str,name:str,price:int,type:str,status:int,file: UploadFile= File(...), db: Session = Depends(get_db)
@@ -59,8 +99,34 @@ def create_course(
     print(images_path)
     #url = str("media/"+file.filename)
     url = os.path.join(images_path, filename)
+    subject =  crud.get_course(db,id)
+    if not subject:
+        raise HTTPException(status_code=404, detail="Course not found")
     #url = os.path.join(static_root_absolute,filename)
     return crud.create_course(db=db,name=name,title=title,desc=desc,price=price,url=url,type=type,status=status)
+
+# @router.put("/course/{id}")
+# async def update_course(
+#     id:int,title:str,desc:str,name:str,price:int,type:str,status:int,file: UploadFile= File(...), db: Session = Depends(get_db)
+# ):
+#     extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
+#     if not extension:
+#         return "Image must be jpg or png format!"
+    
+#     # outputImage = Image.fromarray(sr_img)  
+#     suffix = Path(file.filename).suffix
+#     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
+#     with open("static/"+filename, "wb") as image:
+#         shutil.copyfileobj(file.file, image)
+#     print(images_path)
+#     #url = str("media/"+file.filename)
+#     url = os.path.join(images_path, filename)
+#     #url = os.path.join(static_root_absolute,filename)
+#     subject =  crud.get_course(db,id)
+#     if not subject:
+#         raise HTTPException(status_code=404, detail="Course not found")
+#     return await crud.update_course(db=db,name=name,title=title,desc=desc,price=price,url=url,type=type,status=status)
+#     #return {"update": update}
 
 @router.get("/courses/"  ,dependencies=[Depends(pagination_params)])
 def course_list(db: Session = Depends(get_db)):

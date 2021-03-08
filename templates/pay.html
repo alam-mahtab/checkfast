@@ -32,7 +32,7 @@
                   "order_id": "{{payment['order_id']}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
                   "client_id":"{{payment['client_id']}}",
                 
-                  "callback_url": "http://checkfast.herokuapp.com/success",
+                  "callback_url": "http://127.0.0.1:8000/success?{{payment['order_id']}}",
                     
 
                   "theme": {

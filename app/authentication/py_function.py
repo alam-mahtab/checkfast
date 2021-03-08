@@ -3,15 +3,15 @@ import pandas.io.sql as psql
 import pandas as pd
 from sqlalchemy.orm.session import Session
 def fetch_data(search,engine,search_type):
-#     query_cols = "SELECT * FROM database-1"
-#     df=pd.read_sql(query_cols,engine)
-#     col_list=(','.join(df.columns))
-#     print(col_list)
+    # query_cols = "SELECT * FROM Courses"
+    # df=pd.read_sql(query_cols,engine)
+    # col_list=(','.join(df.columns))
+    # print(col_list)
 
-#     query = 'SELECT TOP 10 FROM Users'\
-#                   "where lower(concat("+col_list+") like '%"+search+"%'"
-    query =" SELECT * FROM "+search_type+" where type like '%"+search+"%'"
-
+    # query = 'SELECT * FROM Courses '\
+    #               "where lower(CONCAT_WS("+col_list+")) like '%"+search+"%'"
+    # #query =" SELECT * FROM "+search_type+" where type like '%"+search+"%'"
+    query = "SELECT * FROM "+search_type+" where type like '%"+search+"%' OR name like '%"+search+"%' OR desc like '%"+search+"%' "#OR title like '%"+search+"%'
     print(query)
     df = pd.read_sql(query,engine)
     return df
@@ -24,6 +24,7 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from app.talent.database import database
+
 # def fetch_data(search,cnxn):
 #     query_cols='select top 1* from SALES_DATA'
 #     df=pd.read_sql(query_cols,cnxn)

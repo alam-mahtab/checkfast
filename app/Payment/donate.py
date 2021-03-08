@@ -7,7 +7,7 @@ import razorpay
 from fastapi.responses import HTMLResponse
 from app.authentication import schemas, models
 from app.authentication.models import Course
-#from . import models,schemas
+from .models import Payment
 router = APIRouter()
 
 templates = Jinja2Templates(directory="templates")
@@ -58,6 +58,9 @@ async def pay_me(request: Request, id:str):
     database.execute(pay1)
     print(pay)
     gid = randint(100000,1000000)
+    rec = ("paycd"+str(gid))
+    
+    print(rec)
     gdate = datetime.datetime.now()
     #print(pay.amount)
     df= pd.read_sql(pay,engine)
@@ -65,10 +68,29 @@ async def pay_me(request: Request, id:str):
     #print(result)
     print(pay1)
     client = razorpay.Client(auth=("rzp_test_cfbr43uRZAs35w","dcPlBgM8Fv7H2J1cYISFKC81"))
-    payment = client.order.create({'amount' : int(df.price.values)*100, 'currency':'INR', 'receipt': 'TEST','payment_capture':'1'})
-    
+    payment = client.order.create({'amount' : int(df.price.values)*100, 'currency':'INR', 'receipt': "paycd"+str(gid),'payment_capture':'1'})
+    print(payment)
+    query = Payment.__table__.insert().values(
+        id = str(gid),
+        pay_id = payment['id'],
+        amount = str(payment['amount']),
+        currency = payment['currency'],
+        receipt = payment['receipt'],
+        status = payment['status'],
+        pay_createdat = str(payment['created_at']),
+        created_date = gdate)
+    await database.execute(query)
     return templates.TemplateResponse("pay.html", {"request": request, "payment":payment})
+# Get Payment Id
+# @router.get("/payments/:id")
+# async def get_payment(request: Request):
 
+
+#     client = razorpay.Client(auth=("rzp_test_cfbr43uRZAs35w", "dcPlBgM8Fv7H2J1cYISFKC81")
+
+#     payment_id = "<PAYMENT_ID>"
+
+#     resp = client.payment.fetch(payment_id)
 @router.get("/success/")
 async def success(request: Request):
     return templates.TemplateResponse("success.html", {"request": request})

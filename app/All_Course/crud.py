@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from . import schemas
+from app.talent.database import SessionLocal, engine, database
 from app.authentication import models
 from .schemas import CourseBase,CourseList
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -14,6 +15,27 @@ def create_course(db: Session,title:str,name:str,desc:str,price:int,url:str,type
     db.commit()
     db.refresh(db_course)
     return db_course
+# async def create_course(title:str,name:str,desc:str,price:int,url:str,type:str,status:int):
+#     query = models.Course.insert().values(title=title,desc=desc,name=name,price=price,url=url,type=type,status=status)
+#     return await database.execute(query)
+    
+# async def update_course(db: Session,id:int,title:str,name:str,desc:str,price:int,url:str,type:str,status:int):
+#     db_course = models.Course.__table__.update().where(models.Course.id== id).values(title=title,desc=desc,name=name,price=price,url=url,type=type,status=status)
+#     print("hello")
+#     #@db.update(db_course)
+#     await database.execute(db_course)
+#     #db.commit()
+#     print("commit")
+#     # db.refresh(db_course)
+#     # print("refresh")
+#     return db_course
+async def update_course(db: Session,title:str,name:str,desc:str,price:int,url:str,type:str,status:int,id:int):
+    query = models.Course.__table__.update()\
+    .where(models.Course.id== id)\
+    .values(title=models.Course.title,desc=models.Course.desc,
+        name=models.Course.name,url=models.Course.url,price=models.Course.url,
+        type=models.Course.type,status=models.Course.status)
+    return await db.execute(query)
 
 def get_course(db, id: int):
     return db.query(models.Course).filter(models.Course.id== id).first()

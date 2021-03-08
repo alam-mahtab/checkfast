@@ -22,6 +22,7 @@ class Users(Base):
     passcode = Column(Integer)
     is_admin = Column(String)
     paid = relationship('Paid',back_populates='client')
+    paid3 = relationship('Payment',back_populates='clients')
     
 class Course(Base):
     __tablename__ = "courses"
@@ -36,6 +37,7 @@ class Course(Base):
     type = Column(String)
     status = Column(Integer)
     paid1 = relationship('Paid',back_populates='course')
+    paid2 = relationship('Payment',back_populates='courses')
 class Paid(Base):
     __tablename__ = "paids"
     id = Column(String, primary_key=True,unique=True)
