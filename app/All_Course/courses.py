@@ -99,9 +99,6 @@ def create_course(
     print(images_path)
     #url = str("media/"+file.filename)
     url = os.path.join(images_path, filename)
-    subject =  crud.get_course(db,id)
-    if not subject:
-        raise HTTPException(status_code=404, detail="Course not found")
     #url = os.path.join(static_root_absolute,filename)
     return crud.create_course(db=db,name=name,title=title,desc=desc,price=price,url=url,type=type,status=status)
 
