@@ -1,6 +1,6 @@
 
 from typing import List
-from fastapi import Depends,File, UploadFile, APIRouter
+from fastapi import Depends,File, UploadFile, APIRouter, HTTPException
 from fastapi_pagination.paginator import paginate
 from sqlalchemy.orm import Session
 from app.awards import crud, models
@@ -51,15 +51,7 @@ def create_award(
 
     extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
     if not extension:
-        return "Image must be jpg or png format!"
-    # print(current_file)
-    # print(project_root)
-    # print(current_file_dir)
-    # print(project_root_absolute)
-    # print("hello")
-    # print(dirname)
-    # print(images_path)
-    # outputImage = Image.fromarray(sr_img)  
+        return "Image must be jpg or png format!" 
     suffix = Path(file.filename).suffix
     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
     #print(filename)
@@ -70,6 +62,31 @@ def create_award(
     #print(static_root_absolute)
     url = os.path.join(images_path, filename)
     return crud.create_award(db=db,status=status,title=title,desc=desc,url=url)
+
+@router.put("/award/{id}")
+def update_award(
+    id:int,title:str,desc:str,status:int,file: UploadFile= File(...), db: Session = Depends(get_db)
+):
+    extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
+    if not extension:
+        return "Image must be jpg or png format!"
+    
+    # outputImage = Image.fromarray(sr_img)  
+    suffix = Path(file.filename).suffix
+    filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
+    with open("static/"+filename, "wb") as image:
+        shutil.copyfileobj(file.file, image)
+    print(images_path)
+    #url = str("media/"+file.filename)
+    url = os.path.join(images_path, filename)
+    #url = os.path.join(static_root_absolute,filename)
+    subject =  crud.get_award(db,id)
+    if not subject:
+        raise HTTPException(status_code=404, detail="Awards not found")
+    query = "UPDATE Award SET title='"+str(title)+"' , desc='"+str(desc)+"' , status='"+str(status)+"', url='"+str(url)+"' WHERE id='"+str(id)+"'"
+    db.execute(query)
+    db.commit()
+    return {"Result" : "Award Updated Succesfully"}
 
 @router.get("/Award/" ,dependencies=[Depends(pagination_params)])
 def award_list(db: Session = Depends(get_db)):

@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import Depends,File, UploadFile, APIRouter
+from fastapi import Depends,File, UploadFile, APIRouter, HTTPException
 from sqlalchemy.orm import Session
 from . import crud, models
 from .database import SessionLocal, engine
@@ -67,6 +67,35 @@ def create_talent(
 
     return crud.create_talent(db=db,name=name,desc=desc,url_profile=url_profile,url_cover=url_cover,type=type,status=status)
 
+@router.put("/talent/{id}")
+def update_talent(
+    id:int,desc:str,name:str,type:str,status:int,file_pro: UploadFile= File(...), file_cover: UploadFile= File(...), db: Session = Depends(get_db)
+):
+
+    extension_pro = file_pro.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+    if not extension_pro:
+        return "Image must be jpg or png format!"
+    suffix_pro = Path(file_pro.filename).suffix
+    filename_pro = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    with open("static/"+filename_pro, "wb") as image:
+        shutil.copyfileobj(file_pro.file, image)
+    url_profile = os.path.join(images_path, filename_pro)
+
+    extension_cover = file_cover.filename.split(".")[-1] in ("jpg", "jpeg", "png")
+    if not extension_cover:
+        return "Image must be jpg or png format!"
+    suffix_cover =Path(file_cover.filename).suffix
+    filename_cover = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_cover )
+    with open("static/"+filename_cover, "wb") as image:
+        shutil.copyfileobj(file_cover.file, image)
+    url_cover = os.path.join(images_path, filename_cover)
+    subject =  crud.get_talent(db,id)
+    if not subject:
+        raise HTTPException(status_code=404, detail="Talents not found")
+    query = "UPDATE talents SET url_profile='"+str(url_profile)+"' , desc='"+str(desc)+"' , status='"+str(status)+"', url_cover='"+str(url_cover)+"' WHERE id='"+str(id)+"'"
+    db.execute(query)
+    db.commit()
+    return {"Result" : "Talent Updated Succesfully"}
 
 @router.get("/talents/" ,dependencies=[Depends(pagination_params)])
 def talent_list(db: Session = Depends(get_db)):

@@ -1,6 +1,6 @@
 
 from typing import List
-from fastapi import Depends,File, UploadFile, APIRouter
+from fastapi import Depends,File, UploadFile, APIRouter, HTTPException
 from fastapi_pagination.paginator import paginate
 from sqlalchemy.orm import Session
 from . import crud, models
@@ -59,6 +59,31 @@ def create_filmo(
     #url = str("media/"+file.filename)
     url = os.path.join(images_path, filename)
     return crud.create_filmo(db=db,status=status,title=title,desc=desc,url=url)
+
+@router.post("/filmo/{id}")
+def update_filmo(
+    id:int,title:str,desc:str,status:int,file: UploadFile= File(...), db: Session = Depends(get_db)
+):
+
+    extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
+    if not extension:
+        return "Image must be jpg or png format!"
+    
+    # outputImage = Image.fromarray(sr_img)  
+    suffix = Path(file.filename).suffix
+    filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
+    with open("static/"+filename, "wb") as image:
+        shutil.copyfileobj(file.file, image)
+
+    #url = str("media/"+file.filename)
+    url = os.path.join(images_path, filename)
+    subject =  crud.get_filmo(db,id)
+    if not subject:
+        raise HTTPException(status_code=404, detail="Filmography not found")
+    query = "UPDATE filmos SET title='"+str(title)+"' , desc='"+str(desc)+"' , status='"+str(status)+"', url='"+str(url)+"' WHERE id='"+str(id)+"'"
+    db.execute(query)
+    db.commit()
+    return {"Result" : "Filmography Updated Succesfully"}
 
 @router.get("/filmos/" ,dependencies=[Depends(pagination_params)])
 def filmo_list(db: Session = Depends(get_db)):

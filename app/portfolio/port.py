@@ -1,6 +1,6 @@
 
 from typing import List
-from fastapi import Depends,File, UploadFile, APIRouter
+from fastapi import Depends,File, UploadFile, APIRouter, HTTPException
 from fastapi_pagination.paginator import paginate
 from sqlalchemy.orm import Session
 from . import crud, models
@@ -61,7 +61,28 @@ def create_port(status:int,file: UploadFile= File(...), db: Session = Depends(ge
     url = os.path.join(images_path, filename)
     crud.create_port(db=db,status=status,url=url)
     return {"url": url,"status":status}
+@router.put("/port/{id}")
+def update_port(id:int,status:int,file: UploadFile= File(...), db: Session = Depends(get_db)):
 
+    # extension = file.filename.split(".")[-1] in ("mp4", "3gp")
+    # if not extension:
+    #     return "video must be mp4 or 3gp format!"
+    
+    # outputImage = Image.fromarray(sr_img)  
+    suffix = Path(file.filename).suffix
+    filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
+    with open("static/"+filename, "wb") as video:
+        shutil.copyfileobj(file.file, video)
+
+    #url = str("media/"+file.filename)
+    url = os.path.join(images_path, filename)
+    subject =  crud.get_port(db,id)
+    if not subject:
+        raise HTTPException(status_code=404, detail="Portfolio not found")
+    query = "UPDATE ports SET status='"+str(status)+"', url='"+str(url)+"' WHERE id='"+str(id)+"'"
+    db.execute(query)
+    db.commit()
+    return {"Result" : "Filmography Updated Succesfully"}
 @router.get("/ports/" ,dependencies=[Depends(pagination_params)])
 def port_list(db: Session = Depends(get_db)):
     port_all = crud.port_list(db=db)

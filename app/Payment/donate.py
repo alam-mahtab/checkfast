@@ -80,8 +80,8 @@ async def pay_me(request: Request, id:str):
         pay_createdat = str(payment['created_at']),
         created_date = gdate)
     await database.execute(query)
-    return {**payment}
-    #return templates.TemplateResponse("pay.html", {"request": request, "payment":payment})
+    #return {**payment}
+    return templates.TemplateResponse("pay.html", {"request": request, "payment":payment})
 # Get Payment Id
 # @router.get("/payments/:id")
 # async def get_payment(request: Request):

@@ -102,26 +102,31 @@ def create_course(
     #url = os.path.join(static_root_absolute,filename)
     return crud.create_course(db=db,name=name,title=title,desc=desc,price=price,url=url,type=type,status=status)
 
-# @router.put("/course/{id}")
-# async def update_course(
-#     id:int,title:str,desc:str,name:str,price:int,type:str,status:int,file: UploadFile= File(...), db: Session = Depends(get_db)
-# ):
-#     extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
-#     if not extension:
-#         return "Image must be jpg or png format!"
+@router.put("/course/{id}")
+async def update_course(
+    id:int,title:str,desc:str,name:str,price:int,type:str,status:int,file: UploadFile= File(...), db: Session = Depends(get_db)
+):
+    extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
+    if not extension:
+        return "Image must be jpg or png format!"
     
-#     # outputImage = Image.fromarray(sr_img)  
-#     suffix = Path(file.filename).suffix
-#     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-#     with open("static/"+filename, "wb") as image:
-#         shutil.copyfileobj(file.file, image)
-#     print(images_path)
-#     #url = str("media/"+file.filename)
-#     url = os.path.join(images_path, filename)
-#     #url = os.path.join(static_root_absolute,filename)
-#     subject =  crud.get_course(db,id)
-#     if not subject:
-#         raise HTTPException(status_code=404, detail="Course not found")
+    # outputImage = Image.fromarray(sr_img)  
+    suffix = Path(file.filename).suffix
+    filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
+    with open("static/"+filename, "wb") as image:
+        shutil.copyfileobj(file.file, image)
+    print(images_path)
+    #url = str("media/"+file.filename)
+    url = os.path.join(images_path, filename)
+    #url = os.path.join(static_root_absolute,filename)
+    subject =  crud.get_course(db,id)
+    if not subject:
+        raise HTTPException(status_code=404, detail="Course not found")
+    #'select * from USERS where email='+"'"+str(username)+"'"+' and PASSWORD='+"'"+str(password)+"'"
+    query = "UPDATE courses SET title='"+str(title)+"' , name='"+str(name)+"' , desc='"+str(desc)+"' , price='"+str(price)+"' , type ='"+str(type)+"', status='"+str(status)+"', url='"+str(url)+"' WHERE id='"+str(id)+"'"
+    db.execute(query)
+    db.commit()
+    return {"Result" : "Course Updated Succesfully"}
 #     return await crud.update_course(db=db,name=name,title=title,desc=desc,price=price,url=url,type=type,status=status)
 #     #return {"update": update}
 
