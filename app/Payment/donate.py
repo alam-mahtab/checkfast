@@ -47,7 +47,7 @@ from random import randint
 import pandas as pd
 # 
 
-@router.get("/pay/{id}",response_class=HTMLResponse)
+@router.get("/pay/{id}")#,response_class=HTMLResponse)
 async def pay_me(request: Request, id:str):
     #pay = models.Payment.__table__.select(models.Payment.amount).where(models.Payment.id==id)
     
@@ -80,7 +80,8 @@ async def pay_me(request: Request, id:str):
         pay_createdat = str(payment['created_at']),
         created_date = gdate)
     await database.execute(query)
-    return templates.TemplateResponse("pay.html", {"request": request, "payment":payment})
+    return {**payment}
+    #return templates.TemplateResponse("pay.html", {"request": request, "payment":payment})
 # Get Payment Id
 # @router.get("/payments/:id")
 # async def get_payment(request: Request):
