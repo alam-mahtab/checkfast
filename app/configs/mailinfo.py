@@ -1,10 +1,8 @@
 from pydantic import BaseSettings
 
 class setting(BaseSettings):
-    db_connection : str
-    db_database : str
-    db_stringlite :str
-    db_stringpost : str
+    email_id : str
+    email_pwd: str
     
 
     class Config:

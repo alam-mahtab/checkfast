@@ -4,7 +4,7 @@ from app.configs.appinfo import setting
 from app.talent.database import database
 from fastapi import FastAPI, Request, Depends, UploadFile, File
 
-from app.configs import appinfo
+from .configs import dbinfo,appinfo
 import time
 from fastapi.middleware.cors import CORSMiddleware
 #import aiofiles
@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 #from fastapi.staticfiles import StaticFiles
 from starlette.staticfiles import StaticFiles
-
+from functools import lru_cache
 tags_metadata = [
     {   "name": "Auth",
         "description": "Operations with authentication. The **login** logic is also here.", },
@@ -65,12 +65,13 @@ app.add_middleware(
 )
 
 
-
+@lru_cache
 def app_setting():
     return appinfo.setting()
 
 @app.get("/app/info", tags =["App"])
 async def app_info(setting: appinfo.setting = Depends(app_setting)):
+    
     return {
         "app_name" : setting.app_name,
         "app_version" : setting.app_version,

@@ -62,10 +62,13 @@ def create_award(
     #print(static_root_absolute)
     url = os.path.join(images_path, filename)
     return crud.create_award(db=db,status=status,title=title,desc=desc,url=url)
-
+# import boto3
+# from botocore.exceptions import NoCredentialsError
 @router.put("/award/{id}")
 def update_award(
-    id:int,title:str,desc:str,status:int,file: UploadFile= File(...), db: Session = Depends(get_db)
+    id:int,title:str,desc:str,status:int,file: UploadFile= File(...),
+    #local_file, bucket, s3_file,
+     db: Session = Depends(get_db)
 ):
     extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
     if not extension:

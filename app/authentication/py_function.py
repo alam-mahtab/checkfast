@@ -2,6 +2,9 @@ from app.authentication.schemas import PasscodeUpdate
 import pandas.io.sql as psql
 import pandas as pd
 from sqlalchemy.orm.session import Session
+from app.configs import mailinfo
+def email_config():
+    return mailinfo.setting()
 def fetch_data(search,engine,search_type):
     # query_cols = "SELECT * FROM Courses"
     # df=pd.read_sql(query_cols,engine)
@@ -82,9 +85,9 @@ async def send_auth_code(email,username):
 def generate_auth_email(passcode1,RECEIVER_EMAIL):
     subject = "Verification Code"
     body ="\nHi Everyone,\n\n Your verification code is "+str(passcode1)
-    sender_email = conf.EMAIL_ID
+    sender_email = email_config().email_id
     receiver_email = RECEIVER_EMAIL
-    password = conf.EMAIL_PWD
+    password = email_config().email_pwd
 
     message = MIMEMultipart()
     message["From"] = sender_email
@@ -104,9 +107,9 @@ def generate_auth_email(passcode1,RECEIVER_EMAIL):
 def generate_password_change_email(RECEIVER_EMAIL):
     subject = "URGENT: Password Change"
     body ="\nHi User,\n\n Your password changed successfully "
-    sender_email = conf.EMAIL_ID
+    sender_email = email_config().email_id
     receiver_email = RECEIVER_EMAIL
-    password = conf.EMAIL_PWD
+    password = email_config().email_pwd
 
     message = MIMEMultipart()
     message["From"] = sender_email
