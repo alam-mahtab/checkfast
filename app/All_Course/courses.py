@@ -162,14 +162,14 @@ def comment_list(db: Session = Depends(get_db)):
     comment_all = crud.comment_list(db=db)
     return paginate(comment_all)
 
-# Wishlist
-@router.post("/courses/{courses_id}/wishlist")
-def create_wishlist(client_id:str,course_id:int,db:Session=Depends(get_db)):
-    return crud.create_wishlist(db=db,client_id=client_id,course_id=course_id)
-@router.get("/courses/{courses_id}/wishlist"  ,dependencies=[Depends(pagination_params)])
-def wishlist_list(db: Session = Depends(get_db)):
-    wishlist_all = crud.wishlist_list(db=db)
-    return paginate(wishlist_all)
+@router.get("/courses/{courses_id}/comment/{id}")
+def comment_detail(id:int,db: Session = Depends(get_db)):
+    course_by_id = crud.get_comment(db=db, id=id)
+    # comments = db.query(models.Comment).filter(models.Comment.courses_id == courses_id)
+    #active_comment = comments.filter(models.Comment.is_active == True).all()
+    if course_by_id is None:
+        raise HTTPException(status_code=404,detail="Comment with this id is not in database")
+    return { "comments":course_by_id, }#"active_comment":active_comment }
 # @router.put("/subjects/{subject_id}", response_model=schemas.SubjectUpdate, status_code=200)
 # async def put_subject(subject_id: int, subject: schemas.SubjectList,
 #     # #file: UploadFile= File(...),

@@ -49,7 +49,10 @@ def create_wishlist(db:Session,course_id:int,client_id:str):
 
 def get_course(db, id: int):
     return db.query(models.Course).filter(models.Course.id== id).first()
-
+def get_comment(db, id: int):
+    return db.query(models.Comment).filter(models.Comment.courses_id== id).all()
+def get_wishlist(db, id: int):
+    return db.query(models.Wishlist).filter(models.Wishlist.client_id== id).all()
 def course_list(db):
     return db.query(models.Course).all()
 def comment_list(db):
