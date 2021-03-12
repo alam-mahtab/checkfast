@@ -1,4 +1,4 @@
-from sqlalchemy import  Column, Integer, String,DateTime,ForeignKey
+from sqlalchemy import  Column, Integer, String,DateTime,ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import URLType
 import datetime
@@ -23,6 +23,7 @@ class Users(Base):
     is_admin = Column(String)
     paid = relationship('Paid',back_populates='client')
     paid3 = relationship('Payment',back_populates='clients')
+    user_wish = relationship('Wishlist', back_populates='users_wish')
     
 class Course(Base):
     __tablename__ = "courses"
@@ -38,6 +39,8 @@ class Course(Base):
     status = Column(Integer)
     paid1 = relationship('Paid',back_populates='course')
     paid2 = relationship('Payment',back_populates='courses')
+    course_comment = relationship('Comment', back_populates='course_related')
+    user_course = relationship('Wishlist',back_populates='course_wish')
 class Paid(Base):
     __tablename__ = "paids"
     id = Column(String, primary_key=True,unique=True)
@@ -48,3 +51,24 @@ class Paid(Base):
     client = relationship('Users', back_populates='paid')
     course_id = Column(Integer, ForeignKey('courses.id'))
     course = relationship('Course', back_populates='paid1')
+    
+class Comment(Base):
+    __tablename__ = "comments"
+
+    id = Column(Integer, primary_key=True,unique=True)
+    created_date = Column(DateTime,default=datetime.datetime.utcnow)
+    is_active = Column(Boolean,default=True)
+    name = Column(String)
+    Message = Column(String)
+    courses_id = Column(Integer, ForeignKey('courses.id'))
+
+    course_related = relationship('Course',back_populates='course_comment')
+
+class Wishlist(Base):
+    __tablename__ = "wishlists"
+    id = Column(Integer, primary_key=True,unique=True)
+    created_date = Column(DateTime,default=datetime.datetime.utcnow)
+    client_id = Column(String, ForeignKey('users.id'))
+    users_wish = relationship('Users', back_populates='user_wish')
+    course_id = Column(Integer, ForeignKey('courses.id'))
+    course_wish = relationship('Course', back_populates='user_course')

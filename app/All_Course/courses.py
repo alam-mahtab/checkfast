@@ -41,47 +41,7 @@ current_file_dir = current_file.parent
 project_root = current_file_dir.parent
 project_root_absolute = project_root.resolve()
 static_root_absolute = project_root_absolute / "static" 
-
-# @router.post("/course", response_model=schemas.CourseList)
-# async def create_course(title:str,desc:str,name:str,price:int,types:str,status:int, file: UploadFile= File(...)):
-#     extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
-#     if not extension:
-#         return "Image must be jpg or png format!"
-    
-#     # outputImage = Image.fromarray(sr_img)  
-#     suffix = Path(file.filename).suffix
-#     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-#     with open("static/"+filename, "wb") as image:
-#         shutil.copyfileobj(file.file, image)
-#     print(images_path)
-#     #url = str("media/"+file.filename)
-#     #url = os.path.join(images_path, filename)
-#     url = os.path.join(static_root_absolute,filename)
-#     gdate = datetime.datetime.now()
-#     query = models.Course.__table__.insert().values(
-#         title = title,
-#         name = name,
-#         desc = desc,
-#         price = price,
-#         type = types,
-#         status = status,
-#         url = url,
-#         created_date = gdate
-#     )
-#     print("hello")
-#     await database.execute(query)
-#     print("executed")
-#     return {
-#         "title" : title,
-#         "name" : name,
-#         "desc" : desc,
-#         "price" : price,
-#         "type" : types,
-#         "status" : status,
-#         "url" : url,
-#         "created_at" : gdate,
-#     }
-    #return True
+ 
 @router.post("/course/")
 def create_course(
     title:str,desc:str,name:str,price:int,type:str,status:int,file: UploadFile= File(...), db: Session = Depends(get_db)
@@ -135,11 +95,16 @@ def course_list(db: Session = Depends(get_db)):
     course_all = crud.course_list(db=db)
     return paginate(course_all)
 
-@router.get("/subjects/{subject_id}")
-def course_detail(subject_id:int,db: Session = Depends(get_db)):
-    return crud.get_course(db=db, id=subject_id)
+@router.get("/courses/{courses_id}")
+def course_detail(courses_id:int,db: Session = Depends(get_db)):
+    course_by_id = crud.get_course(db=db, id=courses_id)
+    comments = db.query(models.Comment).filter(models.Comment.courses_id == courses_id)
+    active_comment = comments.filter(models.Comment.is_active == True).all()
+    if course_by_id is None:
+        raise HTTPException(status_code=404,detail="Course by this id is not in database")
+    return { "course":course_by_id, "active_comment":active_comment }
 
-@router.delete("/subjects/{subject_id}")
+@router.delete("/courses/{courses_id}")
 async def delete(subject_id: int, db: Session = Depends(get_db)):
     deleted = await crud.delete(db, subject_id)
     return {"deleted": deleted}
@@ -185,6 +150,26 @@ def subject_list(db: Session = Depends(get_db)):
 def free_list(db: Session = Depends(get_db)):
     free_all = crud.master_list(db=db)
     return paginate(free_all)
+
+# Comment Section
+
+@router.post("/courses/{courses_id}/comment")
+def create_comment(name:str,Message:str,courses_id:int,db:Session=Depends(get_db)):
+    return crud.create_comment(db=db,name=name,Message=Message,courses_id=courses_id)
+
+@router.get("/courses/{courses_id}/comment"  ,dependencies=[Depends(pagination_params)])
+def comment_list(db: Session = Depends(get_db)):
+    comment_all = crud.comment_list(db=db)
+    return paginate(comment_all)
+
+# Wishlist
+@router.post("/courses/{courses_id}/wishlist")
+def create_wishlist(client_id:str,course_id:int,db:Session=Depends(get_db)):
+    return crud.create_wishlist(db=db,client_id=client_id,course_id=course_id)
+@router.get("/courses/{courses_id}/wishlist"  ,dependencies=[Depends(pagination_params)])
+def wishlist_list(db: Session = Depends(get_db)):
+    wishlist_all = crud.wishlist_list(db=db)
+    return paginate(wishlist_all)
 # @router.put("/subjects/{subject_id}", response_model=schemas.SubjectUpdate, status_code=200)
 # async def put_subject(subject_id: int, subject: schemas.SubjectList,
 #     # #file: UploadFile= File(...),

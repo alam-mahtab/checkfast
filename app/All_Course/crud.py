@@ -3,9 +3,7 @@ from . import schemas
 from app.talent.database import SessionLocal, engine, database
 from app.authentication import models
 from .schemas import CourseBase,CourseList
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from passlib.context import CryptContext
-from datetime import datetime, timedelta
+#from datetime import datetime, timedelta
 from typing import Optional
 import datetime
 
@@ -15,6 +13,18 @@ def create_course(db: Session,title:str,name:str,desc:str,price:int,url:str,type
     db.commit()
     db.refresh(db_course)
     return db_course
+def create_comment(db:Session,courses_id:int,name:str,Message:str):
+    db_comment = models.Comment(name=name,courses_id = courses_id,Message=Message)
+    db.add(db_comment)
+    db.commit()
+    db.refresh(db_comment)
+    return db_comment
+def create_wishlist(db:Session,course_id:int,client_id:str):
+    db_wish = models.Wishlist(course_id = course_id,client_id=client_id)
+    db.add(db_wish)
+    db.commit()
+    db.refresh(db_wish)
+    return db_wish
 # async def create_course(title:str,name:str,desc:str,price:int,url:str,type:str,status:int):
 #     query = models.Course.insert().values(title=title,desc=desc,name=name,price=price,url=url,type=type,status=status)
 #     return await database.execute(query)
@@ -42,6 +52,10 @@ def get_course(db, id: int):
 
 def course_list(db):
     return db.query(models.Course).all()
+def comment_list(db):
+    return db.query(models.Comment).all()
+def wishlist_list(db):
+    return db.query(models.Wishlist).all()
 
 def master_list(db):
     return db.query(models.Course).filter(models.Course.status== 1 and models.Course.type == "Master").all()
