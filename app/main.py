@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 #from fastapi.staticfiles import StaticFiles
 from starlette.staticfiles import StaticFiles
-from functools import lru_cache
+
 tags_metadata = [
     {   "name": "Auth",
         "description": "Operations with authentication. The **login** logic is also here.", },
@@ -65,7 +65,6 @@ app.add_middleware(
 )
 
 
-@lru_cache
 def app_setting():
     return appinfo.setting()
 
