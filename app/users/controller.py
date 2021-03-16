@@ -32,9 +32,7 @@ async def find_user_by_username(username : str):
 @router.get("/users/email",response_model = schemas.UserList)
 async def find_user_by_email(email : str,currentuser: schemas.UserList = Depends(util.get_current_active_user)):
     query = Users.__table__.select().where(Users.email== email)
-    database.fetch_one(query)
-    #return {"email":email}
-    return currentuser
+    return await database.fetch_one(query)
 
 @router.delete("/users/username")
 async def delete_user_by_username(username: str):

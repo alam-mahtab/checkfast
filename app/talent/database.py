@@ -5,6 +5,13 @@ from sqlalchemy.orm import sessionmaker
 import os
 from app.configs import dbinfo
 #from db.table import metadata
+import cloudinary
+
+cloudinary.config(
+    cloud_name = "alamcloud",
+    api_key = "376629981897418",
+    api_secret = "eSWZxKVVqisGZ_FIzCigU-JE_6I"
+)
 
 
 

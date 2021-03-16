@@ -27,6 +27,8 @@ from starlette.staticfiles import StaticFiles
 import os
 from os.path import dirname, abspath, join
 import shutil
+import cloudinary
+import cloudinary.uploader
 
 router.mount("/static", StaticFiles(directory="static"), name="static")
 dirname = dirname(dirname(abspath(__file__)))
@@ -52,18 +54,22 @@ def create_talent(
         return "Image must be jpg or png format!"
     suffix_pro = Path(file_pro.filename).suffix
     filename_pro = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
-    with open("static/"+filename_pro, "wb") as image:
-        shutil.copyfileobj(file_pro.file, image)
-    url_profile = os.path.join(images_path, filename_pro)
+    result = cloudinary.uploader.upload(file_pro.file)
+    url_profile = result.get("url")
+    # with open("static/"+filename_pro, "wb") as image:
+    #     shutil.copyfileobj(file_pro.file, image)
+    # url_profile = os.path.join(images_path, filename_pro)
 
     extension_cover = file_cover.filename.split(".")[-1] in ("jpg", "jpeg", "png")
     if not extension_cover:
         return "Image must be jpg or png format!"
     suffix_cover =Path(file_cover.filename).suffix
     filename_cover = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_cover )
-    with open("static/"+filename_cover, "wb") as image:
-        shutil.copyfileobj(file_cover.file, image)
-    url_cover = os.path.join(images_path, filename_cover)
+    result = cloudinary.uploader.upload(file_cover.file)
+    url_cover = result.get("url")
+    # with open("static/"+filename_cover, "wb") as image:
+    #     shutil.copyfileobj(file_cover.file, image)
+    # url_cover = os.path.join(images_path, filename_cover)
 
     return crud.create_talent(db=db,name=name,desc=desc,url_profile=url_profile,url_cover=url_cover,type=type,status=status)
 
@@ -77,18 +83,22 @@ def update_talent(
         return "Image must be jpg or png format!"
     suffix_pro = Path(file_pro.filename).suffix
     filename_pro = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
-    with open("static/"+filename_pro, "wb") as image:
-        shutil.copyfileobj(file_pro.file, image)
-    url_profile = os.path.join(images_path, filename_pro)
+    result = cloudinary.uploader.upload(file_pro.file)
+    url_profile = result.get("url")
+    # with open("static/"+filename_pro, "wb") as image:
+    #     shutil.copyfileobj(file_pro.file, image)
+    # url_profile = os.path.join(images_path, filename_pro)
 
     extension_cover = file_cover.filename.split(".")[-1] in ("jpg", "jpeg", "png")
     if not extension_cover:
         return "Image must be jpg or png format!"
     suffix_cover =Path(file_cover.filename).suffix
     filename_cover = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_cover )
-    with open("static/"+filename_cover, "wb") as image:
-        shutil.copyfileobj(file_cover.file, image)
-    url_cover = os.path.join(images_path, filename_cover)
+    result = cloudinary.uploader.upload(file_cover.file)
+    url_cover = result.get("url")
+    # with open("static/"+filename_cover, "wb") as image:
+    #     shutil.copyfileobj(file_cover.file, image)
+    # url_cover = os.path.join(images_path, filename_cover)
     subject =  crud.get_talent(db,id)
     if not subject:
         raise HTTPException(status_code=404, detail="Talents not found")

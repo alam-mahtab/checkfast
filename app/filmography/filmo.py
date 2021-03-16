@@ -20,7 +20,8 @@ import time
 from starlette.staticfiles import StaticFiles
 import os
 from os.path import dirname, abspath, join
-
+import cloudinary
+import cloudinary.uploader
 
 def get_db():
     db = SessionLocal()
@@ -53,14 +54,16 @@ def create_filmo(
     # outputImage = Image.fromarray(sr_img)  
     suffix = Path(file.filename).suffix
     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-    with open("static/"+filename, "wb") as image:
-        shutil.copyfileobj(file.file, image)
+    result = cloudinary.uploader.upload(file.file)
+    url = result.get("url")
+    # with open("static/"+filename, "wb") as image:
+    #     shutil.copyfileobj(file.file, image)
 
-    #url = str("media/"+file.filename)
-    url = os.path.join(images_path, filename)
+    # #url = str("media/"+file.filename)
+    # url = os.path.join(images_path, filename)
     return crud.create_filmo(db=db,status=status,title=title,desc=desc,url=url)
 
-@router.post("/filmo/{id}")
+@router.put("/filmo/{id}")
 def update_filmo(
     id:int,title:str,desc:str,status:int,file: UploadFile= File(...), db: Session = Depends(get_db)
 ):
@@ -72,11 +75,13 @@ def update_filmo(
     # outputImage = Image.fromarray(sr_img)  
     suffix = Path(file.filename).suffix
     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-    with open("static/"+filename, "wb") as image:
-        shutil.copyfileobj(file.file, image)
+    result = cloudinary.uploader.upload(file.file)
+    url = result.get("url")
+    # with open("static/"+filename, "wb") as image:
+    #     shutil.copyfileobj(file.file, image)
 
-    #url = str("media/"+file.filename)
-    url = os.path.join(images_path, filename)
+    # #url = str("media/"+file.filename)
+    # url = os.path.join(images_path, filename)
     subject =  crud.get_filmo(db,id)
     if not subject:
         raise HTTPException(status_code=404, detail="Filmography not found")

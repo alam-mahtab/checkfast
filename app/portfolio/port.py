@@ -20,7 +20,8 @@ import time
 from starlette.staticfiles import StaticFiles
 import os
 from os.path import dirname, abspath, join
-
+import cloudinary
+import cloudinary.uploader
 
 def get_db():
     db = SessionLocal()
@@ -54,11 +55,13 @@ def create_port(status:int,file: UploadFile= File(...), db: Session = Depends(ge
     # outputImage = Image.fromarray(sr_img)  
     suffix = Path(file.filename).suffix
     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-    with open("static/"+filename, "wb") as video:
-        shutil.copyfileobj(file.file, video)
+    result = cloudinary.uploader.upload(file.file)
+    url = result.get("url")
+    # with open("static/"+filename, "wb") as video:
+    #     shutil.copyfileobj(file.file, video)
 
-    #url = str("media/"+file.filename)
-    url = os.path.join(images_path, filename)
+    # #url = str("media/"+file.filename)
+    # url = os.path.join(images_path, filename)
     crud.create_port(db=db,status=status,url=url)
     return {"url": url,"status":status}
 @router.put("/port/{id}")
@@ -71,11 +74,13 @@ def update_port(id:int,status:int,file: UploadFile= File(...), db: Session = Dep
     # outputImage = Image.fromarray(sr_img)  
     suffix = Path(file.filename).suffix
     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-    with open("static/"+filename, "wb") as video:
-        shutil.copyfileobj(file.file, video)
+    result = cloudinary.uploader.upload(file.file)
+    url = result.get("url")
+    # with open("static/"+filename, "wb") as video:
+    #     shutil.copyfileobj(file.file, video)
 
-    #url = str("media/"+file.filename)
-    url = os.path.join(images_path, filename)
+    # #url = str("media/"+file.filename)
+    # url = os.path.join(images_path, filename)
     subject =  crud.get_port(db,id)
     if not subject:
         raise HTTPException(status_code=404, detail="Portfolio not found")

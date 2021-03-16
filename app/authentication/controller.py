@@ -116,7 +116,7 @@ from app.talent.database import engine
 @router.get("/search")
 def get_data(search : str = "",search_type: str =" "):
     df = py_function.fetch_data(search,engine,search_type)
-    return df.to_dict('r')
+    return df.to_dict('sequence')
 
 @router.post('/auth')
 async def get_user_auth(email: str, username: str):

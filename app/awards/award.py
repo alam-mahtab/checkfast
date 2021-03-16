@@ -21,6 +21,9 @@ from fastapi.staticfiles import StaticFiles
 import os
 from os.path import dirname, abspath, join
 
+import cloudinary
+import cloudinary.uploader
+
 
 def get_db():
     db = SessionLocal()
@@ -55,12 +58,14 @@ def create_award(
     suffix = Path(file.filename).suffix
     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
     #print(filename)
-    with open("static/"+filename, "wb") as image:
-        shutil.copyfileobj(file.file, image)
+    result = cloudinary.uploader.upload(file.file)
+    url = result.get("url")
+    # with open("static/"+filename, "wb") as image:
+    #     shutil.copyfileobj(file.file, image)
 
-    #url = str("media/"+file.filename)
-    #print(static_root_absolute)
-    url = os.path.join(images_path, filename)
+    # #url = str("media/"+file.filename)
+    # #print(static_root_absolute)
+    # url = os.path.join(images_path, filename)
     return crud.create_award(db=db,status=status,title=title,desc=desc,url=url)
 # import boto3
 # from botocore.exceptions import NoCredentialsError
@@ -77,12 +82,14 @@ def update_award(
     # outputImage = Image.fromarray(sr_img)  
     suffix = Path(file.filename).suffix
     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-    with open("static/"+filename, "wb") as image:
-        shutil.copyfileobj(file.file, image)
-    print(images_path)
-    #url = str("media/"+file.filename)
-    url = os.path.join(images_path, filename)
-    #url = os.path.join(static_root_absolute,filename)
+    result = cloudinary.uploader.upload(file.file)
+    url = result.get("url")
+    # with open("static/"+filename, "wb") as image:
+    #     shutil.copyfileobj(file.file, image)
+    # print(images_path)
+    # #url = str("media/"+file.filename)
+    # url = os.path.join(images_path, filename)
+    # #url = os.path.join(static_root_absolute,filename)
     subject =  crud.get_award(db,id)
     if not subject:
         raise HTTPException(status_code=404, detail="Awards not found")

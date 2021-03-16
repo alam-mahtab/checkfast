@@ -47,7 +47,7 @@ from random import randint
 import pandas as pd
 # 
 
-@router.get("/pay/{id}")#,response_class=HTMLResponse)
+@router.get("/pay/{id}/")#,response_class=HTMLResponse)
 async def pay_me(request: Request, id:str):
     #pay = models.Payment.__table__.select(models.Payment.amount).where(models.Payment.id==id)
     
@@ -78,20 +78,39 @@ async def pay_me(request: Request, id:str):
         receipt = payment['receipt'],
         status = payment['status'],
         pay_createdat = str(payment['created_at']),
-        created_date = gdate)
+        created_date = gdate,)
+        # client_id=str('65f8d1e7-82fa-11eb-9a8a-18c04d4a628c)',
+        # course_id = id)
     await database.execute(query)
     #return {**payment}
     return templates.TemplateResponse("pay.html", {"request": request, "payment":payment})
-# Get Payment Id
-# @router.get("/payments/:id")
-# async def get_payment(request: Request):
+@router.get("/payments")
+async def get_payment():
+    client = razorpay.Client(auth=("rzp_test_cfbr43uRZAs35w", "dcPlBgM8Fv7H2J1cYISFKC81"))
+    count = 2
+    skip = 1
 
+    resp = client.order.fetch_all()
+    return resp
+# Get Payment Id client = razorpay.Client(auth=("rzp_test_cfbr43uRZAs35w", "dcPlBgM8Fv7H2J1cYISFKC81")
+@router.get("/payments/:id")
+async def get_payment_by_id(request: Request, order_id:str):
+    
+    client = razorpay.Client(auth=("rzp_test_cfbr43uRZAs35w", "dcPlBgM8Fv7H2J1cYISFKC81"))
 
-#     client = razorpay.Client(auth=("rzp_test_cfbr43uRZAs35w", "dcPlBgM8Fv7H2J1cYISFKC81")
+    order_id = order_id
 
-#     payment_id = "<PAYMENT_ID>"
+    resp = client.order.fetch(order_id)
+    return resp
+@router.get("/payments/:id/payments")
+async def get_all_payment_by_id(request: Request, order_id:str):
+    
+    client = razorpay.Client(auth=("rzp_test_cfbr43uRZAs35w", "dcPlBgM8Fv7H2J1cYISFKC81"))
 
-#     resp = client.payment.fetch(payment_id)
+    order_id = order_id
+
+    resp = client.order.fetch(order_id)
+    return resp
 @router.get("/success/")
 async def success(request: Request):
     return templates.TemplateResponse("success.html", {"request": request})

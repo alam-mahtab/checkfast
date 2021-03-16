@@ -21,7 +21,8 @@ import time
 from starlette.staticfiles import StaticFiles
 import os
 from os.path import dirname, abspath, join
-
+import cloudinary
+import cloudinary.uploader
 
 def get_db():
     db = SessionLocal()
@@ -54,12 +55,14 @@ def create_course(
     # outputImage = Image.fromarray(sr_img)  
     suffix = Path(file.filename).suffix
     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-    with open("static/"+filename, "wb") as image:
-        shutil.copyfileobj(file.file, image)
-    print(images_path)
-    #url = str("media/"+file.filename)
-    url = os.path.join(images_path, filename)
-    #url = os.path.join(static_root_absolute,filename)
+    result = cloudinary.uploader.upload(file.file)
+    url = result.get("url")
+    # with open("static/"+filename, "wb") as image:
+    #     shutil.copyfileobj(file.file, image)
+    # print(images_path)
+    # #url = str("media/"+file.filename)
+    # url = os.path.join(images_path, filename)
+    # #url = os.path.join(static_root_absolute,filename)
     return crud.create_course(db=db,name=name,title=title,desc=desc,price=price,url=url,type=type,status=status)
 
 @router.put("/course/{id}")
@@ -73,12 +76,14 @@ async def update_course(
     # outputImage = Image.fromarray(sr_img)  
     suffix = Path(file.filename).suffix
     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-    with open("static/"+filename, "wb") as image:
-        shutil.copyfileobj(file.file, image)
-    print(images_path)
-    #url = str("media/"+file.filename)
-    url = os.path.join(images_path, filename)
-    #url = os.path.join(static_root_absolute,filename)
+    result = cloudinary.uploader.upload(file.file)
+    url = result.get("url")
+    # with open("static/"+filename, "wb") as image:
+    #     shutil.copyfileobj(file.file, image)
+    # print(images_path)
+    # #url = str("media/"+file.filename)
+    # url = os.path.join(images_path, filename)
+    # #url = os.path.join(static_root_absolute,filename)
     subject =  crud.get_course(db,id)
     if not subject:
         raise HTTPException(status_code=404, detail="Course not found")
