@@ -60,6 +60,15 @@ def comment_list(db):
 def wishlist_list(db):
     return db.query(models.Wishlist).all()
 
+async def delete_wishlist(db: Session,id: int)-> bool:
+   sym1 =models.Wishlist.__table__
+   sym = sym1.delete().where(models.Wishlist.id== id)
+   print(sym)
+   result = db.execute(sym)
+   db.commit()
+   return True
+
+
 def master_list(db):
     return db.query(models.Course).filter(models.Course.status== 1 and models.Course.type == "Master").all()
 

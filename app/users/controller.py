@@ -82,3 +82,8 @@ def comment_detail(id:str,db: Session = Depends(get_db)):
     if course_by_id is None:
         raise HTTPException(status_code=404,detail="Comment with this id is not in database")
     return { "Wishlist":course_by_id, }#"active_comment":active_comment }
+
+@router.delete("/users/{userId}/wishlist/{id}")
+async def delete(id: int, db: Session = Depends(get_db)):
+    deleted = await crud.delete_wishlist(db,id)
+    return {"deleted": deleted}
