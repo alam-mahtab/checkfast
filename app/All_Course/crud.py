@@ -87,8 +87,8 @@ def create_notes(db:Session,client_id:str,detail:str):
     db.refresh(db_wish)
     return db_wish
 
-def get_notes(db, id: int):
-    return db.query(models.Notes).filter(models.Notes.client_id== id).all()
+def get_notes(db, client_id: int):
+    return db.query(models.Notes).filter(models.Notes.client_id== client_id).all()
 def get_notes_course_id(db, id: int):
     return db.query(models.Notes.course_id).filter(models.Notes.client_id== id).all()
 def notes_list(db):

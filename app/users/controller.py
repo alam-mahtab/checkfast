@@ -167,21 +167,29 @@ def notes_list(db: Session = Depends(get_db)):
     print(notes_all)
     return paginate(notes_all)
 
-# @router.put("/users/{userId}/notes/{id}")
-# async def update_notes(
-#     id:int,client_id:str,detail:str,db:Session=Depends(get_db)
-# ):  
-#     subject = crud.get_notes(db=db, id=id)
-#     if not subject:
-#         raise HTTPException(status_code=404, detail="Course not found")
-#     query = "UPDATE notes SET client_id='"+str(client_id)+"' , detail='"+str(detail)+"'  WHERE id='"+str(id)+"'"
-#     db.execute(query)
-#     db.commit()
-#     return {"Result" : "Course Updated Succesfully"}
+@router.put("/users/{userId}/notes/{id}")
+async def update_notes(
+    client_id:str, id_s :int ,detail:str,db:Session=Depends(get_db)
+):  
+    subject = crud.get_notes(db=db, client_id=client_id)
+
+    if not subject:
+        raise HTTPException(status_code=404, detail="Course not found")
+    # query = "UPDATE NOTES SET DETAIL = '"+str(detail)+"' WHERE CLIENT_ID = '"+str(client_id)+"' AND ID = '"+str(id)+"'" 
+
+    # db.execute(query)
+    # db.commit()
+    query = models.Notes.__table__.update().\
+        where(models.Notes.client_id == client_id and models.Notes.id == id_s).\
+            values(
+                detail=detail
+            )
+    await database.execute(query)
+    return {"Result" : "Course Updated Succesfully"}
 
 @router.get("/users/{userId}/notes/{id}")
 def notes_detail(id:str,db: Session = Depends(get_db)):
-    course_by_id = crud.get_notes(db=db, id=id)
+    course_by_id = crud.get_notes(db=db, client_id=id)
     if course_by_id is None:
         raise HTTPException(status_code=404,detail="Notes with this id is not in database")
     return course_by_id
