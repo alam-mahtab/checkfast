@@ -19,50 +19,84 @@ def create_comment(db:Session,courses_id:int,name:str,Message:str):
     db.commit()
     db.refresh(db_comment)
     return db_comment
+
+
+def get_course(db, id: int):
+    return db.query(models.Course).filter(models.Course.id== id).first()
+def course_list(db):
+    return db.query(models.Course).all()
+
+def get_comment(db, id: int):
+    return db.query(models.Comment).filter(models.Comment.courses_id== id).all()
+def comment_list(db):
+    return db.query(models.Comment).all()
+
+# Wishlist
 def create_wishlist(db:Session,course_id:int,client_id:str):
     db_wish = models.Wishlist(course_id = course_id,client_id=client_id)
     db.add(db_wish)
     db.commit()
     db.refresh(db_wish)
     return db_wish
-# async def create_course(title:str,name:str,desc:str,price:int,url:str,type:str,status:int):
-#     query = models.Course.insert().values(title=title,desc=desc,name=name,price=price,url=url,type=type,status=status)
-#     return await database.execute(query)
-    
-# async def update_course(db: Session,id:int,title:str,name:str,desc:str,price:int,url:str,type:str,status:int):
-#     db_course = models.Course.__table__.update().where(models.Course.id== id).values(title=title,desc=desc,name=name,price=price,url=url,type=type,status=status)
-#     print("hello")
-#     #@db.update(db_course)
-#     await database.execute(db_course)
-#     #db.commit()
-#     print("commit")
-#     # db.refresh(db_course)
-#     # print("refresh")
-#     return db_course
-# async def update_course(db: Session,title:str,name:str,desc:str,price:int,url:str,type:str,status:int,id:int):
-#     query = models.Course.__table__.update()\
-#     .where(models.Course.id== id)\
-#     .values(title=models.Course.title,desc=models.Course.desc,
-#         name=models.Course.name,url=models.Course.url,price=models.Course.url,
-#         type=models.Course.type,status=models.Course.status)
-#     return await db.execute(query)
 
-def get_course(db, id: int):
-    return db.query(models.Course).filter(models.Course.id== id).first()
-def get_comment(db, id: int):
-    return db.query(models.Comment).filter(models.Comment.courses_id== id).all()
 def get_wishlist(db, id: int):
     return db.query(models.Wishlist).filter(models.Wishlist.client_id== id).all()
-def course_list(db):
-    return db.query(models.Course).all()
-def comment_list(db):
-    return db.query(models.Comment).all()
+def get_wishlist_course_id(db, id: int):
+    return db.query(models.Wishlist.course_id).filter(models.Wishlist.client_id== id).all()
+def get_wishlist_course_by_id(db, id: int):
+    return db.query(models.Course).filter(models.Course.id== id).all()
 def wishlist_list(db):
     return db.query(models.Wishlist).all()
 
 async def delete_wishlist(db: Session,id: int)-> bool:
    sym1 =models.Wishlist.__table__
    sym = sym1.delete().where(models.Wishlist.id== id)
+   print(sym)
+   result = db.execute(sym)
+   db.commit()
+   return True
+
+# Project Undertaken
+def create_project(db:Session,client_id:str,url:str,first_name:str,details:str):
+    db_wish = models.Project(client_id=client_id,url=url,first_name=first_name,details=details)
+    db.add(db_wish)
+    db.commit()
+    db.refresh(db_wish)
+    return db_wish
+
+def get_project(db, id: int):
+    return db.query(models.Project).filter(models.Project.client_id== id).all()
+def get_project_course_id(db, id: int):
+    return db.query(models.Project.course_id).filter(models.Project.client_id== id).all()
+def project_list(db):
+    return db.query(models.Project).all()
+
+async def delete_project(db: Session,id: int)-> bool:
+   sym1 =models.Project.__table__
+   sym = sym1.delete().where(models.Project.id== id)
+   print(sym)
+   result = db.execute(sym)
+   db.commit()
+   return True
+
+# Notes
+def create_notes(db:Session,client_id:str,detail:str):
+    db_wish = models.Notes(client_id=client_id,detail=detail)
+    db.add(db_wish)
+    db.commit()
+    db.refresh(db_wish)
+    return db_wish
+
+def get_notes(db, id: int):
+    return db.query(models.Notes).filter(models.Notes.client_id== id).all()
+def get_notes_course_id(db, id: int):
+    return db.query(models.Notes.course_id).filter(models.Notes.client_id== id).all()
+def notes_list(db):
+    return db.query(models.Notes).all()
+
+async def delete_notes(db: Session,id: int)-> bool:
+   sym1 =models.Notes.__table__
+   sym = sym1.delete().where(models.Notes.id== id)
    print(sym)
    result = db.execute(sym)
    db.commit()

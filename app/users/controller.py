@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile
 from sqlalchemy.sql.functions import user
 from sqlalchemy.orm import Session
 from app.authentication import schemas, models
@@ -9,6 +9,10 @@ from app.talent.database import database, SessionLocal, engine
 from fastapi_pagination import Page, pagination_params
 from fastapi_pagination.paginator import paginate
 from app.authentication.models import Users
+import pandas as pd
+import re 
+import cloudinary
+import cloudinary.uploader
 router = APIRouter()
 
 
@@ -67,12 +71,16 @@ async def find_all_user(
     user_all = await database.fetch_all(query=query, values={}) 
     return paginate(user_all)
 
+# Wishlist
+
 @router.post("/users/{userId}/wishlist")
 def create_wishlist(client_id:str,course_id:int,db:Session=Depends(get_db)):
     return crud.create_wishlist(db=db,client_id=client_id,course_id=course_id)
 @router.get("/users/{userId}/wishlist"  ,dependencies=[Depends(pagination_params)])
 def wishlist_list(db: Session = Depends(get_db)):
     wishlist_all = crud.wishlist_list(db=db)
+    print(wishlist_all)
+    
     return paginate(wishlist_all)
 @router.get("/users/{userId}/wishlist/{id}")
 def comment_detail(id:str,db: Session = Depends(get_db)):
@@ -81,9 +89,104 @@ def comment_detail(id:str,db: Session = Depends(get_db)):
     #active_comment = comments.filter(models.Comment.is_active == True).all()
     if course_by_id is None:
         raise HTTPException(status_code=404,detail="Comment with this id is not in database")
-    return { "Wishlist":course_by_id, }#"active_comment":active_comment }
+    course = crud.get_wishlist_course_id(db=db, id=id)
+    # temp = re.sub(r'[\[\]\(\), ]', '', str(course)) 
+    # # Using set 
+    # Output = [int(i) for i in set(temp)] 
+    # print(Output)
+    res = [] 
+    for i in course: 
+        if i not in res: 
+            res.append(i) 
+  
+        # printing list after removal  
+    print ("The list after removing duplicates : " + str(res)) 
+    # all = crud.get_wishlist_course_by_id(db=db, id=Output)
+    # print(all)
+
+    return { "wishlist" :course_by_id,
+    "course_id" : course } #"active_comment":active_comment }
+    #return numb
 
 @router.delete("/users/{userId}/wishlist/{id}")
 async def delete(id: int, db: Session = Depends(get_db)):
     deleted = await crud.delete_wishlist(db,id)
+    return {"deleted": deleted}
+
+# Project_undertaken
+@router.post("/users/{userId}/project")
+def create_project(client_id:str,first_name:str,details:str,file: UploadFile= File(...),db:Session=Depends(get_db)):
+    # suffix = Path(file.filename).suffix
+    # filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
+    result = cloudinary.uploader.upload(file.file)
+    url = result.get("url")
+    return crud.create_project(db=db,client_id=client_id,first_name=first_name,details=details,url=url)
+
+@router.get("/users/{userId}/project"  ,dependencies=[Depends(pagination_params)])
+def project_list(db: Session = Depends(get_db)):
+    project_all = crud.project_list(db=db)
+    print(project_all)
+    return paginate(project_all)
+
+# @router.put("/users/{userId}/project/{id}")
+# async def update_project(
+#    id:str,client_id:str,first_name:str,details:str,file: UploadFile= File(...),db:Session=Depends(get_db)
+# ): 
+#     # suffix = Path(file.filename).suffix
+#     # filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
+#     result = cloudinary.uploader.upload(file.file)
+#     url = result.get("url")
+#     subject =  crud.get_project(db,id)
+#     if not subject:
+#         raise HTTPException(status_code=404, detail="Course not found")
+#     query = "UPDATE projects SET client_id='"+str(client_id)+"' , details='"+str(details)+"', first_name='"+str(first_name)+"' , url='"+str(url)+"' WHERE id='"+str(id)+"'"
+#     db.execute(query)
+#     db.commit()
+#     return {"Result" : "Course Updated Succesfully"}
+
+@router.get("/users/{userId}/project/{id}")
+def project_detail(id:str,db: Session = Depends(get_db)):
+    course_by_id = crud.get_project(db=db, id=id)
+    if course_by_id is None:
+        raise HTTPException(status_code=404,detail="Project with this id is not in database")
+    return course_by_id 
+
+@router.delete("/users/{userId}/project/{id}")
+async def delete_project(id: int, db: Session = Depends(get_db)):
+    deleted = await crud.delete_project(db,id)
+    return {"deleted": deleted}
+
+# notes
+@router.post("/users/{userId}/notes")
+def create_notes(client_id:str,detail:str,db:Session=Depends(get_db)):
+    return crud.create_notes(db=db,client_id=client_id,detail=detail)
+
+@router.get("/users/{userId}/notes"  ,dependencies=[Depends(pagination_params)])
+def notes_list(db: Session = Depends(get_db)):
+    notes_all = crud.notes_list(db=db)
+    print(notes_all)
+    return paginate(notes_all)
+
+# @router.put("/users/{userId}/notes/{id}")
+# async def update_notes(
+#     id:int,client_id:str,detail:str,db:Session=Depends(get_db)
+# ):  
+#     subject = crud.get_notes(db=db, id=id)
+#     if not subject:
+#         raise HTTPException(status_code=404, detail="Course not found")
+#     query = "UPDATE notes SET client_id='"+str(client_id)+"' , detail='"+str(detail)+"'  WHERE id='"+str(id)+"'"
+#     db.execute(query)
+#     db.commit()
+#     return {"Result" : "Course Updated Succesfully"}
+
+@router.get("/users/{userId}/notes/{id}")
+def notes_detail(id:str,db: Session = Depends(get_db)):
+    course_by_id = crud.get_notes(db=db, id=id)
+    if course_by_id is None:
+        raise HTTPException(status_code=404,detail="Notes with this id is not in database")
+    return course_by_id
+
+@router.delete("/users/{userId}/notes/{id}")
+async def delete_notes(id: int, db: Session = Depends(get_db)):
+    deleted = await crud.delete_notes(db,id)
     return {"deleted": deleted}

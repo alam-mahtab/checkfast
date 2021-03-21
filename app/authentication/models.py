@@ -24,6 +24,8 @@ class Users(Base):
     paid = relationship('Paid',back_populates='client')
     paid3 = relationship('Payment',back_populates='clients')
     user_wish = relationship('Wishlist', back_populates='users_wish')
+    user_pro = relationship('Project', back_populates='project_id')
+    user_notes = relationship('Notes', back_populates='notes_id')
     
 class Course(Base):
     __tablename__ = "courses"
@@ -72,3 +74,21 @@ class Wishlist(Base):
     users_wish = relationship('Users', back_populates='user_wish')
     course_id = Column(Integer, ForeignKey('courses.id'))
     course_wish = relationship('Course', back_populates='user_course')
+
+class Project(Base):
+    __tablename__ = "projects"
+    id = Column(Integer, primary_key=True,unique=True)
+    created_date = Column(DateTime,default=datetime.datetime.utcnow)
+    url = Column(URLType)
+    first_name = Column(String)
+    details = Column(String)
+    client_id = Column(String, ForeignKey('users.id'))
+    project_id = relationship('Users', back_populates='user_pro')
+
+class Notes(Base):
+    __tablename__ = "notes"
+    id = Column(Integer, primary_key=True,unique=True)
+    created_date = Column(DateTime,default=datetime.datetime.utcnow)
+    detail = Column(String)
+    client_id = Column(String, ForeignKey('users.id'))
+    notes_id = relationship('Users', back_populates='user_notes')
