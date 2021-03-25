@@ -105,6 +105,9 @@ app.include_router(authController.router, tags =["Auth"])
 from app.users import controller as userController
 app.include_router(userController.router, tags =["Users"])
 
+from app.module import router as weekmodule
+app.include_router(weekmodule.router, tags=['Week wise module'])
+
 # from auth import pyauth
 # app.include_router(pyauth.router,tags=["Users"])
 #new code

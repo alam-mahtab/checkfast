@@ -13,6 +13,7 @@ def create_course(db: Session,title:str,name:str,desc:str,price:int,url:str,type
     db.commit()
     db.refresh(db_course)
     return db_course
+    
 def create_comment(db:Session,courses_id:int,name:str,Message:str):
     db_comment = models.Comment(name=name,courses_id = courses_id,Message=Message)
     db.add(db_comment)

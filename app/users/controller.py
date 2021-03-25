@@ -76,36 +76,57 @@ async def find_all_user(
 @router.post("/users/{userId}/wishlist")
 def create_wishlist(client_id:str,course_id:int,db:Session=Depends(get_db)):
     return crud.create_wishlist(db=db,client_id=client_id,course_id=course_id)
+
 @router.get("/users/{userId}/wishlist"  ,dependencies=[Depends(pagination_params)])
 def wishlist_list(db: Session = Depends(get_db)):
     wishlist_all = crud.wishlist_list(db=db)
-    print(wishlist_all)
-    
     return paginate(wishlist_all)
+
 @router.get("/users/{userId}/wishlist/{id}")
 def comment_detail(id:str,db: Session = Depends(get_db)):
     course_by_id = crud.get_wishlist(db=db, id=id)
-    # comments = db.query(models.Comment).filter(models.Comment.courses_id == courses_id)
-    #active_comment = comments.filter(models.Comment.is_active == True).all()
     if course_by_id is None:
         raise HTTPException(status_code=404,detail="Comment with this id is not in database")
     course = crud.get_wishlist_course_id(db=db, id=id)
-    # temp = re.sub(r'[\[\]\(\), ]', '', str(course)) 
-    # # Using set 
-    # Output = [int(i) for i in set(temp)] 
-    # print(Output)
-    res = [] 
-    for i in course: 
-        if i not in res: 
-            res.append(i) 
+    
+#     res = [] 
+#     for i in course: 
+#         if i not in res: 
+#             res.append(i) 
   
-        # printing list after removal  
-    print ("The list after removing duplicates : " + str(res)) 
-    # all = crud.get_wishlist_course_by_id(db=db, id=Output)
-    # print(all)
+#         # printing list after removal  
+#     print ("The list after removing duplicates : " + str(res)) 
+#     temp = re.sub(r'[\[\]\(\), ]', '', str(res)) 
+#     # Using set 
+#     Output = [int(i) for i in set(temp)] 
+#     print(Output, "after temp")
+#     # Python program to convert a list to string 
+    
+# # Function to convert   
+#     def listToString(temp):  
+    
+#     # initialize an empty string 
+#         str1 = ""  
+    
+#     # traverse in the string   
+#         for ele in temp:  
+#             str1 += str(ele)   
+    
+#     # return string   
+#         return str1  
+        
+        
+# # Driver code     
+#     print(listToString(temp))
 
-    return { "wishlist" :course_by_id,
-    "course_id" : course } #"active_comment":active_comment }
+   # all = crud.get_wishlist_course_by_id(db=db, id=int(listToString(temp)))
+    all = ' '.join(map(str, course))
+    a = ' '.join(map(str, all))
+    print(all)
+    print(a)
+
+    return course_by_id 
+    #"active_comment":active_comment }
     #return numb
 
 @router.delete("/users/{userId}/wishlist/{id}")

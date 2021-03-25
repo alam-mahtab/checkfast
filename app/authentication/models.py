@@ -43,6 +43,45 @@ class Course(Base):
     paid2 = relationship('Payment',back_populates='courses')
     course_comment = relationship('Comment', back_populates='course_related')
     user_course = relationship('Wishlist',back_populates='course_wish')
+    first = relationship('Week_Module', back_populates='module')
+    # second = relationship('Week2', back_populates='m2')
+    # third = relationship('Week3', back_populates='m3')
+
+class Week_Module(Base):
+    __tablename__ = "weeks"
+
+    id = Column(Integer, primary_key=True)
+    created_date = Column(DateTime,default=datetime.datetime.utcnow)
+    url = Column(URLType)
+    title = Column(String)
+    name = Column(String)
+    week = Column(Integer)
+    course_id = Column(Integer, ForeignKey('courses.id'))
+    module = relationship('Course', back_populates='first')
+
+# class Week2(Base):
+#     __tablename__ = "weeks2"
+
+#     id = Column(Integer, primary_key=True)
+#     created_date = Column(DateTime,default=datetime.datetime.utcnow)
+#     url = Column(URLType)
+#     title = Column(String)
+#     name = Column(String)
+#     course_id = Column(Integer, ForeignKey('courses.id'))
+#     m2 = relationship('Course', back_populates='second')
+
+# class Week3(Base):
+#     __tablename__ = "weeks3"
+
+#     id = Column(Integer, primary_key=True)
+#     created_date = Column(DateTime,default=datetime.datetime.utcnow)
+#     url = Column(URLType)
+#     title = Column(String)
+#     name = Column(String)
+#     course_id = Column(Integer, ForeignKey('courses.id'))
+#     m3 = relationship('Course', back_populates='third')
+
+
 class Paid(Base):
     __tablename__ = "paids"
     id = Column(String, primary_key=True,unique=True)
