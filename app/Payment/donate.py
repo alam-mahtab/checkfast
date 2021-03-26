@@ -83,7 +83,7 @@ async def pay_me(request: Request, id:str):
         # course_id = id)
     await database.execute(query)
     #return {**payment}
-    return templates.TemplateResponse("pay.html", {"request": request, "payment":payment})
+    return templates.TemplateResponse("home.html", {"request": request, "payment":payment})
 @router.get("/payments")
 async def get_payment():
     client = razorpay.Client(auth=("rzp_test_cfbr43uRZAs35w", "dcPlBgM8Fv7H2J1cYISFKC81"))

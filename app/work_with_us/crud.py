@@ -16,6 +16,9 @@ def create_work(db: Session,name:str,email:str,message:str,status:int):
 def get_work(db, id: int):
     return db.query(models.Work).filter(models.Work.id== id).first()
 
+def get_work_by_status(db, status: int):
+    return db.query(models.Work).filter(models.Work.status== status).all()
+
 def work_list(db):
     return db.query(models.Work).all()
 

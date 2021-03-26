@@ -108,6 +108,9 @@ app.include_router(userController.router, tags =["Users"])
 from app.module import router as weekmodule
 app.include_router(weekmodule.router, tags=['Week wise module'])
 
+from app.honour import router as honour
+app.include_router(honour.router, tags=['Awards Filmography'])
+
 # from auth import pyauth
 # app.include_router(pyauth.router,tags=["Users"])
 #new code
@@ -117,6 +120,18 @@ app.include_router(ping.router)
 # payment
 from app.Payment import donate
 app.include_router(donate.router, tags=["Payments"])
+
+# For Course 
+from app.All_Course import courses
+app.include_router(courses.router, prefix="/course", tags=["Courses"])
+
+# Talent And Courses
+from app.talent import talents
+app.include_router(talents.router, prefix="/talents", tags=["Talents"])
+# For work_with_us
+from app.work_with_us import work
+app.include_router(work.router, prefix="/work", tags=["Work"])
+
 # For Inquiry
 from app.inquiry_form import inquiry
 app.include_router(inquiry.router, prefix="/inquiry", tags=["Inquiry"])
@@ -133,25 +148,17 @@ app.include_router(award.router, prefix="/award", tags=["Awards"])
 from app.filmography import filmo
 app.include_router(filmo.router, prefix="/filmo", tags=["Filmography"])
 
-# For Portfolio
-from app.portfolio import port
-app.include_router(port.router, prefix="/port", tags=["Portfolio"])
+# # For Portfolio
+# from app.portfolio import port
+# app.include_router(port.router, prefix="/port", tags=["Portfolio"])
 
-# For work_with_us
-from app.work_with_us import work
-app.include_router(work.router, prefix="/work", tags=["Work"])
+
 
 # For User Story
 from app.user_stories import story
 app.include_router(story.router, prefix="/story", tags=["Story"])
 
-# For Course 
-from app.All_Course import courses
-app.include_router(courses.router, prefix="/course", tags=["Courses"])
 
-# Talent And Courses
-from app.talent import talents
-app.include_router(talents.router, prefix="/talents", tags=["Talents"])
 
 #image upload
 import uuid

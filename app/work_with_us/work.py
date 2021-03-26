@@ -35,6 +35,10 @@ def work_list(db: Session = Depends(get_db)):
 def port_detail(work_id:int,db: Session = Depends(get_db)):
     return crud.get_work(db=db, id=work_id)
 
+@router.get("/work/{status}")
+def work_with_us_detail(status:int,db: Session = Depends(get_db)):
+    return crud.get_work_by_status(db=db, status=status)
+
 @router.delete("/works/{work_id}")
 async def delete(work_id: int, db: Session = Depends(get_db)):
     deleted = await crud.delete(db, work_id)
