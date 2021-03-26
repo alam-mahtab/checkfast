@@ -7,10 +7,10 @@ import datetime
 #from courses_live.database import Base1
 from app.talent.database import Base
 
-class Port(Base):
-    __tablename__ = "ports"
+# class Port(Base):
+#     __tablename__ = "ports"
 
-    id = Column(Integer, primary_key=True)
-    created_date = Column(DateTime,default=datetime.datetime.utcnow)
-    url = Column(URLType)
-    status = Column(Integer)
+#     id = Column(Integer, primary_key=True)
+#     created_date = Column(DateTime,default=datetime.datetime.utcnow)
+#     url = Column(URLType)
+#     status = Column(Integer)
