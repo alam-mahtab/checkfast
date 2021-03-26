@@ -21,8 +21,16 @@ def get_course(db,course_id: int):
 def week_list(db):
     return db.query(models.Week_Module).all()
 
-def course_list_weekly(db,course_id: int, week:int):
-    return db.query(models.Week_Module).filter(models.Week_Module.course_id== course_id or models.Week_Module.week== week).all()
+def course_list_weekly(db,course_id:int,week:int):
+    return db.query(models.Week_Module).filter(models.Week_Module.course_id== course_id).filter(models.Week_Module.week== week).all()
+    # query = " Select * From weeks where course_id='"+str(course_id)+"' and week='"+str(week)+"'"
+    # #return db.query(" Select * From weeks where course_id='"+str(course_id)+"' and week='"+str(week)+"'")
+    # db_ad = db.execute(query)
+    # db.commit()
+    # db.refresh(query)
+    # print(query)
+    # return query
+
 
 # def course_list_weekly(db, course_id:int, id:int):
 #     db_week= "select * From weeks where course_id='"+str(course_id)+"' And week='"+str(id)+"'"

@@ -9,12 +9,14 @@ from app.talent.database import database
 #from configs.connection import database
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 #from users.controller import find_user_by_id
-from .models import Users
+from .models import Users, Course
+from app.talent.models import Talent
 from app.users.controller import find_user_by_username
 #from .service import verify_registration_user
 router = APIRouter()
 from . import py_function
 from random import randint
+
 
 @router.post("/auth/register", response_model = schemas.UserList)
 async def register(user : schemas.UserCreate):
@@ -113,10 +115,13 @@ def test_token(current_user: schemas.UserInDB = Depends(get_current_user)):
     return current_user
 
 from app.talent.database import engine
-@router.get("/search")
-def get_data(search : str = "",search_type: str =" "):
-    df = py_function.fetch_data(search,engine,search_type)
-    return df.to_dict('sequence')
+# @router.get("/search")
+# def get_data(search : str = "",search_type: str =" ",db: Session = Depends(get_db)):
+#     # df = py_function.fetch_data(search,engine,search_type)
+#     # print("df is here")
+#     # return df
+#     # #.to_dict('sequence')
+#     return db.query.((search_type)).filter
 
 @router.post('/auth')
 async def get_user_auth(email: str, username: str):

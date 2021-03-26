@@ -77,10 +77,10 @@ def course_detail(id:int,db: Session = Depends(get_db)):
         raise HTTPException(status_code=404,detail="Course by this id is not in database")
     return { "course":course_by_id}
 
-@router.get("/courses/week/{course_id}/{week}")
+@router.get("/courses/week_wise/{course_id}/{week}")
 def course_detail_weekly(course_id:int,week:int,db: Session = Depends(get_db)):
-    course_week = crud.course_list_weekly(db=db, course_id=course_id, week=week)
-    if course_week is None:
+    course_week = crud.course_list_weekly(db, course_id, week)
+    if not course_week:
         raise HTTPException(status_code=404,detail="Course by this id is not in database")
     return { "course":course_week}
 
