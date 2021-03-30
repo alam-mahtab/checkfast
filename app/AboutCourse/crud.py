@@ -5,8 +5,8 @@ from typing import Optional
 import datetime
 
 # week1
-def create_About(db: Session,heading:str,desc:str,title:str,name:str,course_id:int):
-    db_About = models.AboutCourse(title=title,name=name,heading=heading,course_id=course_id,desc=desc)
+def create_About(db: Session,heading:str,description:str,title:str,name:str,course_id:int):
+    db_About = models.AboutCourse(title=title,name=name,heading=heading,course_id=course_id,description=description)
     db.add(db_About)
     db.commit()
     db.refresh(db_About)

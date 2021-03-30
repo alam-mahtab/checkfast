@@ -35,15 +35,15 @@ models.Base.metadata.create_all(bind=engine)
  
 @router.post("/course/about")
 def create_about(
-    course_id:int,heading:str,desc:str,title:str,name:str, db: Session = Depends(get_db)
+    course_id:int,heading:str,description:str,title:str,name:str, db: Session = Depends(get_db)
 ):
-    return crud.create_week(db=db,name=name,title=title,heading=heading,desc=desc,course_id=course_id)
+    return crud.create_About(db=db,name=name,title=title,heading=heading,description=description,course_id=course_id)
 
 @router.put("/course/about/{id}")
 async def update_about(
     id:int,course_id:int,heading:str,desc:str,title:str,name:str, db: Session = Depends(get_db)
 ):
-    query = "UPDATE aboutcourses SET title='"+str(title)+"' , name='"+str(name)+"', COURSE_ID = '"+str(course_id)+"'  , heading='"+str(heading)+"', desc='"+str(desc)+"' WHERE id='"+str(id)+"'"
+    query = "UPDATE aboutcourses SET heading='"+str(heading)+"', name='"+str(name)+"', title = '"+str(title)+"', description='"+str(desc)+"', course_id = '"+str(course_id)+"' WHERE id='"+str(id)+"'"
     db.execute(query)
     db.commit()
     return {"Result" : "Module Updated Succesfully"}

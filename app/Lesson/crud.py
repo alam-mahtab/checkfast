@@ -5,8 +5,8 @@ from typing import Optional
 import datetime
 
 # week1
-def create_lesson(db: Session,title:str,name:str,desc:str,url:str,course_id:int,chapter:int):
-    db_week = models.Lesson(title=title,name=name,desc=desc,url=url,course_id=course_id,chapter=chapter)
+def create_lesson(db: Session,title:str,name:str,description:str,url:str,course_id:int,chapter:int):
+    db_week = models.Lesson(title=title,name=name,description=description,url=url,course_id=course_id,chapter=chapter)
     db.add(db_week)
     db.commit()
     db.refresh(db_week)

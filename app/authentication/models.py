@@ -71,7 +71,7 @@ class Tutor(Base):
     url              = Column(URLType)
     title            = Column(String)
     name             = Column(String)
-    desc             = Column(String)
+    description      = Column(String)
     course_id        = Column(Integer, ForeignKey('courses.id'))
     m2               = relationship('Course', back_populates='second')
 
@@ -83,14 +83,14 @@ class Lesson(Base):
     url              = Column(URLType)
     title            = Column(String)
     name             = Column(String)
-    desc             = Column(String)
+    description      = Column(String)
     chapter          = Column(Integer)
     course_id        = Column(Integer, ForeignKey('courses.id'))
     m3               = relationship('Course', back_populates='third')
 
 class Learn(Base):
     __tablename__    = "learns"
-    id               = Column(String, primary_key=True,unique=True)
+    id               = Column(Integer, primary_key=True,unique=True)
     created_date     = Column(DateTime,default=datetime.datetime.utcnow)
     text1            = Column(String)
     text2            = Column(String)
@@ -101,12 +101,12 @@ class Learn(Base):
 
 class AboutCourse(Base):
     __tablename__    = "aboutcourses"
-    id               = Column(String, primary_key=True,unique=True)
+    id               = Column(Integer, primary_key=True,unique=True)
     created_date     = Column(DateTime,default=datetime.datetime.utcnow)
     heading          = Column(String)
     name             = Column(String)
     title            = Column(String)
-    desc             = Column(String)
+    description      = Column(String)
     course_id        = Column(Integer, ForeignKey('courses.id'))
     m5               = relationship('Course', back_populates='fifth')
 

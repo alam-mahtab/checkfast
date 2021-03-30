@@ -111,8 +111,14 @@ app.include_router(weekmodule.router, tags=['Week wise module'])
 from app.honour import router as honour
 app.include_router(honour.router, tags=['Awards Filmography'])
 
-# from auth import pyauth
-# app.include_router(pyauth.router,tags=["Users"])
+from app.AboutCourse import router as AboutCourse
+app.include_router(AboutCourse.router, tags=['AboutCourse'])
+
+from app.Learn import router as Learn
+app.include_router(Learn.router, tags=['Learn'])
+
+from app.Lesson import router as Lesson
+app.include_router(Lesson.router, tags=['Lesson'])
 #new code
 from app.api import ping
 app.include_router(ping.router)
@@ -140,13 +146,13 @@ app.include_router(inquiry.router, prefix="/inquiry", tags=["Inquiry"])
 from app.Faqs import question
 app.include_router(question.router, prefix="/faq", tags=["FAQS"])
 
-# For Awards
-from app.awards import award
-app.include_router(award.router, prefix="/award", tags=["Awards"])
+# # For Awards
+# from app.awards import award
+# app.include_router(award.router, prefix="/award", tags=["Awards"])
 
-# For Filmography
-from app.filmography import filmo
-app.include_router(filmo.router, prefix="/filmo", tags=["Filmography"])
+# # For Filmography
+# from app.filmography import filmo
+# app.include_router(filmo.router, prefix="/filmo", tags=["Filmography"])
 
 # # For Portfolio
 # from app.portfolio import port

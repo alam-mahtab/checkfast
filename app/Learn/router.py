@@ -37,7 +37,7 @@ models.Base.metadata.create_all(bind=engine)
 def create_learn(
     course_id:int,text1:str,text2:str,text3:str,text4:str, db: Session = Depends(get_db)
 ):
-    return crud.create_week(db=db,text1=text1,text2=text2,text3=text3,text4=text4,course_id=course_id)
+    return crud.create_learn(db=db,text1=text1,text2=text2,text3=text3,text4=text4,course_id=course_id)
 
 @router.put("/course/learn/{id}")
 async def update_learn(
@@ -46,7 +46,7 @@ async def update_learn(
     subject =  crud.get_learn(db,id)
     if not subject:
         raise HTTPException(status_code=404, detail="Course not found")
-    query = "UPDATE weeks SET text1='"+str(text1)+"' , text2='"+str(text2)+"', text3 = '"+str(text3)+"'  , text4='"+str(text4)+"' WHERE id='"+str(id)+"'"
+    query = "UPDATE learns SET text1='"+str(text1)+"' , text2='"+str(text2)+"', text3 = '"+str(text3)+"'  , text4='"+str(text4)+"' WHERE id='"+str(id)+"'"
     db.execute(query)
     db.commit()
     return {"Result" : "Module Updated Succesfully"}
