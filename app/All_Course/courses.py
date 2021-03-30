@@ -45,7 +45,7 @@ static_root_absolute = project_root_absolute / "static"
  
 @router.post("/course/")
 def create_course(
-    title:str,desc:str,name:str,price:int,type:str,status:int,file: UploadFile= File(...), db: Session = Depends(get_db)
+    title:str,desc:str,name:str,price:int,type:str,short_desc:str,module:str,status:int,file: UploadFile= File(...), db: Session = Depends(get_db)
 ):
 
     extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
@@ -57,17 +57,11 @@ def create_course(
     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
     result = cloudinary.uploader.upload(file.file)
     url = result.get("url")
-    # with open("static/"+filename, "wb") as image:
-    #     shutil.copyfileobj(file.file, image)
-    # print(images_path)
-    # #url = str("media/"+file.filename)
-    # url = os.path.join(images_path, filename)
-    # #url = os.path.join(static_root_absolute,filename)
-    return crud.create_course(db=db,name=name,title=title,desc=desc,price=price,url=url,type=type,status=status)
+    return crud.create_course(db=db,name=name,title=title,desc=desc,price=price,short_desc=short_desc,module=module,url=url,type=type,status=status)
 
 @router.put("/course/{id}")
 async def update_course(
-    id:int,title:str,desc:str,name:str,price:int,type:str,status:int,file: UploadFile= File(...), db: Session = Depends(get_db)
+    id:int,title:str,desc:str,name:str,price:int,type:str,short_desc:str,module:str,status:int,file: UploadFile= File(...), db: Session = Depends(get_db)
 ):
     extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
     if not extension:
@@ -78,17 +72,11 @@ async def update_course(
     filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
     result = cloudinary.uploader.upload(file.file)
     url = result.get("url")
-    # with open("static/"+filename, "wb") as image:
-    #     shutil.copyfileobj(file.file, image)
-    # print(images_path)
-    # #url = str("media/"+file.filename)
-    # url = os.path.join(images_path, filename)
-    # #url = os.path.join(static_root_absolute,filename)
     subject =  crud.get_course(db,id)
     if not subject:
         raise HTTPException(status_code=404, detail="Course not found")
     #'select * from USERS where email='+"'"+str(username)+"'"+' and PASSWORD='+"'"+str(password)+"'"
-    query = "UPDATE courses SET title='"+str(title)+"' , name='"+str(name)+"' , desc='"+str(desc)+"' , price='"+str(price)+"' , type ='"+str(type)+"', status='"+str(status)+"', url='"+str(url)+"' WHERE id='"+str(id)+"'"
+    query = "UPDATE courses SET title='"+str(title)+"' , name='"+str(name)+"' , desc='"+str(desc)+"' , price='"+str(price)+"' , short_desc='"+str(short_desc)+"', module ='"+str(module)+"', type ='"+str(type)+"', status='"+str(status)+"', url='"+str(url)+"' WHERE id='"+str(id)+"'"
     db.execute(query)
     db.commit()
     return {"Result" : "Course Updated Succesfully"}
