@@ -26,7 +26,7 @@ class Users(Base):
     user_wish        = relationship('Wishlist', back_populates='users_wish')
     user_pro         = relationship('Project', back_populates='project_id')
     user_notes       = relationship('Notes', back_populates='notes_id')
-    certi             = relationship('Certificate',back_populates='user_certificate')
+    certi            = relationship('Certificate',back_populates='user_certificate')
     
 class Course(Base):
     __tablename__    = "courses"
@@ -50,9 +50,9 @@ class Course(Base):
     second           = relationship('Tutor', back_populates='m2')
     third            = relationship('Lesson', back_populates='m3')
     fourth           = relationship('Learn', back_populates='m4')
-    seventh          = relationship('AboutCourse', back_populates='m5')
-    fifth            = relationship('Certificate', back_populates='m6')
-    sixth            = relationship('Resource', back_populates='m7')
+    fifth            = relationship('Certificate', back_populates='m5')
+    sixth            = relationship('Resource', back_populates='m6')
+    seventh          = relationship('AboutCourse', back_populates='m7')
 
 class Week_Module(Base):
     __tablename__    = "weeks"

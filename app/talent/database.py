@@ -30,7 +30,7 @@ def DATABASE_URL(
 
 #SQLALCHEMY_DATABASE_URL = "sqlite:///./test11.db"
 # For local connection
-#SQLALCHEMY_DATABASE_URL = "postgresql://postgres:Pass2020!@13.127.254.56:5432/CD2" 
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:Pass2020!@65.1.64.150:5432/Cinedarbaar" 
 
 #SQLALCHEMY_DATABASE_URL ="psql --host=cd.csorhad7ihl5.ap-south-1.rds.amazonaws.com --port=5432 --username=postgres --password=Mobirizer12345 --dbname=cd"
 # For aws connection
@@ -43,11 +43,11 @@ def DATABASE_URL(
 #SQLALCHEMY_DATABASE_URL = "postgres://qfawfnaslzovwe:03ef650b17a8e85da0081d5522e11f0a85d667369feb88da97c1b3e968482f81@ec2-54-86-189-179.compute-1.amazonaws.com:5432/d5cu3ni8p963j9"
 
 
-database =databases.Database(DATABASE_URL())
+database =databases.Database(SQLALCHEMY_DATABASE_URL)
 
 
 engine = create_engine(
-    DATABASE_URL(), connect_args={}
+    SQLALCHEMY_DATABASE_URL, connect_args={}
 )
 SessionLocal = sessionmaker(autoflush=False ,bind=engine, expire_on_commit=False)
 # metadata.create_all(engine)
