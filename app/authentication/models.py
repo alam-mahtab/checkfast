@@ -26,6 +26,7 @@ class Users(Base):
     user_wish        = relationship('Wishlist', back_populates='users_wish')
     user_pro         = relationship('Project', back_populates='project_id')
     user_notes       = relationship('Notes', back_populates='notes_id')
+    certi             = relationship('Certificate',back_populates='user_certificate')
     
 class Course(Base):
     __tablename__    = "courses"
@@ -37,7 +38,7 @@ class Course(Base):
     name             = Column(String)
     price            = Column(Integer)
     short_desc       = Column(String)
-    desc             = Column(String)
+    description      = Column(String)
     module           = Column(String)
     type             = Column(String)
     status           = Column(Integer)
@@ -49,7 +50,9 @@ class Course(Base):
     second           = relationship('Tutor', back_populates='m2')
     third            = relationship('Lesson', back_populates='m3')
     fourth           = relationship('Learn', back_populates='m4')
-    fifth            = relationship('AboutCourse', back_populates='m5')
+    seventh          = relationship('AboutCourse', back_populates='m5')
+    fifth            = relationship('Certificate', back_populates='m6')
+    sixth            = relationship('Resource', back_populates='m7')
 
 class Week_Module(Base):
     __tablename__    = "weeks"
@@ -99,6 +102,25 @@ class Learn(Base):
     course_id        = Column(Integer, ForeignKey('courses.id'))
     m4               = relationship('Course', back_populates='fourth')
 
+class Certificate(Base):
+    __tablename__    = "certificates"
+    id               = Column(Integer, primary_key=True,unique=True)
+    created_date     = Column(DateTime,default=datetime.datetime.utcnow)
+    username         = Column(String)
+    lastname         = Column(String)
+    course_id        = Column(Integer, ForeignKey('courses.id'))
+    m5               = relationship('Course', back_populates='fifth')
+    client_id        = Column(String, ForeignKey('users.id'))
+    user_certificate = relationship('Users', back_populates='certi')
+
+class Resource(Base):
+    __tablename__    = "resources"
+    id               = Column(Integer, primary_key=True,unique=True)
+    created_date     = Column(DateTime,default=datetime.datetime.utcnow)
+    pdf_url          = Column(String)
+    course_id        = Column(Integer, ForeignKey('courses.id'))
+    m6               = relationship('Course', back_populates='sixth')
+
 class AboutCourse(Base):
     __tablename__    = "aboutcourses"
     id               = Column(Integer, primary_key=True,unique=True)
@@ -108,7 +130,7 @@ class AboutCourse(Base):
     title            = Column(String)
     description      = Column(String)
     course_id        = Column(Integer, ForeignKey('courses.id'))
-    m5               = relationship('Course', back_populates='fifth')
+    m7               = relationship('Course', back_populates='seventh')
 
 class Paid(Base):
     __tablename__    = "paids"

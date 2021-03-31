@@ -5,7 +5,7 @@ from sqlalchemy.orm.session import Session
 from . import schemas, models
 from app.utils import util, constant
 import uuid, datetime
-from app.talent.database import database
+from app.talent.database import database , SessionLocal
 #from configs.connection import database
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 #from users.controller import find_user_by_id
@@ -17,6 +17,12 @@ router = APIRouter()
 from . import py_function
 from random import randint
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 @router.post("/auth/register", response_model = schemas.UserList)
 async def register(user : schemas.UserCreate):
@@ -115,13 +121,12 @@ def test_token(current_user: schemas.UserInDB = Depends(get_current_user)):
     return current_user
 
 from app.talent.database import engine
-# @router.get("/search")
-# def get_data(search : str = "",search_type: str =" ",db: Session = Depends(get_db)):
-#     # df = py_function.fetch_data(search,engine,search_type)
-#     # print("df is here")
-#     # return df
-#     # #.to_dict('sequence')
-#     return db.query.((search_type)).filter
+@router.get("/search")
+def get_data(search : str = "",search_type: str =" ",db: Session = Depends(get_db)):
+    df = py_function.fetch_data(search,engine,search_type)
+    list_of_dicts = [dict(row.items()) for row in df]
+    print(list_of_dicts)
+    return list_of_dicts
 
 @router.post('/auth')
 async def get_user_auth(email: str, username: str):

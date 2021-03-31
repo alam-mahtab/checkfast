@@ -5,8 +5,8 @@ from typing import Optional
 import datetime
 
 # week1
-def create_tutor(db: Session,title:str,desc:str,name:str,url:str,course_id:int,):
-    db_week = models.Tutor(title=title,name=name,desc=desc,url=url,course_id=course_id)
+def create_tutor(db: Session,title:str,description:str,name:str,url:str,course_id:int,):
+    db_week = models.Tutor(title=title,name=name,description=description,url=url,course_id=course_id)
     db.add(db_week)
     db.commit()
     db.refresh(db_week)

@@ -30,9 +30,9 @@ import shutil
 import cloudinary
 import cloudinary.uploader
 
-router.mount("/static", StaticFiles(directory="static"), name="static")
-dirname = dirname(dirname(abspath(__file__)))
-images_path = join(dirname, '/static')
+# router.mount("/static", StaticFiles(directory="static"), name="static")
+# dirname = dirname(dirname(abspath(__file__)))
+# images_path = join(dirname, '/static')
 
 # router.mount("/app", StaticFiles(directory="app"), name="app")
 # # dirname = dirname(dirname(abspath(__file__)))
@@ -46,7 +46,7 @@ images_path = join(dirname, '/static')
 
 @router.post("/talent/")
 def create_talent(
-    desc:str,name:str,type:str,status:int,file_pro: UploadFile= File(...), file_cover: UploadFile= File(...), db: Session = Depends(get_db)
+    description:str,name:str,type:str,status:int,file_pro: UploadFile= File(...), file_cover: UploadFile= File(...), db: Session = Depends(get_db)
 ):
 
     extension_pro = file_pro.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
@@ -71,11 +71,11 @@ def create_talent(
     #     shutil.copyfileobj(file_cover.file, image)
     # url_cover = os.path.join(images_path, filename_cover)
 
-    return crud.create_talent(db=db,name=name,desc=desc,url_profile=url_profile,url_cover=url_cover,type=type,status=status)
+    return crud.create_talent(db=db,name=name,description=description,url_profile=url_profile,url_cover=url_cover,type=type,status=status)
 
 @router.put("/talent/{id}")
 def update_talent(
-    id:int,desc:str,name:str,type:str,status:int,file_pro: UploadFile= File(...), file_cover: UploadFile= File(...), db: Session = Depends(get_db)
+    id:int,description:str,name:str,type:str,status:int,file_pro: UploadFile= File(...), file_cover: UploadFile= File(...), db: Session = Depends(get_db)
 ):
 
     extension_pro = file_pro.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
@@ -102,7 +102,7 @@ def update_talent(
     subject =  crud.get_talent(db,id)
     if not subject:
         raise HTTPException(status_code=404, detail="Talents not found")
-    query = "UPDATE talents SET url_profile='"+str(url_profile)+"' , desc='"+str(desc)+"' , status='"+str(status)+"', url_cover='"+str(url_cover)+"' WHERE id='"+str(id)+"'"
+    query = "UPDATE talents SET url_profile='"+str(url_profile)+"' , description='"+str(description)+"' , status='"+str(status)+"', url_cover='"+str(url_cover)+"' WHERE id='"+str(id)+"'"
     db.execute(query)
     db.commit()
     return {"Result" : "Talent Updated Succesfully"}

@@ -7,8 +7,8 @@ from .schemas import CourseBase,CourseList
 from typing import Optional
 import datetime
 
-def create_course(db: Session,title:str,name:str,desc:str,price:int,url:str,type:str,status:int,short_desc:str,module:str):
-    db_course = models.Course(title=title,desc=desc,name=name,price=price,url=url,type=type,status=status,short_desc=short_desc,module=module)
+def create_course(db: Session,title:str,name:str,description:str,price:int,url:str,type:str,status:int,short_desc:str,module:str):
+    db_course = models.Course(title=title,description=description,name=name,price=price,url=url,type=type,status=status,short_desc=short_desc,module=module)
     db.add(db_course)
     db.commit()
     db.refresh(db_course)

@@ -18,14 +18,14 @@ tags_metadata = [
         "description": "Operations with authentication. The **login** logic is also here.", },
     {   "name": "Users",
         "description": "Manage users. So _fancy_ they have their own docs.", },
-    {   "name": "Awards",
-        "description": "Operations with awards section in talent & courses. sorting done by status",},
-    {   "name": "Filmography",
-        "description": "Operations with filmography section in talent & courses. sorting done by status",    },
-    {   "name": "Portfolio",
-        "description": "Operations with portfolio section in talent & courses. sorting done by status",    },
-    {   "name": "Work",
-        "description": "Operations with 1.work with us, 2.affiliate, 3.partnership. status = 1 means (work with us) and so on",    },
+    # {   "name": "Awards",
+    #     "description": "Operations with awards section in talent & courses. sorting done by status",},
+    # {   "name": "Filmography",
+    #     "description": "Operations with filmography section in talent & courses. sorting done by status",    },
+    # {   "name": "Portfolio",
+    #     "description": "Operations with portfolio section in talent & courses. sorting done by status",    },
+    # {   "name": "Work",
+    #     "description": "Operations with 1.work with us, 2.affiliate, 3.partnership. status = 1 means (work with us) and so on",    },
     
 ]
 
@@ -105,11 +105,12 @@ app.include_router(authController.router, tags =["Auth"])
 from app.users import controller as userController
 app.include_router(userController.router, tags =["Users"])
 
+# For Course 
+from app.All_Course import courses
+app.include_router(courses.router, prefix="/course", tags=["Courses"])
+
 from app.module import router as weekmodule
 app.include_router(weekmodule.router, tags=['Week wise module'])
-
-from app.honour import router as honour
-app.include_router(honour.router, tags=['Awards Filmography'])
 
 from app.AboutCourse import router as AboutCourse
 app.include_router(AboutCourse.router, tags=['AboutCourse'])
@@ -119,6 +120,9 @@ app.include_router(Learn.router, tags=['Learn'])
 
 from app.Lesson import router as Lesson
 app.include_router(Lesson.router, tags=['Lesson'])
+
+from app.Tutor import router as Tutor
+app.include_router(Tutor.router, tags=['Tutor'])
 #new code
 from app.api import ping
 app.include_router(ping.router)
@@ -127,13 +131,12 @@ app.include_router(ping.router)
 from app.Payment import donate
 app.include_router(donate.router, tags=["Payments"])
 
-# For Course 
-from app.All_Course import courses
-app.include_router(courses.router, prefix="/course", tags=["Courses"])
-
 # Talent And Courses
 from app.talent import talents
 app.include_router(talents.router, prefix="/talents", tags=["Talents"])
+
+from app.honour import router as honour
+app.include_router(honour.router, tags=['Awards Filmography'])
 # For work_with_us
 from app.work_with_us import work
 app.include_router(work.router, prefix="/work", tags=["Work"])
@@ -210,15 +213,15 @@ import aiofiles
 
 # uploaded = upload_to_aws('local_file', 'bucket_name', 's3_file_name')
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-dirname = dirname(dirname(abspath(__file__)))
-images_path = join(dirname, '/static')
+# app.mount("/static", StaticFiles(directory="static"), name="static")
+# dirname = dirname(dirname(abspath(__file__)))
+# images_path = join(dirname, '/static')
 
-current_file = Path(__file__)
-current_file_dir = current_file.parent
-project_root = current_file_dir.parent
-project_root_absolute = project_root.resolve()
-static_root_absolute = project_root_absolute / "static" 
+# current_file = Path(__file__)
+# current_file_dir = current_file.parent
+# project_root = current_file_dir.parent
+# project_root_absolute = project_root.resolve()
+# static_root_absolute = project_root_absolute / "static" 
  
 # @app.post("/cv2")
 # async def get_image(request: Request, file: UploadFile = File(...)):
