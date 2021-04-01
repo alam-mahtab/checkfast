@@ -125,7 +125,6 @@ from app.talent.database import engine
 def get_data(search : str = "",search_type: str =" ",db: Session = Depends(get_db)):
     df = py_function.fetch_data(search,engine,search_type)
     list_of_dicts = [dict(row.items()) for row in df]
-    print(list_of_dicts)
     return list_of_dicts
 
 @router.post('/auth')
