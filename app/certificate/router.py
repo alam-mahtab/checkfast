@@ -68,7 +68,7 @@ async def delete(id: int, db: Session = Depends(get_db)):
     subject =  crud.get_certificate(db,id)
     if not subject:
         raise HTTPException(status_code=404,detail="Course by this id is not in database")
-    query = "Delete From learns WHERE id='"+str(id)+"'"
+    query = "Delete From certificates WHERE id='"+str(id)+"'"
     db.execute(query)
     db.commit()
     return "deleted Succesfully"

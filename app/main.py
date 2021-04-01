@@ -123,6 +123,12 @@ app.include_router(Lesson.router, tags=['Lesson'])
 
 from app.Tutor import router as Tutor
 app.include_router(Tutor.router, tags=['Tutor'])
+
+from app.resource import router as Resource
+app.include_router(Resource.router, tags=['Resource'])
+
+from app.certificate import router as Certificate
+app.include_router(Certificate.router, tags=['Certificate'])
 #new code
 from app.api import ping
 app.include_router(ping.router)
