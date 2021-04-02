@@ -40,9 +40,9 @@ def create_wishlist(db:Session,course_id:int,client_id:str):
     db.refresh(db_wish)
     return db_wish
 
-def get_wishlist(db, id: int):
+def get_wishlist(db, id: str):
     return db.query(models.Wishlist).filter(models.Wishlist.client_id== id).all()
-def get_wishlist_course_id(db, id: int):
+def get_wishlist_course_id(db, id: str):
     return db.query(models.Wishlist.course_id).filter(models.Wishlist.client_id== id).all()
 def get_wishlist_course_by_id(db, id: int):
     return db.query(models.Course).filter(models.Course.id== id).all()

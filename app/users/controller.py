@@ -81,53 +81,19 @@ def create_wishlist(client_id:str,course_id:int,db:Session=Depends(get_db)):
 def wishlist_list(db: Session = Depends(get_db)):
     wishlist_all = crud.wishlist_list(db=db)
     return paginate(wishlist_all)
-
+from copy import deepcopy
 @router.get("/users/{userId}/wishlist/{id}")
-def comment_detail(id:str,db: Session = Depends(get_db)):
+async def comment_detail(id:str,db: Session = Depends(get_db)):
     course_by_id = crud.get_wishlist(db=db, id=id)
     if course_by_id is None:
         raise HTTPException(status_code=404,detail="Comment with this id is not in database")
     course = crud.get_wishlist_course_id(db=db, id=id)
-    
-#     res = [] 
-#     for i in course: 
-#         if i not in res: 
-#             res.append(i) 
-  
-#         # printing list after removal  
-#     print ("The list after removing duplicates : " + str(res)) 
-#     temp = re.sub(r'[\[\]\(\), ]', '', str(res)) 
-#     # Using set 
-#     Output = [int(i) for i in set(temp)] 
-#     print(Output, "after temp")
-#     # Python program to convert a list to string 
-    
-# # Function to convert   
-#     def listToString(temp):  
-    
-#     # initialize an empty string 
-#         str1 = ""  
-    
-#     # traverse in the string   
-#         for ele in temp:  
-#             str1 += str(ele)   
-    
-#     # return string   
-#         return str1  
-        
-        
-# # Driver code     
-#     print(listToString(temp))
-
-   # all = crud.get_wishlist_course_by_id(db=db, id=int(listToString(temp)))
-    all = ' '.join(map(str, course))
-    a = ' '.join(map(str, all))
-    print(all)
-    print(a)
-
-    return course_by_id 
-    #"active_comment":active_comment }
-    #return numb
+    courses = []
+    for i in course:
+        print(i)
+        course_by_id = crud.get_wishlist_course_by_id(db, i)
+        courses.append(deepcopy(course_by_id))
+    return courses
 
 @router.delete("/users/{userId}/wishlist/{id}")
 async def delete(id: int, db: Session = Depends(get_db)):
@@ -149,21 +115,6 @@ def project_list(db: Session = Depends(get_db)):
     print(project_all)
     return paginate(project_all)
 
-# @router.put("/users/{userId}/project/{id}")
-# async def update_project(
-#    id:str,client_id:str,first_name:str,details:str,file: UploadFile= File(...),db:Session=Depends(get_db)
-# ): 
-#     # suffix = Path(file.filename).suffix
-#     # filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-#     result = cloudinary.uploader.upload(file.file)
-#     url = result.get("url")
-#     subject =  crud.get_project(db,id)
-#     if not subject:
-#         raise HTTPException(status_code=404, detail="Course not found")
-#     query = "UPDATE projects SET client_id='"+str(client_id)+"' , details='"+str(details)+"', first_name='"+str(first_name)+"' , url='"+str(url)+"' WHERE id='"+str(id)+"'"
-#     db.execute(query)
-#     db.commit()
-#     return {"Result" : "Course Updated Succesfully"}
 
 @router.get("/users/{userId}/project/{id}")
 def project_detail(id:str,db: Session = Depends(get_db)):

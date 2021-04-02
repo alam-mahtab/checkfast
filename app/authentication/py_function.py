@@ -7,21 +7,10 @@ from app.configs import mailinfo
 def email_config():
     return mailinfo.setting()
 def fetch_data(search,engine,search_type):
-    # query_cols = "SELECT * FROM Courses"
-    # df=pd.read_sql(query_cols,engine)
-    # col_list=(','.join(df.columns))
-    # print(col_list)
-
-    # query = 'SELECT * FROM Courses '\
-    #               "where lower(CONCAT_WS("+col_list+")) like '%"+search+"%'"
-    # #query =" SELECT * FROM "+search_type+" where type like '%"+search+"%'"
     query = "SELECT * FROM courses Where type like '"+search+"%' OR name like '"+search+"%' OR description like '"+search+"%' "#OR title like '%"+search+"%'"
-   # query = query = 'select * from "'"+str(search_type)+"' where type='+"'"+str(search)+"'"+' OR name='+"'"+str(search)+"'"
     print(query)
     print("hello")
-    #df = await database.execute(query,encoders)
     df = engine.execute(sqlalchemy.text(query))
-    #df = pd.read_sql(query,engine)
     print(df)
     return df
 import pandas as pd

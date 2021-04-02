@@ -5,8 +5,8 @@ from typing import Optional
 import datetime
 
 # week1
-def create_certificate(db: Session,client_id:str,course_id:int,username:str,lastname:str):
-    db_week = models.Certificate(username=username,lastname=lastname,course_id=course_id,client_id=client_id)
+def create_certificate(db: Session,client_id:str,course_id:int,email:str,username:str,lastname:str):
+    db_week = models.Certificate(email=email,username=username,lastname=lastname,course_id=course_id,client_id=client_id)
     db.add(db_week)
     db.commit()
     db.refresh(db_week)
