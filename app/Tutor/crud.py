@@ -13,7 +13,7 @@ def create_tutor(db: Session,title:str,description:str,name:str,url:str,course_i
     return db_week
 
 def get_tutor(db, id: int):
-    return db.query(models.Tutor).filter(models.Tutor.id== id).first()
+    return db.query(models.Tutor).filter(models.Tutor.course_id== id).first()
 
 def get_course(db,course_id: int):
     return db.query(models.Tutor).filter(models.Tutor.course_id== course_id).first()

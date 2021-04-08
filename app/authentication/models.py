@@ -178,6 +178,7 @@ class Notes(Base):
     __tablename__    = "notes"
     id               = Column(Integer, primary_key=True,unique=True)
     created_date     = Column(DateTime,default=datetime.datetime.utcnow)
+    title            = Column(String)
     detail           = Column(String)
     client_id        = Column(String, ForeignKey('users.id'))
     notes_id         = relationship('Users', back_populates='user_notes')

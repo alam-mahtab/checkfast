@@ -158,8 +158,8 @@ async def delete_project(id: int, db: Session = Depends(get_db)):
 
 # notes
 @router.post("/users/{userId}/notes")
-def create_notes(client_id:str,detail:str,db:Session=Depends(get_db)):
-    return crud.create_notes(db=db,client_id=client_id,detail=detail)
+def create_notes(client_id:str,title:str,detail:str,db:Session=Depends(get_db)):
+    return crud.create_notes(db=db,client_id=client_id,title=title,detail=detail)
 
 @router.get("/users/{userId}/notes"  ,dependencies=[Depends(pagination_params)])
 def notes_list(db: Session = Depends(get_db)):
@@ -169,9 +169,9 @@ def notes_list(db: Session = Depends(get_db)):
 
 @router.put("/users/{userId}/notes/{id}")
 async def update_notes(
-    client_id:str, id_s :int ,detail:str,db:Session=Depends(get_db)
+    client_id:str, id_s :int , title:str,detail:str,db:Session=Depends(get_db)
 ):  
-    subject = crud.get_notes(db=db, client_id=client_id)
+    subject = crud.get_notes(db=db,title=title ,client_id=client_id)
 
     if not subject:
         raise HTTPException(status_code=404, detail="Course not found")
@@ -182,6 +182,7 @@ async def update_notes(
     query = models.Notes.__table__.update().\
         where(models.Notes.client_id == client_id and models.Notes.id == id_s).\
             values(
+                title = title,
                 detail=detail
             )
     await database.execute(query)
