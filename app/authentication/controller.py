@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, Form
 from fastapi.openapi.models import OAuth2
 from fastapi.security.oauth2 import OAuth2AuthorizationCodeBearer, OAuth2PasswordRequestFormStrict
 from sqlalchemy.orm.session import Session
-from . import schemas, models
+from . import schemas, models, crud
 from app.utils import util, constant
 import uuid, datetime
 from app.talent.database import database , SessionLocal
@@ -46,8 +46,9 @@ async def register(user : schemas.UserCreate):
         passcode = 0,
         is_admin = "False",
         status = "1")
-
+    
     await database.execute(query)
+    py_function.generate_register_email(user.username,[user.email])
     return {
         **user.dict(),
         "id" :gid,
@@ -74,7 +75,8 @@ async def login(form_data : OAuth2PasswordRequestForm = Depends()):
         data ={"sub": form_data.username},
         expires_delta= access_token_expires,
     )
-
+    # mail = crud.get_course
+    # py_function.generate_login_email(form_data.username,[user.email])
     results = {
         "access_token": access_token,
         "token_type": "bearer",
@@ -128,27 +130,21 @@ def get_data(search : str = "",search_type: str =" ",db: Session = Depends(get_d
     return list_of_dicts
 
 @router.post('/auth')
-async def get_user_auth(email: str, username: str):
+async def get_user_auth(email: str):
     #check = util.findExistedEmailUser(database=database,email=email)
     check = py_function.check_user_exist(email,engine)
     if check:
-        passcode1 = await py_function.send_auth_code(email,username)
+        passcode1 = await py_function.send_auth_code(email)
         py_function.generate_auth_email(passcode1,[email])
         return {"status":'Sent Passcode'}
     else:
         return  {"message":"Check your email-id"}
 
-# @router.put('/auth/')
-# def get_user_auth(email: str):
-#     passcode = py_function.send_auth_code(email,database)
-#     py_function.generate_auth_email(passcode,[email])
-#     return {"status":'Sent Passcode'}
-
 @router.post('/forget')
-async def forget(email: str,username:str,passcode:int,new_pass:str,confirm_password:str):
+async def forget(email: str,passcode:int,new_pass:str,confirm_password:str):
     validate=py_function.validate_passcode(email,passcode,engine)
     if validate:
-        passcode = await py_function.update_password(email,username,new_pass,confirm_password)
+        passcode = await py_function.update_password(email,new_pass,confirm_password)
         py_function.generate_password_change_email([email])
         return {"status":'Success'}
     else:

@@ -32,36 +32,64 @@ def get_db():
         db.close()
 
 models.Base.metadata.create_all(bind=engine)
+
+from fastapi.param_functions import File, Body
+from s3_events.s3_utils import S3_SERVICE
+AWS_ACCESS_KEY_ID = "AKIA2O3WJVIG42BHMUPF"
+AWS_SECRET_ACCESS_KEY = "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"
+S3_Key = "honour" # change everywhere
+S3_Bucket = 'cinedarbaar'
+AWS_REGION = 'ap-south-1'
+DESTINATION = "static/"
+PUBLIC_DESTINATION = "https://cinedarbaar.s3.ap-south-1.amazonaws.com/"
+s3_client = S3_SERVICE(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
  
 @router.post("/course/tutor")
-def create_tutor(
-    course_id:int,title:str,name:str,description:str,file: UploadFile= File(...), db: Session = Depends(get_db)
+async def create_tutor(
+    course_id:int,title:str,name:str,description:str,fileobject: UploadFile= File(...),filename: str = Body(default=None), db: Session = Depends(get_db)
 ):
 
-    extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
-    if not extension:
-        return "Image must be jpg or png format!"
-    result = cloudinary.uploader.upload(file.file)
-    url = result.get("url")
-    return crud.create_tutor(db=db,name=name,title=title,description=description,url=url,course_id=course_id)
+    if filename is None:
+        #filename = generate_png_string()
+        extension_pro = fileobject.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+        if not extension_pro:
+            return "Image must be jpg or png format!"
+        suffix_pro = Path(fileobject.filename).suffix
+        filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = fileobject.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads3 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data)
+    if uploads3:
+        url = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename)
+        return crud.create_tutor(db=db,name=name,title=title,description=description,url=url,course_id=course_id)
+    else:
+        raise HTTPException(status_code=400, detail="Failed to upload in S3")
 
 @router.put("/course/tutor/{id}")
 async def update_tutor(
-    id:int,course_id:int,title:str,name:str,description:str,file: UploadFile= File(...), db: Session = Depends(get_db)
+    id:int,course_id:int,title:str,name:str,description:str,fileobject: UploadFile= File(...),filename: str = Body(default=None), db: Session = Depends(get_db)
 ):
-    extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
-    if not extension:
-        return "Image must be jpg or png format!"
-    result = cloudinary.uploader.upload(file.file)
-    url = result.get("url")
-    subject =  crud.get_tutor(db,id)
-    if not subject:
-        raise HTTPException(status_code=404, detail="Course not found")
-    #'select * from USERS where email='+"'"+str(username)+"'"+' and PASSWORD='+"'"+str(password)+"'"
-    query = "UPDATE tutors SET title='"+str(title)+"' , name='"+str(name)+"' , description='"+str(description)+"', COURSE_ID = '"+str(course_id)+"' , url='"+str(url)+"' WHERE id='"+str(id)+"'"
-    db.execute(query)
-    db.commit()
-    return {"Result" : "Module Updated Succesfully"}
+    
+    if filename is None:
+        #filename = generate_png_string()
+        extension_pro = fileobject.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+        if not extension_pro:
+            return "Image must be jpg or png format!"
+        suffix_pro = Path(fileobject.filename).suffix
+        filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = fileobject.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads3 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data)
+    if uploads3:
+        url = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename)
+        subject =  crud.get_tutor(db,id)
+        if not subject:
+            raise HTTPException(status_code=404, detail="Course not found")
+        #'select * from USERS where email='+"'"+str(username)+"'"+' and PASSWORD='+"'"+str(password)+"'"
+        query = "UPDATE tutors SET title='"+str(title)+"' , name='"+str(name)+"' , description='"+str(description)+"', COURSE_ID = '"+str(course_id)+"' , url='"+str(url)+"' WHERE id='"+str(id)+"'"
+        db.execute(query)
+        db.commit()
+        return {"Result" : "Module Updated Succesfully"}
+    else:
+        raise HTTPException(status_code=400, detail="Failed to upload in S3")
 
 @router.get("/courses/tutor/"  ,dependencies=[Depends(pagination_params)])
 def tutor_list(db: Session = Depends(get_db)):

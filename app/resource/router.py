@@ -32,35 +32,69 @@ def get_db():
         db.close()
 
 models.Base.metadata.create_all(bind=engine)
+
+import boto3
+from fastapi.param_functions import File, Body
+from s3_events.s3_utils import S3_SERVICE
+AWS_ACCESS_KEY_ID = "AKIA2O3WJVIG42BHMUPF"
+AWS_SECRET_ACCESS_KEY = "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"
+S3_Key = "resource" # change everywhere
+S3_Bucket = 'cinedarbaar'
+AWS_REGION = 'ap-south-1'
+DESTINATION = "static/"
+PUBLIC_DESTINATION = "https://cinedarbaar.s3.ap-south-1.amazonaws.com/"
+s3_client = S3_SERVICE(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
  
+# @router.post("/course/resource")
+# async def create_learn(
+#     course_id:int,fileobject: UploadFile= File(...), filename: str = Body(default=None), db: Session = Depends(get_db)
+# ):  
+#     if filename is None:
+#         #filename = generate_png_string()
+#         extension_pro = fileobject.filename.split(".")[-1] in ("pdf", "docx") 
+#         if not extension_pro:
+#             return "Image must be jpg or png format!"
+#         suffix_pro = Path(fileobject.filename).suffix
+#         filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+#     data = fileobject.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+#     uploads3 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data )
+#     if uploads3:
+#         pdf_url = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename)
+#         return crud.create_resource(db=db,pdf_url=pdf_url,course_id=course_id)
+
+# @router.put("/course/resource/{id}")
+# async def update_learn(
+#     id:int,course_id:int,fileobject: UploadFile= File(...), filename: str = Body(default=None), db: Session = Depends(get_db)
+# ):  
+#     if filename is None:
+#         #filename = generate_png_string()
+#         extension_pro = fileobject.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+#         if not extension_pro:
+#             return "Image must be jpg or png format!"
+#         suffix_pro = Path(fileobject.filename).suffix
+#         filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+#     data = fileobject.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+#     uploads3 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data )
+#     if uploads3:
+#         pdf_url = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename)
+#         subject =  crud.get_resorce(db,id)
+#         if not subject:
+#             raise HTTPException(status_code=404, detail="Course not found")
+#         query = "UPDATE resources SET course_id='"+str(course_id)+"' , pdf_url='"+str(pdf_url)+"' WHERE id='"+str(id)+"'"
+#         db.execute(query)
+#         db.commit()
+#     return {"Result" : "Module Updated Succesfully"}
+
 @router.post("/course/resource")
-def create_learn(
-    course_id:int,file: UploadFile= File(...), db: Session = Depends(get_db)
-):  
-    extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")#("pdf", "txt", "docs")
-    if not extension:
-        return "Documents must be pdf or txt format!"
-    
-    # outputImage = Image.fromarray(sr_img)  
-    suffix = Path(file.filename).suffix
-    filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-    result = cloudinary.uploader.upload(file.file)
-    pdf_url = result.get("url")
-    return crud.create_resource(db=db,pdf_url=pdf_url,course_id=course_id)
+async def create_learn(
+    course_id:int,pdf_url:str, db: Session = Depends(get_db)
+):
+    return crud.create_resource(db=db,course_id=course_id,pdf_url=pdf_url)
 
 @router.put("/course/resource/{id}")
 async def update_learn(
-    id:int,course_id:int,file: UploadFile= File(...), db: Session = Depends(get_db)
-):  
-    extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
-    if not extension:
-        return "Documents must be pdf or txt format!"
-    
-    # outputImage = Image.fromarray(sr_img)  
-    suffix = Path(file.filename).suffix
-    filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-    result = cloudinary.uploader.upload(file.file)
-    pdf_url = result.get("url")
+    id:int,course_id:int, pdf_url:str, db: Session = Depends(get_db)
+):
     subject =  crud.get_resorce(db,id)
     if not subject:
         raise HTTPException(status_code=404, detail="Course not found")

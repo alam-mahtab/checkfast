@@ -67,7 +67,8 @@ async def pay_me(request: Request, id:str):
     # any = models.Payment.amount
     #print(result)
     print(pay1)
-    client = razorpay.Client(auth=("rzp_test_cfbr43uRZAs35w","dcPlBgM8Fv7H2J1cYISFKC81"))
+    #client = razorpay.Client(auth=("rzp_live_7Wz67232paIYjD","WjSsY2oGGw6HhZbXqsbcsRnT"))
+    client = razorpay.Client(auth=("rzp_test_AZImZBA0Ypgwni", "amS1t8KL21wnsFyh1cFHKfXb"))
     payment = client.order.create({'amount' : int(df.price.values)*100, 'currency':'INR', 'receipt': "paycd"+str(gid),'payment_capture':'1'})
     print(payment)
     query = Payment.__table__.insert().values(
@@ -83,38 +84,42 @@ async def pay_me(request: Request, id:str):
         # course_id = id)
     await database.execute(query)
     #return {**payment}
-    return templates.TemplateResponse("home.html", {"request": request, "payment":payment})
+    return templates.TemplateResponse("app.html", {"request": request, "payment":payment})
 @router.get("/payments")
 async def get_payment():
-    client = razorpay.Client(auth=("rzp_test_cfbr43uRZAs35w", "dcPlBgM8Fv7H2J1cYISFKC81"))
+    client = razorpay.Client(auth=("rzp_test_AZImZBA0Ypgwni", "amS1t8KL21wnsFyh1cFHKfXb"))
     count = 2
     skip = 1
 
     resp = client.order.fetch_all()
     return resp
 # Get Payment Id client = razorpay.Client(auth=("rzp_test_cfbr43uRZAs35w", "dcPlBgM8Fv7H2J1cYISFKC81")
-@router.get("/payments/:id")
-async def get_payment_by_id(request: Request, order_id:str):
+# @router.post("/pay/{id}/charge/")
+# async def get_payment_by_id(request: Request, order_id:str):
     
-    client = razorpay.Client(auth=("rzp_test_cfbr43uRZAs35w", "dcPlBgM8Fv7H2J1cYISFKC81"))
+#     client = razorpay.Client(auth=("rzp_test_AZImZBA0Ypgwni", "amS1t8KL21wnsFyh1cFHKfXb"))
 
-    order_id = order_id
+#     order_id = order_id
 
-    resp = client.order.fetch(order_id)
-    return resp
+#     resp = client.order.fetch(order_id)
+#     return resp
 @router.get("/payments/:id/payments")
 async def get_all_payment_by_id(request: Request, order_id:str):
     
-    client = razorpay.Client(auth=("rzp_test_cfbr43uRZAs35w", "dcPlBgM8Fv7H2J1cYISFKC81"))
+    client = razorpay.Client(auth=("rzp_test_AZImZBA0Ypgwni", "amS1t8KL21wnsFyh1cFHKfXb"))
 
     order_id = order_id
 
     resp = client.order.fetch(order_id)
     return resp
-@router.get("/success/")
-async def success(request: Request):
-    return templates.TemplateResponse("success.html", {"request": request})
+# @router.get("/success/{order_id}")
+# async def success(request: Request, order_id:str):
+#     return templates.TemplateResponse("success.html", {"request": request})
 
-@router.post("/success/")
+@router.post("/pay/{id}/charge/")
 async def success(request: Request):
+    client = razorpay.Client(auth=("rzp_test_AZImZBA0Ypgwni", "amS1t8KL21wnsFyh1cFHKfXb"))
+    payment_id = request.form['razorpay_payment_id']
+    abc = client.order.fetch(payment_id)
+    print(abc)
     return templates.TemplateResponse("success.html", {"request": request})

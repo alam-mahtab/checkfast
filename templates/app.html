@@ -1,0 +1,24 @@
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+</head>
+<body>
+    <form action="charge" method="POST">
+        <script
+            src="https://checkout.razorpay.com/v1/checkout.js"
+            data-key="rzp_test_AZImZBA0Ypgwni"
+            data-amount="{{payment['amount']}}"
+            data-name="Cinedarbaar"
+            data-description="Purchase Description"
+            data-image="vk.jpg"
+            data-netbanking="true"
+            data-description="Buying a course"
+            data-prefill.name="Karan Mehra"
+            data-prefill.email="alammahtab869@gmail.com"
+            data-prefill.contact="8210022103"
+            data-notes.shopping_order_id="Course Fess">
+        </script>
+        <input type="hidden" name="shopping_order_id" value="21">
+    </form>
+</body>
+</html>

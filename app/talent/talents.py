@@ -27,85 +27,93 @@ from starlette.staticfiles import StaticFiles
 import os
 from os.path import dirname, abspath, join
 import shutil
-import cloudinary
-import cloudinary.uploader
 
-# router.mount("/static", StaticFiles(directory="static"), name="static")
-# dirname = dirname(dirname(abspath(__file__)))
-# images_path = join(dirname, '/static')
-
-# router.mount("/app", StaticFiles(directory="app"), name="app")
-# # dirname = dirname(dirname(abspath(__file__)))
-# # images_path = join(dirname, '/static')
-
-# current_file = Path(__file__)
-# current_file_dir = current_file.parent
-# project_root = current_file_dir.parent
-# project_root_absolute = project_root.resolve()
-# static_root_absolute = project_root_absolute / "static" 
+import boto3
+from fastapi.param_functions import File, Body
+from s3_events.s3_utils import S3_SERVICE
+AWS_ACCESS_KEY_ID = "AKIA2O3WJVIG42BHMUPF"
+AWS_SECRET_ACCESS_KEY = "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"
+S3_Key = "talents" # change everywhere
+S3_Bucket = 'cinedarbaar'
+AWS_REGION = 'ap-south-1'
+DESTINATION = "static/"
+PUBLIC_DESTINATION = "https://cinedarbaar.s3.ap-south-1.amazonaws.com/"
+s3_client = S3_SERVICE(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
 
 @router.post("/talent/")
-def create_talent(
-    description:str,name:str,type:str,status:int,file_pro: UploadFile= File(...), file_cover: UploadFile= File(...), db: Session = Depends(get_db)
+async def create_talent(
+    description:str,name:str,type:str,status:int,file_pro: UploadFile= File(...), file_cover: UploadFile= File(...),filename1: str = Body(default=None), filename2: str = Body(default=None), db: Session = Depends(get_db)
 ):
 
-    extension_pro = file_pro.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
-    if not extension_pro:
-        return "Image must be jpg or png format!"
-    suffix_pro = Path(file_pro.filename).suffix
-    filename_pro = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
-    result = cloudinary.uploader.upload(file_pro.file)
-    url_profile = result.get("url")
-    # with open("static/"+filename_pro, "wb") as image:
-    #     shutil.copyfileobj(file_pro.file, image)
-    # url_profile = os.path.join(images_path, filename_pro)
+    if filename1 is None:
+        #filename = generate_png_string()
+        extension_pro = file_pro.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+        if not extension_pro:
+            return "Image must be jpg or png format!"
+        suffix_pro = Path(file_pro.filename).suffix
+        filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = file_pro.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads3 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data )
+    if uploads3:
+        url_profile = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename)
+    else:
+        raise HTTPException(status_code=400, detail="Failed to upload in S3")
 
-    extension_cover = file_cover.filename.split(".")[-1] in ("jpg", "jpeg", "png")
-    if not extension_cover:
-        return "Image must be jpg or png format!"
-    suffix_cover =Path(file_cover.filename).suffix
-    filename_cover = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_cover )
-    result = cloudinary.uploader.upload(file_cover.file)
-    url_cover = result.get("url")
-    # with open("static/"+filename_cover, "wb") as image:
-    #     shutil.copyfileobj(file_cover.file, image)
-    # url_cover = os.path.join(images_path, filename_cover)
+    if filename2 is None:
+        #filename = generate_png_string()
+        extension_pro = file_cover.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+        if not extension_pro:
+            return "Image must be jpg or png format!"
+        suffix_pro = Path(file_cover.filename).suffix
+        filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = file_cover.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads3 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data )
+    if uploads3:
+        url_cover = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename)
 
-    return crud.create_talent(db=db,name=name,description=description,url_profile=url_profile,url_cover=url_cover,type=type,status=status)
+        return crud.create_talent(db=db,name=name,description=description,url_profile=url_profile,url_cover=url_cover,type=type,status=status)
+    else:
+        raise HTTPException(status_code=400, detail="Failed to upload in S3")
 
 @router.put("/talent/{id}")
-def update_talent(
-    id:int,description:str,name:str,type:str,status:int,file_pro: UploadFile= File(...), file_cover: UploadFile= File(...), db: Session = Depends(get_db)
+async def update_talent(
+    id:int,description:str,name:str,type:str,status:int,file_pro: UploadFile= File(...), file_cover: UploadFile= File(...),filename1: str = Body(default=None), filename2: str = Body(default=None), db: Session = Depends(get_db)
 ):
 
-    extension_pro = file_pro.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
-    if not extension_pro:
-        return "Image must be jpg or png format!"
-    suffix_pro = Path(file_pro.filename).suffix
-    filename_pro = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
-    result = cloudinary.uploader.upload(file_pro.file)
-    url_profile = result.get("url")
-    # with open("static/"+filename_pro, "wb") as image:
-    #     shutil.copyfileobj(file_pro.file, image)
-    # url_profile = os.path.join(images_path, filename_pro)
+    if filename1 is None:
+        #filename = generate_png_string()
+        extension_pro = file_pro.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+        if not extension_pro:
+            return "Image must be jpg or png format!"
+        suffix_pro = Path(file_pro.filename).suffix
+        filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = file_pro.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads31 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data )
+    if uploads31:
+        url_profile = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename)
+    else:
+        raise HTTPException(status_code=400, detail="Failed to upload in S3")
 
-    extension_cover = file_cover.filename.split(".")[-1] in ("jpg", "jpeg", "png")
-    if not extension_cover:
-        return "Image must be jpg or png format!"
-    suffix_cover =Path(file_cover.filename).suffix
-    filename_cover = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_cover )
-    result = cloudinary.uploader.upload(file_cover.file)
-    url_cover = result.get("url")
-    # with open("static/"+filename_cover, "wb") as image:
-    #     shutil.copyfileobj(file_cover.file, image)
-    # url_cover = os.path.join(images_path, filename_cover)
-    subject =  crud.get_talent(db,id)
-    if not subject:
-        raise HTTPException(status_code=404, detail="Talents not found")
-    query = "UPDATE talents SET url_profile='"+str(url_profile)+"' , description='"+str(description)+"' , status='"+str(status)+"', url_cover='"+str(url_cover)+"' WHERE id='"+str(id)+"'"
-    db.execute(query)
-    db.commit()
-    return {"Result" : "Talent Updated Succesfully"}
+    if filename2 is None:
+        #filename = generate_png_string()
+        extension_pro = file_cover.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+        if not extension_pro:
+            return "Image must be jpg or png format!"
+        suffix_pro = Path(file_cover.filename).suffix
+        filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = file_cover.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads32 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data )
+    if uploads32:
+        url_cover = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename)
+        subject =  crud.get_talent(db,id)
+        if not subject:
+            raise HTTPException(status_code=404, detail="Talents not found")
+        query = "UPDATE talents SET url_profile='"+str(url_profile)+"' , description='"+str(description)+"' , status='"+str(status)+"', url_cover='"+str(url_cover)+"' WHERE id='"+str(id)+"'"
+        db.execute(query)
+        db.commit()
+        return {"Result" : "Talent Updated Succesfully"}
+    else:
+        raise HTTPException(status_code=400, detail="Failed to upload in S3")
 
 @router.get("/talents/" ,dependencies=[Depends(pagination_params)])
 def talent_list(db: Session = Depends(get_db)):

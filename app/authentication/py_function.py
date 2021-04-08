@@ -58,24 +58,61 @@ def signup_data(firstname,lastname,city,email,password):
 def generate_code():
     return randint(100000,1000000)
 
-async def send_auth_code(email,username):
+async def send_auth_code(email):
     passcode = generate_code()
     print (passcode)
-    query = "Update users set passcode='" + str(passcode) + "'where username='"+ str(username)+"'"
-    #query = "UPDATE USERS SET PASSCODE ='" + str(code) + "' where EMAIL='" + str(email) + "'"
-    #query='select * from USERS where email='+"'"+str(email)+"'"' AND
-    #query=' UPDATE USERS SET PASSCODE ='+"'"+str(code)+"'"'where EMAIL'+"'"+str(email)+"'"
-    print(username)
-    #query = Users.__table__.update().where(Users.username == username ).values(
-            #    passcode = passcode,
-            #    status = "2"
-            # )
+    query = "Update users set passcode='" + str(passcode) + "'where email='"+ str(email)+"'"
     print(query)
     await database.execute(query)
-    #database.add(query)
-        #' UPDATE USERS SET PASSCODE ='+"'"+str(code)+"'"'where EMAIL'+"'"+str(email)+"'")
     return passcode
 
+
+def generate_register_email(username,RECEIVER_EMAIL):
+    subject = "Register User"
+    body ="\nHi "+str(username)+"\n\n Your registration is completed\n\n\n Thanks & Regards \nTeam Cinedarbaar"
+    sender_email = email_config().email_id
+    receiver_email = RECEIVER_EMAIL
+    password = email_config().email_pwd
+
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = ", ".join(receiver_email)
+    message["Subject"] = subject
+    message.attach(MIMEText(body, "plain"))
+    text = message.as_string()
+
+    context = ssl.create_default_context()
+    
+    with smtplib.SMTP_SSL("smtpout.secureserver.net", 465, context=context) as server:
+
+    #with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, text)
+
+def generate_login_email(username,RECEIVER_EMAIL):
+    subject = "URGENT: Login Detected"
+    body ="\nHi "+str(username)+"\n\nWe notice that you logged in \n\nIf it isn't You kindly reset your password \n\n\nThanks & Regards \nTeam Cinedarbaar"
+    sender_email = email_config().email_id
+    receiver_email = RECEIVER_EMAIL
+    password = email_config().email_pwd
+
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = ", ".join(receiver_email)
+    message["Subject"] = subject
+    message.attach(MIMEText(body, "plain"))
+    text = message.as_string()
+
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtpout.secureserver.net", 465, context=context) as server:
+    #with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, text)
+
+
+
+
+# old section
 
 def generate_auth_email(passcode1,RECEIVER_EMAIL):
     subject = "Verification Code"
@@ -128,10 +165,8 @@ def validate_passcode(email,passcode,engine):
     else:
         return False
 from app.utils import util
-async def update_password(email,username,password,confirm_password):
-    #query = "UPDATE USERS SET PASSWORD ='" + str(password) + "' where EMAIL='" + str(email) + "'"
-    print(username)
-    query = Users.__table__.update().where(Users.username == username).values(
+async def update_password(email,password,confirm_password):
+    query = Users.__table__.update().where(Users.email == email).values(
             password = util.get_password_hash(password),
             confirm_password = util.get_password_hash(confirm_password),
             passcode = 000000

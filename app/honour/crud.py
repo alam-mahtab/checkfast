@@ -6,8 +6,8 @@ from typing import Optional
 import datetime
 
 # Honour
-def create_honour(db: Session,desc:str,name:str,url:str,talent_id:int,status:int):
-    db_honour = models.Honour(desc=desc,name=name,url=url,talent_id=talent_id,status=status)
+def create_honour(db: Session,description:str,name:str,url:str,talent_id:int,status:int):
+    db_honour = models.Honour(description=description,name=name,url=url,talent_id=talent_id,status=status)
     db.add(db_honour)
     db.commit()
     db.refresh(db_honour)

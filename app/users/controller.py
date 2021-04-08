@@ -13,6 +13,10 @@ import pandas as pd
 import re 
 import cloudinary
 import cloudinary.uploader
+import os
+import uuid
+from pathlib import Path
+import time
 router = APIRouter()
 
 
@@ -24,6 +28,18 @@ def get_db():
         db.close()
 
 models.Base.metadata.create_all(bind=engine)
+
+from fastapi.param_functions import File, Body
+from s3_events.s3_utils import S3_SERVICE
+AWS_ACCESS_KEY_ID = "AKIA2O3WJVIG42BHMUPF"
+AWS_SECRET_ACCESS_KEY = "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"
+S3_Key = "project" # change everywhere
+S3_Bucket = 'cinedarbaar'
+AWS_REGION = 'ap-south-1'
+DESTINATION = "static/"
+PUBLIC_DESTINATION = "https://cinedarbaar.s3.ap-south-1.amazonaws.com/"
+s3_client = S3_SERVICE(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
+
 @router.get("/users/me", response_model = schemas.UserList)
 async def read_user_me(currentuser: schemas.UserList = Depends(util.get_current_active_user)):
     return currentuser
@@ -32,6 +48,11 @@ async def read_user_me(currentuser: schemas.UserList = Depends(util.get_current_
 async def find_user_by_username(username : str):
     query = Users.__table__.select().where(Users.username == username)
     return await database.fetch_one(query)
+
+# @router.get("/user/{username}", response_model= schemas.UserList)
+# async def find_email_by_username(username : str):
+#     query = Users.__table__.select().where(Users.username == username)
+#     return await database.fetch_one(query)
 
 @router.get("/users/email",response_model = schemas.UserList)
 async def find_user_by_email(email : str,currentuser: schemas.UserList = Depends(util.get_current_active_user)):
@@ -102,12 +123,19 @@ async def delete(id: int, db: Session = Depends(get_db)):
 
 # Project_undertaken
 @router.post("/users/{userId}/project")
-def create_project(client_id:str,first_name:str,details:str,file: UploadFile= File(...),db:Session=Depends(get_db)):
-    # suffix = Path(file.filename).suffix
-    # filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-    result = cloudinary.uploader.upload(file.file)
-    url = result.get("url")
-    return crud.create_project(db=db,client_id=client_id,first_name=first_name,details=details,url=url)
+async def create_project(client_id:str,first_name:str,details:str,fileobject: UploadFile= File(...), filename: str = Body(default=None),db:Session=Depends(get_db)):
+    if filename is None:
+        #filename = generate_png_string()
+        extension_pro = fileobject.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+        if not extension_pro:
+            return "Image must be jpg or png format!"
+        suffix_pro = Path(fileobject.filename).suffix
+        filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = fileobject.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads3 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data )
+    if uploads3:
+        url = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename)
+        return crud.create_project(db=db,client_id=client_id,first_name=first_name,details=details,url=url)
 
 @router.get("/users/{userId}/project"  ,dependencies=[Depends(pagination_params)])
 def project_list(db: Session = Depends(get_db)):

@@ -108,7 +108,7 @@ class Certificate(Base):
     created_date     = Column(DateTime,default=datetime.datetime.utcnow)
     username         = Column(String)
     lastname         = Column(String)
-    email            = Column(String)
+    email             = Column(String)
     course_id        = Column(Integer, ForeignKey('courses.id'))
     m5               = relationship('Course', back_populates='fifth')
     client_id        = Column(String, ForeignKey('users.id'))

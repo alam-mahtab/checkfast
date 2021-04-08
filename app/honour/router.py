@@ -32,38 +32,64 @@ def get_db():
         db.close()
 
 models.Base.metadata.create_all(bind=engine)
+import boto3
+# For S3
+from fastapi.param_functions import File, Body
+from s3_events.s3_utils import S3_SERVICE
+AWS_ACCESS_KEY_ID = "AKIA2O3WJVIG42BHMUPF"
+AWS_SECRET_ACCESS_KEY = "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"
+S3_Key = "honour" # change everywhere
+S3_Bucket = 'cinedarbaar'
+AWS_REGION = 'ap-south-1'
+DESTINATION = "static/"
+PUBLIC_DESTINATION = "https://cinedarbaar.s3.ap-south-1.amazonaws.com/"
+s3_client = S3_SERVICE(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
  
 @router.post("/talent/honour")
-def create_honour(
-    talent_id:int,desc:str,name:str,status:int,file: UploadFile= File(...), db: Session = Depends(get_db)
+async def create_honour(
+    talent_id:int,description:str,name:str,status:int,fileobject: UploadFile= File(...), filename: str = Body(default=None), db: Session = Depends(get_db)
 ):
 
-    extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
-    if not extension:
-        return "Image must be jpg or png format!"
-    result = cloudinary.uploader.upload(file.file)
-    url = result.get("url")
-    return crud.create_honour(db=db,desc=desc,name=name,url=url,talent_id=talent_id,status=status)
+    if filename is None:
+        #filename = generate_png_string()
+        extension_pro = fileobject.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+        if not extension_pro:
+            return "Image must be jpg or png format!"
+        suffix_pro = Path(fileobject.filename).suffix
+        filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = fileobject.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads3 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data)
+    if uploads3:
+        url = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename)
+        return crud.create_honour(db=db,talent_id=talent_id,name=name,url=url,description=description,status=status)
+    else:
+        raise HTTPException(status_code=400, detail="Failed to upload in S3")
 
 @router.put("/talent/honour/{id}")
 async def update_talent(
-    id:int,talent_id:int,desc:str,name:str,week:int,file: UploadFile= File(...), db: Session = Depends(get_db)
+    id:int,talent_id:int,description:str,name:str,status:int,fileobject: UploadFile= File(...), filename: str = Body(default=None), db: Session = Depends(get_db)
 ):
-    extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
-    if not extension:
-        return "Image must be jpg or png format!"
-    result = cloudinary.uploader.upload(file.file)
-    url = result.get("url")
-    subject =  crud.get_honour(db,id)
-    if not subject:
-        raise HTTPException(status_code=404, detail="Course not found")
-    #'select * from USERS where email='+"'"+str(username)+"'"+' and PASSWORD='+"'"+str(password)+"'"
-    query = "UPDATE honours SET desc='"+str(desc)+"' , name='"+str(name)+"', talent_id = '"+str(talent_id)+"'  , status='"+str(status)+"', url='"+str(url)+"' WHERE id='"+str(id)+"'"
-    db.execute(query)
-    db.commit()
-    return {"Result" : "Module Updated Succesfully"}
-#     return await crud.update_course(db=db,name=name,title=title,desc=desc,price=price,url=url,type=type,status=status)
-#     #return {"update": update}
+    if filename is None:
+        #filename = generate_png_string()
+        extension_pro = fileobject.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+        if not extension_pro:
+            return "Image must be jpg or png format!"
+        suffix_pro = Path(fileobject.filename).suffix
+        filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = fileobject.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads3 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data )
+    if uploads3:
+        url = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename)
+        subject =  crud.get_honour(db,id)
+        if not subject:
+            raise HTTPException(status_code=404, detail="Module not found")
+        #'select * from USERS where email='+"'"+str(username)+"'"+' and PASSWORD='+"'"+str(password)+"'"
+        query = "UPDATE honours SET description='"+str(description)+"' , name='"+str(name)+"', talent_id = '"+str(talent_id)+"'  , status='"+str(status)+"', url='"+str(url)+"' WHERE id='"+str(id)+"'"
+        db.execute(query)
+        db.commit()
+        return {"Result" : "Module Updated Succesfully"}
+    else:
+        raise HTTPException(status_code=400, detail="Failed to upload in S3")
 
 @router.get("/talent/honour"  ,dependencies=[Depends(pagination_params)])
 def talent_list(db: Session = Depends(get_db)):

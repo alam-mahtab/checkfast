@@ -5,5 +5,5 @@ services:
       container_name: "core-api-container"
       restart: "always"
       ports: 
-      - "8100:15400"
+      - "8000:15400"
       

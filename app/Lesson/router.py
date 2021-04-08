@@ -32,36 +32,63 @@ def get_db():
         db.close()
 
 models.Base.metadata.create_all(bind=engine)
+
+import boto3
+from fastapi.param_functions import File, Body
+from s3_events.s3_utils import S3_SERVICE_VIDEO
+AWS_ACCESS_KEY_ID = "AKIA2O3WJVIG42BHMUPF"
+AWS_SECRET_ACCESS_KEY = "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"
+S3_Key = "lesson" # change everywhere
+S3_Bucket = 'cinedarbaar'
+AWS_REGION = 'ap-south-1'
+DESTINATION = "static/"
+PUBLIC_DESTINATION = "https://cinedarbaar.s3.ap-south-1.amazonaws.com/"
+s3_client = S3_SERVICE_VIDEO(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
  
 @router.post("/course/lesson")
-def create_lesson(
-    course_id:int,title:str,name:str,description:str,chapter:int,file: UploadFile= File(...), db: Session = Depends(get_db)
+async def create_lesson(
+    course_id:int,title:str,name:str,description:str,chapter:int,fileobject: UploadFile= File(...), filename: str = Body(default=None), db: Session = Depends(get_db)
 ):
 
-    extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
-    if not extension:
-        return "Image must be jpg or png format!"
-    result = cloudinary.uploader.upload(file.file)
-    url = result.get("url")
-    return crud.create_lesson(db=db,name=name,title=title,description=description,url=url,course_id=course_id,chapter=chapter)
+    if filename is None:
+        #filename = generate_png_string()
+        extension_pro = fileobject.filename.split(".")[-1] in ("mp4", "3gp", "mkv") 
+        if not extension_pro:
+            return "video must be jpg or png format!"
+        suffix_pro = Path(fileobject.filename).suffix
+        filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = fileobject.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads3 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data)
+    if uploads3:
+        url = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename)
+        return crud.create_lesson(db=db,name=name,title=title,description=description,url=url,course_id=course_id,chapter=chapter)
+    else:
+        raise HTTPException(status_code=400, detail="Failed to upload in S3")
 
 @router.put("/course/lesson/{id}")
 async def update_lesson(
-    id:int,course_id:int,title:str,name:str,description:str,chapter:int,file: UploadFile= File(...), db: Session = Depends(get_db)
+    id:int,course_id:int,title:str,name:str,description:str,chapter:int,fileobject: UploadFile= File(...), filename: str = Body(default=None), db: Session = Depends(get_db)
 ):
-    extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
-    if not extension:
-        return "Image must be jpg or png format!"
-    result = cloudinary.uploader.upload(file.file)
-    url = result.get("url")
-    subject =  crud.get_lesson(db,id)
-    if not subject:
-        raise HTTPException(status_code=404, detail="Course not found")
-    #'select * from USERS where email='+"'"+str(username)+"'"+' and PASSWORD='+"'"+str(password)+"'"
-    query = "UPDATE lessons SET title='"+str(title)+"' , name='"+str(name)+"', description ='"+str(description)+"', COURSE_ID = '"+str(course_id)+"'  , chapter='"+str(chapter)+"', url='"+str(url)+"' WHERE id='"+str(id)+"'"
-    db.execute(query)
-    db.commit()
-    return {"Result" : "Module Updated Succesfully"}
+    if filename is None:
+        #filename = generate_png_string()
+        extension_pro = fileobject.filename.split(".")[-1] in ("mp4", "3gp", "mkv") 
+        if not extension_pro:
+            return "video must be jpg or png format!"
+        suffix_pro = Path(fileobject.filename).suffix
+        filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = fileobject.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads3 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data )
+    if uploads3:
+        url = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename)
+        subject =  crud.get_lesson(db,id)
+        if not subject:
+            raise HTTPException(status_code=404, detail="Lesson not found")
+        query = "UPDATE lessons SET title='"+str(title)+"' , name='"+str(name)+"', description ='"+str(description)+"', COURSE_ID = '"+str(course_id)+"'  , chapter='"+str(chapter)+"', url='"+str(url)+"' WHERE id='"+str(id)+"'"
+        db.execute(query)
+        db.commit()
+        return {"Result" : "Module Updated Succesfully"}
+    else:
+        raise HTTPException(status_code=400, detail="Failed to upload in S3")
 
 @router.get("/courses/lesson/"  ,dependencies=[Depends(pagination_params)])
 def lesson_list(db: Session = Depends(get_db)):

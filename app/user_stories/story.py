@@ -31,29 +31,33 @@ def get_db():
 
 models.Base.metadata.create_all(bind=engine)
 
-# router.mount("/static", StaticFiles(directory="static"), name="static")
-# dirname = dirname(dirname(abspath(__file__)))
-# images_path = join(dirname, '/static')
-current_file = Path(__file__)
-current_file_dir = current_file.parent
-project_root = current_file_dir.parent
-project_root_absolute = project_root.resolve()
-static_root_absolute = project_root_absolute / "static" 
+import boto3
+from fastapi.param_functions import File, Body
+from s3_events.s3_utils import S3_SERVICE
+AWS_ACCESS_KEY_ID = "AKIA2O3WJVIG42BHMUPF"
+AWS_SECRET_ACCESS_KEY = "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"
+S3_Key = "user-story" # change everywhere
+S3_Bucket = 'cinedarbaar'
+AWS_REGION = 'ap-south-1'
+DESTINATION = "static/"
+PUBLIC_DESTINATION = "https://cinedarbaar.s3.ap-south-1.amazonaws.com/"
+s3_client = S3_SERVICE(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
 
 @router.post("/story/")
-def create_story(story:str,file: UploadFile= File(...), db: Session = Depends(get_db)):
+async def create_story(story:str,fileobject: UploadFile= File(...), filename: str = Body(default=None), db: Session = Depends(get_db)):
 
-    extension = file.filename.split(".")[-1] in ("jpg", "jpeg","png")
-    if not extension:
-        return "image must be mp4 or 3gp format!"
-    suffix = Path(file.filename).suffix
-    filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix )
-    with open("static/"+filename, "wb") as image:
-        shutil.copyfileobj(file.file, image)
-
-    #url = str("media/"+file.filename)
-    url = os.path.join(static_root_absolute, filename)
-    return crud.create_story(db=db,story=story,url=url)
+    if filename is None:
+        #filename = generate_png_string()
+        extension_pro = fileobject.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+        if not extension_pro:
+            return "Image must be jpg or png format!"
+        suffix_pro = Path(fileobject.filename).suffix
+        filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = fileobject.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads3 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data )
+    if uploads3:
+        url = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename)
+        return crud.create_story(db=db,story=story,url=url)
     #return {"url": url,"status":status}
 
 @router.get("/stories/" ,dependencies=[Depends(pagination_params)])

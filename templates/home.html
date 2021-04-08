@@ -34,17 +34,17 @@
 								<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 								<script>
 								var options = {
-									"key": "rzp_test_cfbr43uRZAs35w", // Enter the Key ID generated from the Dashboard
+									"key": "rzp_live_7Wz67232paIYjD", // Enter the Key ID generated from the Dashboard
 									"amount": "{{payment['amount']}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
 									"currency": "INR",
 									"name": "Cinedarbaar",
-									"description": "Test Transaction",
+									"description": "Live Transaction",
 									"image": "https://example.com/your_logo",
 									"order_id": "{{payment['order_id']}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
 									"client_id":"{{payment['client_id']}}",
 									
 								  
-									"callback_url": "http://127.0.0.1:8000/success",
+									"callback_url": "http://127.0.0.1:8000/success/{order_id}",
 									  
 				  
 									"theme": {
