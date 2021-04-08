@@ -57,13 +57,18 @@ from .files import generate_png_string
 #         else:
 #             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
 #                                 detail="File could not be uploaded")
+from dotenv import load_dotenv
 
-AWS_ACCESS_KEY_ID = "AKIA2O3WJVIG42BHMUPF"
-AWS_SECRET_ACCESS_KEY = "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"
+env = os.getenv('ENV', 'dev')
+env_file_name_dict = {
+    "dev": ".dev.env",
+}
+
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_REGION = os.getenv("AWS_REGION")
+S3_Bucket = os.getenv("S3_Bucket")
 S3_Key = "courses" # change everywhere
-S3_Bucket = 'cinedarbaar'
-AWS_REGION = 'ap-south-1'
-DESTINATION = "static/"
 PUBLIC_DESTINATION = "https://cinedarbaar.s3.ap-south-1.amazonaws.com/"
 s3_client = S3_SERVICE(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
 #s3_client = boto3.resource('s3',aws_access_key_id=access_key,aws_secret_access_key=secret_access_key)
@@ -71,24 +76,24 @@ s3_client = S3_SERVICE(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
 
 
 
-@router.post("/upload", status_code=200, description="***** Upload png asset to S3 *****")
-async def upload(fileobject: UploadFile = File(...), filename: str = Body(default=None)):
-    if filename is None:
-        #filename = generate_png_string()
-        extension_pro = fileobject.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
-        if not extension_pro:
-            return "Image must be jpg or png format!"
-        suffix_pro = Path(fileobject.filename).suffix
-        filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
-    data = fileobject.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
-    uploads3 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key + filename, fileobject=data)
-    if uploads3:
-        s3_url = f"https://{S3_Bucket}.s3.{AWS_REGION}.amazonaws.com/{S3_Key}{filename}"
-        print(s3_url)
-        #doc = [{"image_url": s3_url}]
-        return s3_url
-    else:
-        raise HTTPException(status_code=400, detail="Failed to upload in S3")
+# @router.post("/upload", status_code=200, description="***** Upload png asset to S3 *****")
+# async def upload(fileobject: UploadFile = File(...), filename: str = Body(default=None)):
+#     if filename is None:
+#         #filename = generate_png_string()
+#         extension_pro = fileobject.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+#         if not extension_pro:
+#             return "Image must be jpg or png format!"
+#         suffix_pro = Path(fileobject.filename).suffix
+#         filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+#     data = fileobject.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+#     uploads3 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key + filename, fileobject=data)
+#     if uploads3:
+#         s3_url = f"https://{S3_Bucket}.s3.{AWS_REGION}.amazonaws.com/{S3_Key}{filename}"
+#         print(s3_url)
+#         #doc = [{"image_url": s3_url}]
+#         return s3_url
+#     else:
+#         raise HTTPException(status_code=400, detail="Failed to upload in S3")
 
 
 

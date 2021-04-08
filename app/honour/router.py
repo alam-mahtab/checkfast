@@ -36,12 +36,18 @@ import boto3
 # For S3
 from fastapi.param_functions import File, Body
 from s3_events.s3_utils import S3_SERVICE
-AWS_ACCESS_KEY_ID = "AKIA2O3WJVIG42BHMUPF"
-AWS_SECRET_ACCESS_KEY = "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"
+from dotenv import load_dotenv
+
+env = os.getenv('ENV', 'dev')
+env_file_name_dict = {
+    "dev": ".dev.env",
+}
+
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_REGION = os.getenv("AWS_REGION")
+S3_Bucket = os.getenv("S3_Bucket")
 S3_Key = "honour" # change everywhere
-S3_Bucket = 'cinedarbaar'
-AWS_REGION = 'ap-south-1'
-DESTINATION = "static/"
 PUBLIC_DESTINATION = "https://cinedarbaar.s3.ap-south-1.amazonaws.com/"
 s3_client = S3_SERVICE(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
  

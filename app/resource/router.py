@@ -33,17 +33,6 @@ def get_db():
 
 models.Base.metadata.create_all(bind=engine)
 
-import boto3
-from fastapi.param_functions import File, Body
-from s3_events.s3_utils import S3_SERVICE
-AWS_ACCESS_KEY_ID = "AKIA2O3WJVIG42BHMUPF"
-AWS_SECRET_ACCESS_KEY = "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"
-S3_Key = "resource" # change everywhere
-S3_Bucket = 'cinedarbaar'
-AWS_REGION = 'ap-south-1'
-DESTINATION = "static/"
-PUBLIC_DESTINATION = "https://cinedarbaar.s3.ap-south-1.amazonaws.com/"
-s3_client = S3_SERVICE(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
  
 # @router.post("/course/resource")
 # async def create_learn(
