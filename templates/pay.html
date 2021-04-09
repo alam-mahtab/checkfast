@@ -23,7 +23,7 @@
               <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
               <script>
               var options = {
-                  "key": "rzp_test_cfbr43uRZAs35w", // Enter the Key ID generated from the Dashboard
+                  "key": "rzp_test_AZImZBA0Ypgwni", // Enter the Key ID generated from the Dashboard
                   "amount": "{{payment['amount']}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
                   "currency": "INR",
                   "name": "Cinedarbaar",
@@ -33,7 +33,7 @@
                   "client_id":"{{payment['client_id']}}",
                   
                 
-                  "callback_url": "http://127.0.0.1:8000/success",
+                  "callback_url": "http://127.0.0.1:8000/pay/charge?razorpay_payment_id={{payment['id']}}",
                     
 
                   "theme": {

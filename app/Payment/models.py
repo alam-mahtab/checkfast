@@ -7,7 +7,7 @@ from app.talent.database import Base
 class Payment(Base):
     __tablename__ = "payments"
 
-    id = Column(String, primary_key=True,unique=True)
+    id = Column(Integer, primary_key=True,unique=True)
     created_date = Column(DateTime,default=datetime.datetime.utcnow)
     pay_id = Column(String)
     amount = Column(String)

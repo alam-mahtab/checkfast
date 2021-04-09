@@ -3,7 +3,7 @@
     <meta charset="utf-8">
 </head>
 <body>
-    <form action="charge" method="POST">
+    <form action="charge?razorpay_payment_id={{payment['id']}}" method="POST">
         <script
             src="https://checkout.razorpay.com/v1/checkout.js"
             data-key="rzp_test_AZImZBA0Ypgwni"
@@ -14,8 +14,8 @@
             data-netbanking="true"
             data-description="Buying a course"
             data-prefill.name="Karan Mehra"
-            data-prefill.email="alammahtab869@gmail.com"
-            data-prefill.contact="8210022103"
+            data-prefill.email="********@gmail.com"
+            data-prefill.contact="**********"   
             data-notes.shopping_order_id="Course Fess">
         </script>
         <input type="hidden" name="shopping_order_id" value="21">

@@ -4,6 +4,7 @@ import uuid, datetime
 from app.talent.database import SessionLocal, engine, database
 from starlette.responses import RedirectResponse
 import razorpay
+from sqlalchemy.orm import Session
 from fastapi.responses import HTMLResponse
 from app.authentication import schemas, models
 from app.authentication.models import Course
@@ -12,36 +13,29 @@ router = APIRouter()
 
 templates = Jinja2Templates(directory="templates")
 from random import randint
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 import pandas as pd
-client = razorpay.Client(auth=("rzp_test_AZImZBA0Ypgwni", "amS1t8KL21wnsFyh1cFHKfXb")) 
 
-@router.get("/pay/{id}/")#,response_class=HTMLResponse)
-async def pay_me(request: Request, id:str, client_id):
-    #pay = models.Payment.__table__.select(models.Payment.amount).where(models.Payment.id==id)
-    
+#client = razorpay.Client(auth=("rzp_test_AZImZBA0Ypgwni", "amS1t8KL21wnsFyh1cFHKfXb")) 
+client = razorpay.Client(auth=("rzp_live_7Wz67232paIYjD","WjSsY2oGGw6HhZbXqsbcsRnT"))
+
+@router.get("/pay/")#,response_class=HTMLResponse)
+async def pay_me(request: Request, id:int, client_id:str):
     pay =  "SELECT courses.price FROM courses WHERE courses.id ="+str(id)
-    #pay1 =  "SELECT courses.name FROM courses WHERE courses.id ="+str(id)
-    pay1 = Course.__table__.select(models.Course.name).where(models.Course.id==id)
     result = await database.execute(pay)
-    database.execute(pay1)
-    print(pay)
     gid = randint(100000,1000000)
     rec = ("paycd"+str(gid))
-    
-    print(rec)
     gdate = datetime.datetime.now()
-    #print(pay.amount)
     df= pd.read_sql(pay,engine)
-    # any = models.Payment.amount
-    #print(result)
-    print(pay1)
-    #client = razorpay.Client(auth=("rzp_live_7Wz67232paIYjD","WjSsY2oGGw6HhZbXqsbcsRnT"))
-    #client = razorpay.Client(auth=("rzp_test_AZImZBA0Ypgwni", "amS1t8KL21wnsFyh1cFHKfXb"))
     payment = client.order.create({'amount' : int(df.price.values)*100, 'currency':'INR', 'receipt': "paycd"+str(gid),'payment_capture':'1'})
-    print(payment)
     query = Payment.__table__.insert().values(
-        id = str(gid),
+        #id = str(gid),
         pay_id = payment['id'],
         amount = str(payment['amount']),
         currency = payment['currency'],
@@ -49,14 +43,12 @@ async def pay_me(request: Request, id:str, client_id):
         status = payment['status'],
         pay_createdat = str(payment['created_at']),
         created_date = gdate,
-        client_id=str('65f8d1e7-82fa-11eb-9a8a-18c04d4a628c'),
-        course_id = id)
+        clients_id= client_id,
+        courses_id = id)
     await database.execute(query)
-    #return {**payment}
-    return templates.TemplateResponse("app.html", {"request": request, "payment":payment})
+    return templates.TemplateResponse("home.html", {"request": request, "payment":payment})
 @router.get("/payments")
 async def get_payment():
-    #client = razorpay.Client(auth=("rzp_test_AZImZBA0Ypgwni", "amS1t8KL21wnsFyh1cFHKfXb"))
     count = 2
     skip = 1
 
@@ -81,14 +73,12 @@ async def get_all_payment_by_id(request: Request, order_id:str):
 
     resp = client.order.fetch(order_id)
     return resp
-# @router.get("/success/{order_id}")
-# async def success(request: Request, order_id:str):
-#     return templates.TemplateResponse("success.html", {"request": request})
 
-@router.post("/pay/{id}/charge/")
-async def success(request: Request):
-    client = razorpay.Client(auth=("rzp_test_AZImZBA0Ypgwni", "amS1t8KL21wnsFyh1cFHKfXb"))
-    payment_id = request.form['razorpay_payment_id']
+@router.post("/pay/charge/")
+async def success(request: Request,razorpay_payment_id:str, db: Session = Depends(get_db)):
+    payment_id = razorpay_payment_id
     abc = client.order.fetch(payment_id)
-    print(abc)
+    query = "Update payments SET status = 'paid' Where pay_id = '"+str(payment_id)+"'"
+    db.execute(query)
+    db.commit()
     return templates.TemplateResponse("success.html", {"request": request})
