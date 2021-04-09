@@ -81,7 +81,7 @@ async def delete_project(db: Session,id: int)-> bool:
    return True
 
 # Notes
-def create_notes(db:Session,client_id:str,tile:str,detail:str):
+def create_notes(db:Session,client_id:str,title:str,detail:str):
     db_wish = models.Notes(client_id=client_id,title=title,detail=detail)
     db.add(db_wish)
     db.commit()

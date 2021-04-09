@@ -30,21 +30,19 @@ def get_db():
 models.Base.metadata.create_all(bind=engine)
 
 from fastapi.param_functions import File, Body
-from s3_events.s3_utils import S3_SERVICE
-from dotenv import load_dotenv
+from s3_events.s3_utils import S3_SERVICE_VIDEO
+from app.configs import bucketinfo
+def bucket_config():
+    return bucketinfo.setting()
 
-env = os.getenv('ENV', 'dev')
-env_file_name_dict = {
-    "dev": ".dev.env",
-}
 
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_REGION = os.getenv("AWS_REGION")
-S3_Bucket = os.getenv("S3_Bucket")
+AWS_ACCESS_KEY_ID =  bucket_config().AWS_ACCESS_KEY_ID#os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY =  bucket_config().AWS_SECRET_ACCESS_KEY#os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_REGION =  bucket_config().AWS_REGION #os.getenv("AWS_REGION")
+S3_Bucket = bucket_config().S3_Bucket #os.getenv("S3_Bucket")
 S3_Key = "project" # change everywhere
 PUBLIC_DESTINATION = "https://cinedarbaar.s3.ap-south-1.amazonaws.com/"
-s3_client = S3_SERVICE(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
+s3_client = S3_SERVICE_VIDEO(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
 
 @router.get("/users/me", response_model = schemas.UserList)
 async def read_user_me(currentuser: schemas.UserList = Depends(util.get_current_active_user)):
@@ -132,9 +130,9 @@ async def delete(id: int, db: Session = Depends(get_db)):
 async def create_project(client_id:str,first_name:str,details:str,fileobject: UploadFile= File(...), filename: str = Body(default=None),db:Session=Depends(get_db)):
     if filename is None:
         #filename = generate_png_string()
-        extension_pro = fileobject.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+        extension_pro = fileobject.filename.split(".")[-1] in ("mp4", "3gp", "mkv") 
         if not extension_pro:
-            return "Image must be jpg or png format!"
+            return "Video must be jpg or png format!"
         suffix_pro = Path(fileobject.filename).suffix
         filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
     data = fileobject.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO

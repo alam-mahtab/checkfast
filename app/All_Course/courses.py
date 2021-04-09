@@ -35,7 +35,7 @@ def get_db():
         db.close()
 
 models.Base.metadata.create_all(bind=engine)
-from .files import generate_png_string
+
 # from .files import s3, AWS_S3_BUCKET_NAME, upload_file_to_bucket
 
 # PUBLIC_DESTINATION = "https://cinedarbaar.s3.ap-south-1.amazonaws.com/courses"
@@ -57,17 +57,21 @@ from .files import generate_png_string
 #         else:
 #             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
 #                                 detail="File could not be uploaded")
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-env = os.getenv('ENV', 'dev')
-env_file_name_dict = {
-    "dev": ".dev.env",
-}
+# env = os.getenv('ENV', 'dev')
+# env_file_name_dict = {
+#     "dev": "app/configenv/.dev.env",
+#}
+from app.configs import bucketinfo
+def bucket_config():
+    return bucketinfo.setting()
 
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_REGION = os.getenv("AWS_REGION")
-S3_Bucket = os.getenv("S3_Bucket")
+
+AWS_ACCESS_KEY_ID =  bucket_config().AWS_ACCESS_KEY_ID#os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY =  bucket_config().AWS_SECRET_ACCESS_KEY#os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_REGION =  bucket_config().AWS_REGION #os.getenv("AWS_REGION")
+S3_Bucket = bucket_config().S3_Bucket #os.getenv("S3_Bucket")
 S3_Key = "courses" # change everywhere
 PUBLIC_DESTINATION = "https://cinedarbaar.s3.ap-south-1.amazonaws.com/"
 s3_client = S3_SERVICE(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
@@ -131,6 +135,7 @@ async def create_course(
             return "Image must be jpg or png format!"
         suffix_pro = Path(fileobject.filename).suffix
         filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    print(S3_Bucket, "bucket")
     data = fileobject.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
     uploads3 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data)
     if uploads3:

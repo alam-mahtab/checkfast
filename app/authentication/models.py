@@ -159,7 +159,7 @@ class Wishlist(Base):
     __tablename__    = "wishlists"
     id               = Column(Integer, primary_key=True,unique=True)
     created_date     = Column(DateTime,default=datetime.datetime.utcnow)
-    client_id        = Column(String, ForeignKey('users.id'))
+    client_id        = Column(String(50), ForeignKey('users.id'))
     users_wish       = relationship('Users', back_populates='user_wish')
     course_id        = Column(Integer, ForeignKey('courses.id'))
     course_wish      = relationship('Course', back_populates='user_course')
@@ -171,7 +171,7 @@ class Project(Base):
     url              = Column(URLType)
     first_name       = Column(String)
     details          = Column(String)
-    client_id        = Column(String, ForeignKey('users.id'))
+    client_id        = Column(String(50), ForeignKey('users.id'))
     project_id       = relationship('Users', back_populates='user_pro')
 
 class Notes(Base):
@@ -180,5 +180,5 @@ class Notes(Base):
     created_date     = Column(DateTime,default=datetime.datetime.utcnow)
     title            = Column(String)
     detail           = Column(String)
-    client_id        = Column(String, ForeignKey('users.id'))
+    client_id        = Column(String(50), ForeignKey('users.id'))
     notes_id         = relationship('Users', back_populates='user_notes')

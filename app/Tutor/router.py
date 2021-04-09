@@ -35,18 +35,16 @@ models.Base.metadata.create_all(bind=engine)
 
 from fastapi.param_functions import File, Body
 from s3_events.s3_utils import S3_SERVICE
-from dotenv import load_dotenv
+from app.configs import bucketinfo
+def bucket_config():
+    return bucketinfo.setting()
 
-env = os.getenv('ENV', 'dev')
-env_file_name_dict = {
-    "dev": ".dev.env",
-}
 
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_REGION = os.getenv("AWS_REGION")
-S3_Bucket = os.getenv("S3_Bucket")
-S3_Key = "honour" # change everywhere
+AWS_ACCESS_KEY_ID =  bucket_config().AWS_ACCESS_KEY_ID#os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY =  bucket_config().AWS_SECRET_ACCESS_KEY#os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_REGION =  bucket_config().AWS_REGION #os.getenv("AWS_REGION")
+S3_Bucket = bucket_config().S3_Bucket #os.getenv("S3_Bucket")
+S3_Key = "tutors" # change everywhere
 PUBLIC_DESTINATION = "https://cinedarbaar.s3.ap-south-1.amazonaws.com/"
 s3_client = S3_SERVICE(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
  

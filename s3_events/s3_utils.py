@@ -1,4 +1,5 @@
 import aiobotocore
+import botocore
 import logging
 
 logger = logging.getLogger(__name__)
@@ -37,7 +38,7 @@ class S3_SERVICE_VIDEO(object):
         async with session.create_client('s3', region_name=self.region,
                                          aws_secret_access_key=self.aws_secret_access_key,
                                          aws_access_key_id=self.aws_access_key_id) as client:
-            file_upload_response = await client.put_object(ACL="public-read",ContentType = 'video/mp4 video/3gp' ,Bucket=bucket, Key=key, Body=fileobject)
+            file_upload_response = await client.put_object(ACL="public-read",ContentType='video/mp4',Bucket=bucket, Key=key)
 
             if file_upload_response["ResponseMetadata"]["HTTPStatusCode"] == 200:
                 logger.info(f"File uploaded path : https://{bucket}.s3.{self.region}.amazonaws.com/{key}")
@@ -56,7 +57,7 @@ class S3_SERVICE_DOC(object):
         async with session.create_client('s3', region_name=self.region,
                                          aws_secret_access_key=self.aws_secret_access_key,
                                          aws_access_key_id=self.aws_access_key_id) as client:
-            file_upload_response = await client.put_object(ACL="public-read",ContentType = 'application/pdf' ,Bucket=bucket, Key=key, Body=fileobject)
+            file_upload_response = await client.put_object(ACL="public-read",ContentType = 'application/pdf' ,Bucket=bucket, Key=key)
 
             if file_upload_response["ResponseMetadata"]["HTTPStatusCode"] == 200:
                 logger.info(f"File uploaded path : https://{bucket}.s3.{self.region}.amazonaws.com/{key}")
