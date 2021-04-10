@@ -105,6 +105,9 @@ app.include_router(authController.router, tags =["Auth"])
 from app.users import controller as userController
 app.include_router(userController.router, tags =["Users"])
 
+# from app.social import router as authentication 
+# app.include_router(authentication.router, prefix="/social")
+
 # For Course 
 from app.All_Course import courses
 app.include_router(courses.router, prefix="/course", tags=["Courses"])

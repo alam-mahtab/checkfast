@@ -1,40 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-</head>
-<body>
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Thank You</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://cinedarbaar.s3.ap-south-1.amazonaws.com/user-story/css/main.css">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+	</head>
+	<body>
+	<style type="text/css">
+		.image{
+			background: url(https://cinedarbaar.s3.ap-south-1.amazonaws.com/user-story/banner-top.png);
+		    background-size: cover;
+		    background-position: center;
+		    background-repeat: no-repeat;
+		}
+		#rzp-button1{
+			margin-bottom: 350px;
+		}
+	</style>
+		<!-- Header -->
+			<header id="header">
+				<div class="logo"><a href="#">Cinedarbar</a></div>
+			</header>
 
-<!-- Just an image -->
-<nav class="navbar navbar-light bg-dark">
-    <a class="navbar-brand" href="#">
-        Buy Me A Coffee
-    </a>
-  </nav>
-  <div class="container">
-      <div class="row shadow mt-5 p-4">
-          <div class="col-lg-6">
-              <img src="https://images.unsplash.com/flagged/photo-1572951351615-0c892383dbe1?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1041&q=80" class="image-fluid">
-          </div>
-          <div class="col-lg-6 mt-4">
-              <h3>Donate A Cup Of Coffee</h3>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta, ipsum, harum laudantium corporis molestiae aspernatur enim accusantium velit deserunt magnam optio accusamus facere eligendi delectus ipsa animi saepe sunt magni.</p>
-              <form method="post">
-                 <!-- <input class="form-control mt-2" name="email" placeholder="email" type="text" required> -->
-                  <input class="form-control mt-2" name="name" placeholder="name" type="text" required>
-                  <input class="form-control mt-2" name="amount" placeholder="amount" type="text" required>
-                  <button class="btn btn-success mt-3 btn-block"> Donate </button>
+		<!-- Main -->
+			<section id="main">
+				<div class="inner">
 
+				<!-- One -->
+					<section id="one" class="wrapper style1">
 
-              </form>
-          
-            </div>
-      </div>
-  </div>
-    
-</body>
+						<div class="image fit flush ">
+							<br> <br> <br> <br> 
+							<header class="special text-center">
+							<h2 style="text-align:center; margin-top: 3rem;">Thank You For Choosing Us</h2>
+							<button type="button" class="btn btn-secondary btn-lg" style="padding: .5rem 3rem; margin-top: 3rem;" id="rzp-button1">Pay With RazorPay</button>
+						<!--	<button id="rzp-button1">Pay With RazorPay</button> -->
+								<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+								<script>
+								var options = {
+									"key": "rzp_live_7Wz67232paIYjD", // Enter the Key ID generated from the Dashboard
+									"amount": "{{payment['amount']}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+									"currency": "INR",
+									"name": "Cinedarbaar",
+									"description": "Live Transaction",
+									"image": "https://example.com/your_logo",
+									"order_id": "{{payment['order_id']}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+									"client_id":"{{payment['client_id']}}",
+									
+								  
+									"callback_url": "http://127.0.0.1:8000/pay/charge?razorpay_payment_id={{payment['id']}}",
+								//    "callback_url": "http://3.7.38.153:8000/pay/charge?razorpay_payment_id={{payment['id']}}",
+									  
+				  
+									"theme": {
+										"color": "#3399cc"
+									}
+								};
+								var rzp1 = new Razorpay(options);
+								document.getElementById('rzp-button1').onclick = function(e){
+									rzp1.open();
+									e.preventDefault();
+								}
+								</script>
+							
+							<!-- <img src="https://cinedarbaar.s3.ap-south-1.amazonaws.com/user-story/banner-top.png" alt="" /> -->
+						</header> 
+							
+							
+						</div>
+						
+						<div class="content">
+							<p>Curabitur eget semper ante. Morbi eleifend ultricies est, a blandit diam vehicula vel. Vestibulum porttitor nisi quis viverra hendrerit. Suspendisse vel volutpat nibh, vel elementum lacus. Maecenas commodo pulvinar dui, at cursus metus imperdiet vel. Vestibulum et efficitur urna. Duis velit nulla, interdum sed felis sit amet, facilisis auctor nunc. Cras luctus urna at risus feugiat scelerisque nec sed diam. </p>
+							<p>Nunc fringilla metus odio, at rutrum augue tristique vel. Nulla ac tellus a neque ullamcorper porta a vitae ipsum. Morbi est sapien, hendrerit quis mi in, aliquam bibendum orci. Vestibulum imperdiet nibh vitae maximus posuere. Aenean sit amet nibh feugiat, condimentum tellus eu, malesuada nunc. Mauris ac pulvinar turpis, sit amet pharetra est. Ut bibendum justo condimentum, vehicula ex vel, venenatis libero. Etiam vehicula urna sed justo bibendum, ac lacinia nunc pulvinar. Integer nec velit orci. Vestibulum pellentesque varius dapibus. Morbi ullamcorper augue est, sed luctus orci fermentum dictum. Nunc tincidunt, nisl consequat convallis viverra, metus nisl ultricies dui, vitae dapibus ligula urna sit amet nibh. Duis ut venenatis enim.</p>
+						</div>
+					</section>
+
+			
+
+	
+	</body>
 </html>

@@ -1,4 +1,5 @@
 from fastapi import Depends,File, UploadFile, APIRouter,Request
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import uuid, datetime
 from app.talent.database import SessionLocal, engine, database
@@ -11,6 +12,7 @@ from app.authentication.models import Course
 from .models import Payment
 router = APIRouter()
 
+router.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 from random import randint
 def get_db():
@@ -46,7 +48,7 @@ async def pay_me(request: Request, id:int, client_id:str):
         clients_id= client_id,
         courses_id = id)
     await database.execute(query)
-    return templates.TemplateResponse("home.html", {"request": request, "payment":payment})
+    return templates.TemplateResponse("index.html", {"request": request, "payment":payment})
 @router.get("/payments")
 async def get_payment():
     count = 2
@@ -81,4 +83,9 @@ async def success(request: Request,razorpay_payment_id:str, db: Session = Depend
     query = "Update payments SET status = 'paid' Where pay_id = '"+str(payment_id)+"'"
     db.execute(query)
     db.commit()
+    return templates.TemplateResponse("success.html", {"request": request})
+
+@router.get("/success")
+async def success_(request: Request):
+    
     return templates.TemplateResponse("success.html", {"request": request})

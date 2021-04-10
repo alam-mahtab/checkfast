@@ -124,10 +124,11 @@ def test_token(current_user: schemas.UserInDB = Depends(get_current_user)):
 
 from app.talent.database import engine
 @router.get("/search")
-def get_data(search : str = "",search_type: str =" ",db: Session = Depends(get_db)):
+def get_data(search : str,search_type: str,db: Session = Depends(get_db)):
     df = py_function.fetch_data(search,engine,search_type)
     list_of_dicts = [dict(row.items()) for row in df]
     return list_of_dicts
+    #return df
 
 @router.post('/auth')
 async def get_user_auth(email: str):
