@@ -97,9 +97,9 @@ def generate_register_email(username,RECEIVER_EMAIL):
 
     context = ssl.create_default_context()
     
-    with smtplib.SMTP_SSL("smtpout.secureserver.net", 465, context=context) as server:
+    #with smtplib.SMTP_SSL("smtpout.secureserver.net", 465, context=context) as server:
 
-    #with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, text)
 
@@ -118,8 +118,8 @@ def generate_login_email(username,RECEIVER_EMAIL):
     text = message.as_string()
 
     context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtpout.secureserver.net", 465, context=context) as server:
-    #with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+    #with smtplib.SMTP_SSL("smtpout.secureserver.net", 465, context=context) as server:
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, text)
 
@@ -144,9 +144,9 @@ def generate_auth_email(passcode1,RECEIVER_EMAIL):
 
     context = ssl.create_default_context()
     
-    with smtplib.SMTP_SSL("smtpout.secureserver.net", 465, context=context) as server:
+    #with smtplib.SMTP_SSL("smtpout.secureserver.net", 465, context=context) as server:
 
-    #with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, text)
 
@@ -165,8 +165,8 @@ def generate_password_change_email(RECEIVER_EMAIL):
     text = message.as_string()
 
     context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtpout.secureserver.net", 465, context=context) as server:
-    #with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+    #with smtplib.SMTP_SSL("smtpout.secureserver.net", 465, context=context) as server:
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, text)
 

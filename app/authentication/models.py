@@ -27,6 +27,7 @@ class Users(Base):
     user_pro         = relationship('Project', back_populates='project_id')
     user_notes       = relationship('Notes', back_populates='notes_id')
     certi            = relationship('Certificate',back_populates='user_certificate')
+    user_build       = relationship('BuildTalent', back_populates='build_id')
     
 class Course(Base):
     __tablename__    = "courses"
@@ -182,3 +183,22 @@ class Notes(Base):
     detail           = Column(String)
     client_id        = Column(String(50), ForeignKey('users.id'))
     notes_id         = relationship('Users', back_populates='user_notes')
+
+class BuildTalent(Base):
+    __tablename__    = "buildtalents"
+    id               = Column(Integer, primary_key=True,unique=True)
+    created_date     = Column(DateTime,default=datetime.datetime.utcnow)
+    full_name        = Column(String)
+    work             = Column(String)
+    award            = Column(String)
+    portfolio_link   = Column(URLType)
+    years_3_5        = Column(Boolean,default=False)
+    years_5_7        = Column(Boolean,default=False)
+    years_7_10       = Column(Boolean,default=False)
+    above_10         = Column(Boolean,default=False)
+    profile          = Column(String)
+    profile_picture  = Column(URLType)
+    work_picture     = Column(URLType)
+    work_video       = Column(URLType)
+    client_id        = Column(String(50), ForeignKey('users.id'))
+    build_id         = relationship('Users', back_populates='user_build')

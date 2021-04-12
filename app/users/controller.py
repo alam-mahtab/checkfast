@@ -30,7 +30,7 @@ def get_db():
 models.Base.metadata.create_all(bind=engine)
 
 from fastapi.param_functions import File, Body
-from s3_events.s3_utils import S3_SERVICE_VIDEO
+from s3_events.s3_utils import S3_SERVICE_VIDEO, S3_SERVICE
 from app.configs import bucketinfo
 def bucket_config():
     return bucketinfo.setting()
@@ -42,7 +42,8 @@ AWS_REGION =  bucket_config().AWS_REGION #os.getenv("AWS_REGION")
 S3_Bucket = bucket_config().S3_Bucket #os.getenv("S3_Bucket")
 S3_Key = "project" # change everywhere
 PUBLIC_DESTINATION = "https://cinedarbaar.s3.ap-south-1.amazonaws.com/"
-s3_client = S3_SERVICE_VIDEO(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
+s3_client1 = S3_SERVICE_VIDEO(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
+s3_client2 = S3_SERVICE(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
 
 @router.get("/users/me", response_model = schemas.UserList)
 async def read_user_me(currentuser: schemas.UserList = Depends(util.get_current_active_user)):
@@ -132,11 +133,11 @@ async def create_project(client_id:str,first_name:str,details:str,fileobject: Up
         #filename = generate_png_string()
         extension_pro = fileobject.filename.split(".")[-1] in ("mp4", "3gp", "mkv") 
         if not extension_pro:
-            return "Video must be jpg or png format!"
+            return "Video must be mp4 or 3gp format!"
         suffix_pro = Path(fileobject.filename).suffix
         filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
     data = fileobject.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
-    uploads3 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data )
+    uploads3 = await s3_client1.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data )
     if uploads3:
         url = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename)
         return crud.create_project(db=db,client_id=client_id,first_name=first_name,details=details,url=url)
@@ -203,3 +204,125 @@ def notes_detail(id:str,db: Session = Depends(get_db)):
 async def delete_notes(id: int, db: Session = Depends(get_db)):
     deleted = await crud.delete_notes(db,id)
     return {"deleted": deleted}
+
+@router.post("/users/{userId}/build_your_talent")
+async def create_build_your_talent(client_id:str,full_name:str,work:str,award:str,portfolio_link:str, profile:str,years_3_5:bool=False,years_5_7:bool=False,years_7_10:bool=False,above_10:bool=False,
+ profile_picture: UploadFile= File(...), filename1: str = Body(default=None),work_picture: UploadFile= File(...), filename2: str = Body(default=None),work_video: UploadFile= File(...), filename3: str = Body(default=None),db:Session=Depends(get_db)):
+    if filename1 is None:
+        #filename = generate_png_string()
+        extension_pro = profile_picture.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+        if not extension_pro:
+            return "Profile picture must be jpg or png format!"
+        suffix_pro = Path(profile_picture.filename).suffix
+        filename1 = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = profile_picture.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads3 = await s3_client2.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename1, fileobject=data )
+    if uploads3:
+        profile_picture = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename1)
+    else:
+        raise HTTPException(status_code=400, detail="Failed to upload in S3")
+
+    if filename2 is None:
+        #filename = generate_png_string()
+        extension_pro = work_picture.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+        if not extension_pro:
+            return "work picture must be jpg or png format!"
+        suffix_pro = Path(work_picture.filename).suffix
+        filename2 = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = work_picture.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads3 = await s3_client2.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename2, fileobject=data )
+    if uploads3:
+        work_picture = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename2)
+    else:
+        raise HTTPException(status_code=400, detail="Failed to upload in S3")
+    
+    if filename3 is None:
+        #filename = generate_png_string()
+        extension_pro = work_video.filename.split(".")[-1] in ("mp4", "3gp", "mkv") 
+        if not extension_pro:
+            return "Video must be mp4 or 3gp format!"
+        suffix_pro = Path(work_video.filename).suffix
+        filename3 = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = work_video.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads3 = await s3_client1.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename3, fileobject=data )
+    if uploads3:
+        work_video = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename3)
+        return crud.create_your_talent(db=db,client_id=client_id,full_name=full_name,work=work,award=award,portfolio_link=portfolio_link,profile=profile,years_3_5=years_3_5,years_5_7=years_5_7,years_7_10=years_7_10,above_10=above_10,profile_picture=profile_picture,work_picture=work_picture,work_video=work_video)
+    else:
+        raise HTTPException(status_code=400, detail="Failed to upload in S3")
+
+@router.put("/users/{userId}/build_your_talent/{id}")
+async def update_build_your_talent(client_id:str,id:int,full_name:str,work:str,award:str,portfolio_link:str, profile:str,years_3_5:bool=False,years_5_7:bool=False,years_7_10:bool=False,above_10:bool=False,
+ profile_picture: UploadFile= File(...), filename1: str = Body(default=None),work_picture: UploadFile= File(...), filename2: str = Body(default=None),work_video: UploadFile= File(...), filename3: str = Body(default=None),db:Session=Depends(get_db)):
+    if filename1 is None:
+        #filename = generate_png_string()
+        extension_pro = profile_picture.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+        if not extension_pro:
+            return "Profile picture must be jpg or png format!"
+        suffix_pro = Path(profile_picture.filename).suffix
+        filename1 = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = profile_picture.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads3 = await s3_client2.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename1, fileobject=data )
+    if uploads3:
+        profile_picture = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename1)
+    else:
+        raise HTTPException(status_code=400, detail="Failed to upload in S3")
+
+    if filename2 is None:
+        #filename = generate_png_string()
+        extension_pro = work_picture.filename.split(".")[-1] in ("jpg", "jpeg", "png") 
+        if not extension_pro:
+            return "work picture must be jpg or png format!"
+        suffix_pro = Path(work_picture.filename).suffix
+        filename2 = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = work_picture.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads3 = await s3_client2.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename2, fileobject=data )
+    if uploads3:
+        work_picture = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename2)
+    else:
+        raise HTTPException(status_code=400, detail="Failed to upload in S3")
+    
+    if filename3 is None:
+        #filename = generate_png_string()
+        extension_pro = work_video.filename.split(".")[-1] in ("mp4", "3gp", "mkv") 
+        if not extension_pro:
+            return "Video must be mp4 or 3gp format!"
+        suffix_pro = Path(work_video.filename).suffix
+        filename3 = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
+    data = work_video.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
+    uploads3 = await s3_client1.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename3, fileobject=data )
+    if uploads3:
+        work_video = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename3)
+        subject =  crud.get_your_talent(db,id)
+        if not subject:
+            raise HTTPException(status_code=404, detail="Talents not found")
+        query = "UPDATE buildtalents SET full_name='"+str(full_name)+"' , work='"+str(work)+"' , award='"+str(award)+"', portfolio_link='"+str(portfolio_link)+"',years_3_5='"+str(years_3_5)+"' , years_5_7='"+str(years_5_7)+"' , years_7_10='"+str(years_7_10)+"', above_10='"+str(above_10)+"',profile='"+str(profile)+"' , profile_picture='"+str(profile_picture)+"' , work_picture='"+str(work_picture)+"', work_video='"+str(work_video)+"', client_id ='"+str(client_id)+"' WHERE id='"+str(id)+"'"
+        db.execute(query)
+        db.commit()
+        return {"Result" : "Talent Updated Succesfully"}
+    else:
+        raise HTTPException(status_code=400, detail="Failed to upload in S3")
+
+@router.get("/users/{userId}/build_your_talents/{client_id}")
+def your_talent_detail(client_id:str,db: Session = Depends(get_db)):
+    your_talent_by_id = crud.get_your_talent_client_id(db=db, client_id=client_id)
+    if your_talent_by_id is None:
+        raise HTTPException(status_code=404,detail="Notes with this id is not in database")
+    return your_talent_by_id
+
+@router.get("/users/{userId}/build_your_talent/{id}")
+def your_talent_detail_by_id(id:int,db: Session = Depends(get_db)):
+    your_talent_by_id = crud.get_your_talent(db=db, id=id)
+    if your_talent_by_id is None:
+        raise HTTPException(status_code=404,detail="Notes with this id is not in database")
+    return your_talent_by_id
+
+@router.delete("/users/{userId}/build_your_talent/{id}")
+async def delete_your_talents(id: int, db: Session = Depends(get_db)):
+    subject =  crud.get_your_talent(db=db, id=id)
+    if not subject:
+        raise HTTPException(status_code=404,detail="Course by this id is not in database")
+    query = "Delete From buildtalents WHERE id='"+str(id)+"'"
+    db.execute(query)
+    db.commit()
+    return "deleted Succesfully"

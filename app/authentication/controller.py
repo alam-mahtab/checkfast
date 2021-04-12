@@ -57,7 +57,7 @@ async def register(user : schemas.UserCreate):
         "passcode" : 0
     }
 @router.post("/auth/login", response_model = schemas.Token)
-async def login(form_data : OAuth2PasswordRequestForm = Depends()):
+async def login(form_data : OAuth2PasswordRequestForm = Depends(),db:Session=Depends(get_db)):
 
     userDB = await util.findExistedUser(form_data.username) #(username)
     print("this is username" ,form_data.username)
@@ -69,14 +69,18 @@ async def login(form_data : OAuth2PasswordRequestForm = Depends()):
     print("This is password", form_data.password)
     if not isValid:
         raise HTTPException(status_code = 404, detail="Incorrect Username Or Password")
-
+    query = "Select is_admin from users where Users.username ='"+str(form_data.username)+"'"
+    is_admin = await database.execute(query)
+    print(is_admin)
     access_token_expires = util.timedelta(minutes=constant.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = util.create_access_token(
         data ={"sub": form_data.username},
         expires_delta= access_token_expires,
     )
-    # mail = crud.get_course
-    # py_function.generate_login_email(form_data.username,[user.email])
+    query = "Select email from users where Users.username ='"+str(form_data.username)+"'"
+    email = await database.execute(query)
+    print(email)
+    py_function.generate_login_email(form_data.username,[email])
     results = {
         "access_token": access_token,
         "token_type": "bearer",

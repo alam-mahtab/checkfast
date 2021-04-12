@@ -132,6 +132,25 @@ async def delete(db: Session,id: int)-> bool:
    db.commit()
    return True
 
+# build your talent
+def create_your_talent(db:Session,client_id:str,full_name:str,work:str,award:str,portfolio_link:str,years_3_5:bool,years_5_7:bool,years_7_10:bool,above_10:bool,profile:str,profile_picture:str,work_picture:str,work_video:str):
+    db_wish = models.BuildTalent(client_id=client_id,full_name=full_name,work=work,award=award,portfolio_link=portfolio_link,years_3_5=years_3_5,years_5_7=years_5_7,years_7_10=years_7_10,above_10=above_10,profile=profile,profile_picture=profile_picture,work_picture=work_picture,work_video=work_video)
+    db.add(db_wish)
+    db.commit()
+    db.refresh(db_wish)
+    return db_wish
+
+def get_your_talent(db, id: int):
+    return db.query(models.BuildTalent).filter(models.BuildTalent.id== id).all()
+
+def get_your_talent_client_id(db, client_id: str):
+    return db.query(models.BuildTalent).filter(models.BuildTalent.client_id== client_id).all()
+
+def get_talent_by_your_talent_id(db, id: int):
+    return db.query(models.BuildTalent.id).filter(models.BuildTalent.client_id== id).all()
+def talent_by_your_talent_list(db):
+    return db.query(models.BuildTalent).all()
+
 # # async def update_subject(db: Session,title:str,name:str,desc:str,url:str,subject_id:int):
 # #     query = models.Subject.__table__.update()\
 # #     .where(models.Subject.id== subject_id)\
