@@ -3,15 +3,17 @@ from app.configs.appinfo import setting
 #from configs.connection import database
 from app.talent.database import database
 from fastapi import FastAPI, Request, Depends, UploadFile, File
-
+from authlib.integrations.starlette_client import OAuth
 from .configs import dbinfo,appinfo
 import time
 from fastapi.middleware.cors import CORSMiddleware
 #import aiofiles
 #from aiofiles import stat as aio_stat
 import asyncio
+from starlette.config import Config
 #from fastapi.staticfiles import StaticFiles
 from starlette.staticfiles import StaticFiles
+from starlette.middleware.sessions import SessionMiddleware
 
 tags_metadata = [
     {   "name": "Auth",
@@ -29,13 +31,22 @@ tags_metadata = [
     
 ]
 
-app = FastAPI(
-    openapi_tags=tags_metadata,
-    title="CineDarbaar Project",
-    description="This is the Backend Of the Educational Website deals with Film industry",
-    version="0.0.0",
-)
 
+app = FastAPI(
+    # openapi_tags=tags_metadata,
+    # title="CineDarbaar Project",
+    # description="This is the Backend Of the Educational Website deals with Film industry",
+    # version="0.0.0",
+)
+config = Config('app/.env')  # read config from .env file
+oauth = OAuth(config)
+oauth.register(
+    name='google',
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    client_kwargs={
+        'scope': 'openid email profile'
+    }
+)
 # origins = [
 #     "http://checkfast.herokuapp.com/docs",
 #     "https://checkfast.herokuapp.com/docs",
@@ -64,6 +75,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.add_middleware(SessionMiddleware, secret_key="some-random-string")
 
 def app_setting():
     return appinfo.setting()
@@ -99,14 +111,31 @@ async def startup():
 async def shutdown():
     await database.disconnect()
 
+
+# @app.route('/login')
+# async def login(request: Request):
+#     # absolute url for callback
+#     # we will define it below
+#     redirect_uri = request.url_for('auth')
+#     return await oauth.google.authorize_redirect(request, redirect_uri)
+
+# @app.post('/auth')
+# async def auth(request: Request):
+#     token = await oauth.google.authorize_access_token(request)
+#     user = await oauth.google.parse_id_token(request, token)
+#     return user
+
 from app.authentication import controller as authController
 app.include_router(authController.router, tags =["Auth"])
 
 from app.users import controller as userController
 app.include_router(userController.router, tags =["Users"])
 
-# from app.social import router as authentication 
-# app.include_router(authentication.router, prefix="/social")
+# from app.google_auth import router as googleauth
+# app.include_router(googleauth.router, tags=["Google Auth"])
+
+# from app.twitter import router as twitterauth
+# app.include_router(twitterauth.router, tags=["Twitter Auth"])
 
 # For Course 
 from app.All_Course import courses

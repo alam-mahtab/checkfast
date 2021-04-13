@@ -13,6 +13,7 @@ class Talent(Base):
     url_cover = Column(URLType)
     name = Column(String)
     description = Column(String)
+    profile = Column(String)
     type = Column(String)
     status = Column(Integer)
     connect = relationship('Honour', back_populates='conn')

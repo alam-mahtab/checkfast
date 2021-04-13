@@ -46,7 +46,7 @@ s3_client = S3_SERVICE(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
 
 @router.post("/talent/")
 async def create_talent(
-    description:str,name:str,type:str,status:int,file_pro: UploadFile= File(...), file_cover: UploadFile= File(...),filename1: str = Body(default=None), filename2: str = Body(default=None), db: Session = Depends(get_db)
+    description:str,name:str,type:str,status:int,profile:str,file_pro: UploadFile= File(...), file_cover: UploadFile= File(...),filename1: str = Body(default=None), filename2: str = Body(default=None), db: Session = Depends(get_db)
 ):
 
     if filename1 is None:
@@ -75,13 +75,13 @@ async def create_talent(
     if uploads3:
         url_cover = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename)
 
-        return crud.create_talent(db=db,name=name,description=description,url_profile=url_profile,url_cover=url_cover,type=type,status=status)
+        return crud.create_talent(db=db,name=name,description=description,profile=profile,url_profile=url_profile,url_cover=url_cover,type=type,status=status)
     else:
         raise HTTPException(status_code=400, detail="Failed to upload in S3")
 
 @router.put("/talent/{id}")
 async def update_talent(
-    id:int,description:str,name:str,type:str,status:int,file_pro: UploadFile= File(...), file_cover: UploadFile= File(...),filename1: str = Body(default=None), filename2: str = Body(default=None), db: Session = Depends(get_db)
+    id:int,description:str,name:str,type:str,status:int,profile:str,file_pro: UploadFile= File(...), file_cover: UploadFile= File(...),filename1: str = Body(default=None), filename2: str = Body(default=None), db: Session = Depends(get_db)
 ):
 
     if filename1 is None:
@@ -112,7 +112,7 @@ async def update_talent(
         subject =  crud.get_talent(db,id)
         if not subject:
             raise HTTPException(status_code=404, detail="Talents not found")
-        query = "UPDATE talents SET url_profile='"+str(url_profile)+"' , description='"+str(description)+"' , status='"+str(status)+"', url_cover='"+str(url_cover)+"' WHERE id='"+str(id)+"'"
+        query = "UPDATE talents SET url_profile='"+str(url_profile)+"' , description='"+str(description)+"' , profile ='"+str(profile)+"', status='"+str(status)+"', url_cover='"+str(url_cover)+"' WHERE id='"+str(id)+"'"
         db.execute(query)
         db.commit()
         return {"Result" : "Talent Updated Succesfully"}

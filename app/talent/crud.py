@@ -6,8 +6,8 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Optional
 
-def create_talent(db: Session,name:str,description:str,type:str,status:int,url_profile:str, url_cover:str):
-    db_talent = models.Talent(name=name,description=description,type=type,status=status,url_profile=url_profile,url_cover=url_cover)
+def create_talent(db: Session,name:str,description:str,type:str,profile:str,status:int,url_profile:str, url_cover:str):
+    db_talent = models.Talent(name=name,description=description,type=type,status=status,profile=profile,url_profile=url_profile,url_cover=url_cover)
     db.add(db_talent)
     db.commit()
     db.refresh(db_talent)
