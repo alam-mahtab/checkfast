@@ -15,7 +15,7 @@ def create_talent(db: Session,name:str,description:str,type:str,profile:str,stat
 
 
 def get_talent(db, id: int):
-    return db.query(models.Talent).filter(models.Talent.id== id).first()
+    return db.query(models.Talent).filter(models.Talent.id== id).all()
 
 def talent_list(db):
     return db.query(models.Talent).all()
