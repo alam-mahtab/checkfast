@@ -80,7 +80,7 @@ async def login(form_data : OAuth2PasswordRequestForm = Depends(),db:Session=Dep
     query = "Select email from users where Users.username ='"+str(form_data.username)+"'"
     email = await database.execute(query)
     print(email)
-    py_function.generate_login_email(form_data.username,[email])
+    #py_function.generate_login_email(form_data.username,[email])
     results = {
         "access_token": access_token,
         "token_type": "bearer",

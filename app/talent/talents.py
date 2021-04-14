@@ -126,7 +126,10 @@ def talent_list(db: Session = Depends(get_db)):
 
 @router.get("/talents/{talent_id}")
 def talent_detail(talent_id:int,db: Session = Depends(get_db)):
-    return crud.get_talent(db=db, id=talent_id)
+    talent_by_id =  crud.get_talent(db=db, id=talent_id)
+    if talent_by_id is None:
+        raise HTTPException(status_code=404,detail="Course by this id is not in database")
+    return { "talent":talent_by_id}
 
 @router.delete("/talents/{talent_id}")
 async def delete(talent_id: int, db: Session = Depends(get_db)):
