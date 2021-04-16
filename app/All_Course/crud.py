@@ -57,6 +57,23 @@ async def delete_wishlist(db: Session,id: int)-> bool:
    db.commit()
    return True
 
+# Courses buy 
+
+def get_course_bought(db, id: str):
+    return db.query(models.Paid).filter(models.Paid.client_id== id).all()
+def get_course_bought_id(db, id: str):
+    return db.query(models.Paid.course_id).filter(models.Paid.client_id== id).all()
+def get_course_bought_by_id(db, id: int):
+    return db.query(models.Course).filter(models.Course.id== id).all()
+def course_bought_list(db):
+    return db.query(models.Paid).all()
+
+# To check duplicacy
+def check_duplicacy(db, id:int, client_id:str):
+    return db.query(models.Paid).filter(models.Paid.client_id == client_id).filter(models.Paid.course_id == id)
+
+
+
 # Project Undertaken
 def create_project(db:Session,client_id:str,url:str,first_name:str,details:str):
     db_wish = models.Project(client_id=client_id,url=url,first_name=first_name,details=details)

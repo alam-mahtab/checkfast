@@ -113,18 +113,39 @@ async def comment_detail(id:str,db: Session = Depends(get_db)):
     course_by_id = crud.get_wishlist(db=db, id=id)
     if course_by_id is None:
         raise HTTPException(status_code=404,detail="Comment with this id is not in database")
-    course = crud.get_wishlist_course_id(db=db, id=id)
-    courses = []
-    for i in course:
-        print(i)
-        course_by_id = crud.get_wishlist_course_by_id(db, i)
-        courses.append(deepcopy(course_by_id))
-    return courses
+    else:
+        course = crud.get_wishlist_course_id(db=db, id=id)
+        courses = []
+        for i in course:
+            print(i)
+            course_by_id = crud.get_wishlist_course_by_id(db, i)
+            courses.append(deepcopy(course_by_id))
+        return courses
 
 @router.delete("/users/{userId}/wishlist/{id}")
 async def delete(id: int, db: Session = Depends(get_db)):
     deleted = await crud.delete_wishlist(db,id)
     return {"deleted": deleted}
+
+# Course Buy
+
+@router.get("/users/{userId}/course-bought"  ,dependencies=[Depends(pagination_params)])
+def course_bought_list(db: Session = Depends(get_db)):
+    course_bought_all = crud.course_bought_list(db=db)
+    return paginate(course_bought_all)
+from copy import deepcopy
+@router.get("/users/{userId}/course-bought/{id}")
+async def course_bought_detail(id:str,db: Session = Depends(get_db)):
+    course_by_id = crud.get_course_bought(db=db, id=id)
+    if course_by_id is None:
+        raise HTTPException(status_code=404,detail="Comment with this id is not in database")
+    course = crud.get_course_bought_id(db=db, id=id)
+    courses = []
+    for i in course:
+        print(i)
+        course_by_id = crud.get_course_bought_by_id(db, i)
+        courses.append(deepcopy(course_by_id))
+    return courses
 
 # Project_undertaken
 @router.post("/users/{userId}/project")

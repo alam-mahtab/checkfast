@@ -136,9 +136,9 @@ class AboutCourse(Base):
 
 class Paid(Base):
     __tablename__    = "paids"
-    id               = Column(String, primary_key=True,unique=True)
+    id               = Column(Integer, primary_key=True,unique=True)
     created_date     = Column(DateTime,default=datetime.datetime.utcnow)
-    name             = Column(String)
+    payment_id       = Column(String)
     #amount          = Column(Integer)
     client_id        = Column(String, ForeignKey('users.id'))
     client           = relationship('Users', back_populates='paid')
