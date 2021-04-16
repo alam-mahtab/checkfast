@@ -27,8 +27,8 @@ def get_db():
 
 import pandas as pd
 
-client = razorpay.Client(auth=("rzp_test_AZImZBA0Ypgwni", "amS1t8KL21wnsFyh1cFHKfXb")) 
-#client = razorpay.Client(auth=("rzp_live_7Wz67232paIYjD","WjSsY2oGGw6HhZbXqsbcsRnT"))
+#client = razorpay.Client(auth=("rzp_test_AZImZBA0Ypgwni", "amS1t8KL21wnsFyh1cFHKfXb")) 
+client = razorpay.Client(auth=("rzp_live_7Wz67232paIYjD","WjSsY2oGGw6HhZbXqsbcsRnT"))
 
 @router.get("/pay/")#,response_class=HTMLResponse)
 async def pay_me(request: Request, id:int, client_id:str, db: Session = Depends(get_db)):
