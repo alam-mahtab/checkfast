@@ -28,6 +28,7 @@ class Users(Base):
     user_notes       = relationship('Notes', back_populates='notes_id')
     certi            = relationship('Certificate',back_populates='user_certificate')
     user_build       = relationship('BuildTalent', back_populates='build_id')
+    user_feeds       = relationship('Feedback', back_populates='feedbacks_id')
     
 class Course(Base):
     __tablename__    = "courses"
@@ -202,3 +203,12 @@ class BuildTalent(Base):
     work_video       = Column(URLType)
     client_id        = Column(String(50), ForeignKey('users.id'))
     build_id         = relationship('Users', back_populates='user_build')
+
+class Feedback(Base):
+    __tablename__    = "feedbacks"
+    id               = Column(Integer, primary_key=True,unique=True)
+    created_date     = Column(DateTime,default=datetime.datetime.utcnow)
+    name             = Column(String)
+    detail           = Column(String)
+    client_id        = Column(String(50), ForeignKey('users.id'))
+    feedbacks_id     = relationship('Users', back_populates='user_feeds')

@@ -120,6 +120,29 @@ async def delete_notes(db: Session,id: int)-> bool:
    db.commit()
    return True
 
+# Feedback
+def create_feeds(db:Session,client_id:str,name:str,detail:str):
+    db_wish = models.Feedback(client_id=client_id,name=name,detail=detail)
+    db.add(db_wish)
+    db.commit()
+    db.refresh(db_wish)
+    return db_wish
+
+def get_feeds(db, client_id: int):
+    return db.query(models.Feedback).filter(models.Feedback.client_id== client_id).all()
+def get_feeds_course_id(db, id: int):
+    return db.query(models.Feedback.course_id).filter(models.Feedback.client_id== id).all()
+def feeds_list(db):
+    return db.query(models.Feedback).all()
+
+async def delete_feeds(db: Session,id: int)-> bool:
+   sym1 =models.Notes.__table__
+   sym = sym1.delete().where(models.Notes.id== id)
+   print(sym)
+   result = db.execute(sym)
+   db.commit()
+   return True
+
 
 def master_list(db):
     return db.query(models.Course).filter(models.Course.status== 1 and models.Course.type == "Master").all()

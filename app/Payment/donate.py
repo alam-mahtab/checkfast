@@ -32,17 +32,10 @@ client = razorpay.Client(auth=("rzp_live_7Wz67232paIYjD","WjSsY2oGGw6HhZbXqsbcsR
 
 @router.get("/pay/")#,response_class=HTMLResponse)
 async def pay_me(request: Request, id:int, client_id:str, db: Session = Depends(get_db)):
-    # bought_course = crud.check_duplicacy(db,client_id,id)
-    # print(bought_course)
-    # if bought_course is not None:
-    #     raise HTTPException(status_code=400,detail="You already bought this course")
     check = "Select * From paids WHERE course_id ="+str(id)+" and client_id = '"+str(client_id)+"'"
     df1 = pd.read_sql(check,engine)
-        #df = pd.read_sql(query, engine)
-    print(df1)
     if df1.empty:
         pay =  "SELECT courses.price FROM courses WHERE courses.id ="+str(id)
-        result = await database.execute(pay)
         gid = randint(100000,1000000)
         rec = ("paycd"+str(gid))
         gdate = datetime.datetime.now()

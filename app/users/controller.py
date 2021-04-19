@@ -221,6 +221,45 @@ async def delete_notes(id: int, db: Session = Depends(get_db)):
     deleted = await crud.delete_notes(db,id)
     return {"deleted": deleted}
 
+# Feedbacks
+@router.post("/users/{userId}/feedbacks")
+def create_feeds(client_id:str,name:str,detail:str,db:Session=Depends(get_db)):
+    return crud.create_feeds(db=db,client_id=client_id,name=name,detail=detail)
+
+@router.get("/users/{userId}/feedbacks"  ,dependencies=[Depends(pagination_params)])
+def feeds_list(db: Session = Depends(get_db)):
+    feeds_all = crud.feeds_list(db=db)
+    return paginate(feeds_all)
+
+@router.put("/users/{userId}/feedbacks/{id}")
+async def update_feeds(
+    client_id:str, id_s :int , name:str,detail:str,db:Session=Depends(get_db)
+):  
+    subject = crud.get_notes(db=db,name=name ,client_id=client_id)
+
+    if not subject:
+        raise HTTPException(status_code=404, detail="Course not found")
+    query = models.Notes.__table__.update().\
+        where(models.Feedback.client_id == client_id and models.Feedback.id == id_s).\
+            values(
+                name = name,
+                detail=detail
+            )
+    await database.execute(query)
+    return {"Result" : "Feedback Updated Succesfully"}
+
+@router.get("/users/{userId}/feedbacks/{id}")
+def feed_detail(id:str,db: Session = Depends(get_db)):
+    course_by_id = crud.get_feeds(db=db, client_id=id)
+    if course_by_id is None:
+        raise HTTPException(status_code=404,detail="Feeds with this id is not in database")
+    return { "Feeds": course_by_id}
+
+@router.delete("/users/{userId}/feedbacks/{id}")
+async def delete_feeds(id: int, db: Session = Depends(get_db)):
+    deleted = await crud.delete_feeds(db,id)
+    return {"deleted": deleted}
+
 @router.post("/users/{userId}/build_your_talent")
 async def create_build_your_talent(client_id:str,full_name:str,work:str,award:str,portfolio_link:str, profile:str,years_3_5:bool=False,years_5_7:bool=False,years_7_10:bool=False,above_10:bool=False,
  profile_picture: UploadFile= File(...), filename1: str = Body(default=None),work_picture: UploadFile= File(...), filename2: str = Body(default=None),work_video: UploadFile= File(...), filename3: str = Body(default=None),db:Session=Depends(get_db)):
