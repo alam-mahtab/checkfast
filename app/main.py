@@ -33,10 +33,10 @@ tags_metadata = [
 
 
 app = FastAPI(
-    # openapi_tags=tags_metadata,
-    # title="CineDarbaar Project",
-    # description="This is the Backend Of the Educational Website deals with Film industry",
-    # version="0.0.0",
+    openapi_tags=tags_metadata,
+    title="CineDarbaar Project",
+    description="This is the Backend Of the Educational Website deals with Film industry",
+    version="0.0.0",
 )
 config = Config('app/.env')  # read config from .env file
 oauth = OAuth(config)
