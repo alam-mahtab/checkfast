@@ -45,7 +45,7 @@ async def create_learn(
     userDB2 = await util.findExistedEmailUser(email)
     if not userDB2:
         raise HTTPException(status_code =400, detail="check email")
-    py_controller.generate_certificate_email(username,[email])
+    #py_controller.generate_certificate_email(username,[email])
     return crud.create_certificate(db=db,email=email,lastname=lastname,username=username,course_id=course_id,client_id=client_id)
 
 @router.put("/course/certificate/{id}")

@@ -48,7 +48,7 @@ async def register(user : schemas.UserCreate):
         status = "1")
     
     await database.execute(query)
-    py_function.generate_register_email(user.username,[user.email])
+    #py_function.generate_register_email(user.username,[user.email])
     return {
         **user.dict(),
         "id" :gid,
