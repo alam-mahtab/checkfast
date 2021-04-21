@@ -114,7 +114,7 @@ def wishlist_list(db: Session = Depends(get_db)):
     return paginate(wishlist_all)
 from copy import deepcopy
 @router.get("/users/{userId}/wishlist/{id}")
-async def comment_detail(id:str,db: Session = Depends(get_db)):
+async def wishlist_detail(id:str,db: Session = Depends(get_db)):
     course_by_id = crud.get_wishlist(db=db, id=id)
     if course_by_id is None:
         raise HTTPException(status_code=404,detail="Comment with this id is not in database")
@@ -126,6 +126,11 @@ async def comment_detail(id:str,db: Session = Depends(get_db)):
             course_by_id = crud.get_wishlist_course_by_id(db, i)
             courses.append(deepcopy(course_by_id))
         return courses
+
+@router.get("/users/{userId}/wishlist/{client_id}/{course_id}")
+async def get_wishlist_by_id(client_id: str, course_id:int, db: Session = Depends(get_db)):
+    return crud.get_wishlist_id(db, client_id, course_id)
+
 
 @router.delete("/users/{userId}/wishlist/{client_id}/{course_id}")
 async def delete(client_id: str, course_id:int, db: Session = Depends(get_db)):

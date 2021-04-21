@@ -49,6 +49,9 @@ def get_wishlist_course_by_id(db, id: int):
 def wishlist_list(db):
     return db.query(models.Wishlist).all()
 
+def get_wishlist_id(db, client_id: str,course_id:int):
+    return db.query(models.Wishlist).filter(models.Wishlist.client_id== client_id).filter(models.Wishlist.course_id== course_id).all()
+
 async def delete_wishlist(db: Session,id: int)-> bool:
    sym1 =models.Wishlist.__table__
    sym = sym1.delete().where(models.Wishlist.id== id)
