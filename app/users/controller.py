@@ -101,7 +101,12 @@ async def find_all_user(
 
 @router.post("/users/{userId}/wishlist")
 def create_wishlist(client_id:str,course_id:int,db:Session=Depends(get_db)):
-    return crud.create_wishlist(db=db,client_id=client_id,course_id=course_id)
+    check = "Select * From wishlists WHERE course_id ="+str(course_id)+" and client_id = '"+str(client_id)+"'"
+    df1 = pd.read_sql(check,engine)
+    if df1.empty:
+        return crud.create_wishlist(db=db,client_id=client_id,course_id=course_id)
+    else:
+        raise HTTPException(status_code=400,detail="This course is already in Wishlist")
 
 @router.get("/users/{userId}/wishlist"  ,dependencies=[Depends(pagination_params)])
 def wishlist_list(db: Session = Depends(get_db)):
@@ -122,10 +127,18 @@ async def comment_detail(id:str,db: Session = Depends(get_db)):
             courses.append(deepcopy(course_by_id))
         return courses
 
-@router.delete("/users/{userId}/wishlist/{id}")
-async def delete(id: int, db: Session = Depends(get_db)):
-    deleted = await crud.delete_wishlist(db,id)
-    return {"deleted": deleted}
+@router.delete("/users/{userId}/wishlist/{client_id}/{course_id}")
+async def delete(client_id: str, course_id:int, db: Session = Depends(get_db)):
+    check = "Select * From wishlists WHERE course_id ="+str(course_id)+" and client_id = '"+str(client_id)+"'"
+    df1 = pd.read_sql(check,engine)
+    if not df1.empty:
+        query = "Delete From wishlists where client_id = '"+str(client_id)+"' AND course_id ='"+str(course_id)+"'"
+        db.execute(query)
+        db.commit()
+        #deleted = await crud.delete_wishlist(db,id)
+        return {"deleted": True}
+    else:
+        raise HTTPException(status_code=400,detail="This course is Not in Your Wishlist")
 
 # Course Buy
 
