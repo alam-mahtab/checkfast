@@ -135,14 +135,10 @@ async def create_course(
             return "Image must be jpg or png format!"
         suffix_pro = Path(fileobject.filename).suffix
         filename = time.strftime( str(uuid.uuid4().hex) + "%Y%m%d-%H%M%S" + suffix_pro )
-    print(S3_Bucket, "bucket")
     data = fileobject.file._file  # Converting tempfile.SpooledTemporaryFile to io.BytesIO
     uploads3 = await s3_client.upload_fileobj(bucket=S3_Bucket, key=S3_Key+"/"+filename, fileobject=data)
     if uploads3:
         url = os.path.join(PUBLIC_DESTINATION, S3_Key+"/"+filename)
-        #url = f"https://{S3_Bucket}.s3.{AWS_REGION}.amazonaws.com/{S3_Key}{filename}"
-        print(url)
-        #doc = [{"image_url": s3_url}]
         return crud.create_course(db=db,name=name,title=title,description=description,price=price,short_desc=short_desc,module=module,url=url,type=type,status=status)
     else:
         raise HTTPException(status_code=400, detail="Failed to upload in S3")
