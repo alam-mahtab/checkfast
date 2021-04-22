@@ -8,14 +8,10 @@ def email_config():
     return mailinfo.setting()
 def fetch_data(search,engine,search_type):
 
-    query = "SELECT * FROM "+search_type+" Where type like '"+search+"%' OR name like '"+search+"%' OR description like '"+search+"%' "#OR title like '%"+search+"%'"
+    query = "SELECT * FROM "+search_type+" Where lower(type) like lower('"+search+"%') OR lower(name) like lower('"+search+"%') OR lower(description) like lower('"+search+"%') "#OR title like '%"+search+"%'"
         #query  = "SELECT courses.name, courses.type, courses.description FROM courses WHERE courses.name like '"+search+"%' OR courses.type like '"+search+"%' OR courses.description like '"+search+"%' UNION ALL SELECT talents.name , talents.type, talents.description FROM talents WHERE talents.name like '"+search+"%' OR talents.type like '"+search+"%' Or talents.description like '"+search+"%'"
         #query   = "SELECT * FROM courses WHERE courses.name like '"+search+"%' OR courses.type like '"+search+"%' OR courses.description like '"+search+"%' UNION ALL SELECT * FROM talents WHERE talents.name like '"+search+"%' OR talents.type like '"+search+"%' Or talents.description like '"+search+"%'"
-    print(query)
-    print("hello")
     df = engine.execute(sqlalchemy.text(query))
-        #df = pd.read_sql(query, engine)
-    print(df)
     return df
     # elif search_type == "talents":
     #     query = "SELECT * FROM talents Where type like '"+search+"%' OR name like '"+search+"%' OR description like '"+search+"%' "
